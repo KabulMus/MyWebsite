@@ -203,6 +203,14 @@
 			font-style: normal;
 			font-display: swap;
 		}
+		/* Iosevka - 用于特殊符号排版 */
+		@font-face {
+			font-family: 'Iosevka';
+			src: url('Iosevka-Regular.woff2') format('woff2');
+			font-weight: 400;
+			font-style: normal;
+			font-display: swap;
+		}
 		:root {
 			--primary-blue: #1e66c6;
 			--bg-dark: #070a1a;
@@ -557,7 +565,7 @@
 		}
 
 		.card-subtitle { font-size: 0.9rem; font-weight: 500; }
-		.card:hover { color: white; transform: scale(1.05); box-shadow: 0 12px 30px rgba(14, 52, 112, 0.2); }
+		.card:hover { color: white; box-shadow: 0 12px 30px rgba(14, 52, 112, 0.2); }
 		.card.bilibili:hover { background-color: var(--bilibili-blue); }
 		.card.bilibili-pink:hover { background-color: var(--bilibili-pink); }
 		.card.xhs:hover { background-color: var(--xhs-red); }
@@ -1184,20 +1192,44 @@
 				<a href="https://github.com/rsms/inter" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Inter</a>
 			</div>
 			<div style="text-align: left; font-size: 0.85rem; color: var(--sub-text-on-light);">
-				<p>© Copyright 2016 The Inter Project Authors.</p>
-				<p>™ Inter UI and Inter is a trademark of rsms.</p>
-				<p>This Font Software is licensed under the SIL Open Font License, Version 1.1. <a href="http://scripts.sil.org/OFL" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Click here</a> to view this license.</p>
+				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
+					<span style="flex-shrink: 0; width: 1.6em;">©</span>
+					<span>Copyright 2016 The Inter Project Authors.</span>
+				</p>
+				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
+					<span style="flex-shrink: 0; width: 1.6em; font-family: 'Iosevka', monospace; font-feature-settings: normal;">TM</span>
+					<span>Inter UI and Inter is a trademark of rsms.</span>
+				</p>
+				<p>This font software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: <a href="http://scripts.sil.org/OFL" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://scripts.sil.org/OFL</a>.</p>
 			</div>
 			<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
 				<a href="https://www.dynacw.com.cn/king/" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">苹方 / 华康金刚黑</a>
 			</div>
 			<div style="text-align: left; font-size: 0.85rem; color: var(--sub-text-on-light);">
-				<p>© Copyright 2017 DynaComware Taiwan Inc. All rights reserved.</p>
-				<p>™ King Gothic is a trademark of DynaComware Taiwan Inc.</p>
+				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
+					<span style="flex-shrink: 0; width: 1.6em;">©</span>
+					<span>Copyright 2017 DynaComware Taiwan Inc. All rights reserved.</span>
+				</p>
+				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
+					<span style="flex-shrink: 0; width: 1.6em; font-family: 'Iosevka', monospace; font-feature-settings: normal;">TM</span>
+					<span>King Gothic is a trademark of DynaComware Taiwan Inc.</span>
+				</p>
 			</div>
 			<div style="text-align: justify; text-justify: inter-ideograph; line-break: strict; font-size: 0.85rem; color: var(--sub-text-on-light);">
 				<p>中文字体文件已使用 <a href="https://www.python.org/" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Python</a> 库 <a href="https://github.com/fonttools/fonttools" target="_blank" style="color: var(--primary-blue); text-decoration: none;">FontTools</a> 进行子集化压缩。</p>
 			</div>
+			<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
+				<a href="https://github.com/be5invis/Iosevka" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Iosevka</a>
+			</div>
+			<div style="text-align: left; font-size: 0.85rem; color: var(--sub-text-on-light);">
+				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
+					<span style="flex-shrink: 0; width: 1.6em;">©</span>
+					<span>Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net).</span>
+				</p>
+				<p>Spatial efficient monospace font family for programming. Built from code. <a href="http://be5invis.github.io/Iosevka" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://be5invis.github.io/Iosevka</a></p>
+				<p>This font software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: <a href="http://scripts.sil.org/OFL" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://scripts.sil.org/OFL</a>.</p>
+			</div>
+			
 		</article>
 	</section>
 
