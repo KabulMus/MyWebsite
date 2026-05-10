@@ -111,6 +111,80 @@
 			}, 400);
 		}
 
+		// 大事记横向滚动控制 - 实现卡片居中翻页
+		function scrollMilestones(direction) {
+			const container = document.getElementById('milestoneScrollContainer');
+			if (!container) return;
+			const cards = container.querySelectorAll('.milestone-card');
+			if (cards.length === 0) return;
+
+			const containerWidth = container.offsetWidth;
+			const centerLine = container.scrollLeft + containerWidth / 2;
+
+			// 寻找当前最靠近中心的卡片索引
+			let minDiff = Infinity;
+			let currentIndex = 0;
+			cards.forEach((card, index) => {
+				const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+				const diff = Math.abs(centerLine - cardCenter);
+				if (diff < minDiff) {
+					minDiff = diff;
+					currentIndex = index;
+				}
+			});
+
+			let targetIndex = currentIndex + direction;
+			targetIndex = Math.max(0, Math.min(targetIndex, cards.length - 1));
+
+			const targetCard = cards[targetIndex];
+			// 计算让目标卡片居中的滚动位置
+			const targetScrollLeft = targetCard.offsetLeft - (containerWidth / 2) + (targetCard.offsetWidth / 2);
+			container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+		}
+
+		// 大事记年份筛选
+		function filterMilestones(year, btn) {
+			const container = document.getElementById('milestoneScrollContainer');
+			const cards = container.querySelectorAll('.milestone-card');
+			const buttons = document.querySelectorAll('.year-filter-btn');
+			
+			buttons.forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+
+			cards.forEach(card => {
+				if (year === 'all' || card.getAttribute('data-year') === year) {
+					card.style.display = 'block';
+				} else {
+					card.style.display = 'none';
+				}
+			});
+			container.scrollLeft = 0;
+			updateMilestoneButtons();
+		}
+
+		// 更新大事记按钮可见性及遮罩渐变
+		function updateMilestoneButtons() {
+			const container = document.getElementById('milestoneScrollContainer');
+			const prevBtn = document.querySelector('.milestone-nav-btn.prev');
+			const nextBtn = document.querySelector('.milestone-nav-btn.next');
+			if (!container || !prevBtn || !nextBtn) return;
+
+			const scrollLeft = container.scrollLeft;
+			const maxScroll = container.scrollWidth - container.offsetWidth;
+
+			// 按钮显示/隐藏逻辑
+			prevBtn.classList.toggle('hidden', scrollLeft <= 5);
+			nextBtn.classList.toggle('hidden', scrollLeft >= maxScroll - 5);
+
+			// 动态更新遮罩：0px 时 alpha=1 (不透明，遮罩消失)，60px 时 alpha=0 (透明，遮罩全开)
+			// 使用 Math.min/max 确保数值在 0-1 之间
+			const leftAlpha = Math.min(1, Math.max(0, 1 - (scrollLeft / 60)));
+			const rightAlpha = Math.min(1, Math.max(0, 1 - ((maxScroll - scrollLeft) / 60)));
+
+			container.style.setProperty('--mask-left', `rgba(0,0,0,${leftAlpha})`);
+			container.style.setProperty('--mask-right', `rgba(0,0,0,${rightAlpha})`);
+		}
+
 		// 复制到剪贴板功能
 		function copyToClipboard(text, btn) {
 			navigator.clipboard.writeText(text).then(() => {
@@ -149,6 +223,13 @@
 					e.stopPropagation();
 				}
 			}, true); // 使用捕获模式以拦截事件
+			
+			// 初始化大事记滚动按钮状态
+			const milestoneScrollContainer = document.getElementById('milestoneScrollContainer');
+			if (milestoneScrollContainer) {
+				milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
+				updateMilestoneButtons();
+			}
 		});
 	</script>
 	<style>
@@ -221,6 +302,7 @@
 			--card-shadow: 0 8px 20px -4px rgba(14, 52, 112, 0.12), 0 4px 8px -2px rgba(14, 52, 112, 0.08);
 			--card-radius: 12px;
 			--navbar-bg: rgba(255, 255, 255, 0.8);
+			--card-bg: #ffffff;
 			--bilibili-blue: #0cb6f2;
 			--bilibili-pink: #ff6699;
 			--xhs-red: #ff2442;
@@ -523,12 +605,162 @@
 			background-color: var(--primary-blue);
 		}
 
+		.section-hint {
+			font-size: 0.85rem;
+			color: var(--sub-text-on-light);
+			margin-top: -25px;
+			margin-bottom: 30px;
+			display: flex;
+			justify-content: center;
+			gap: 5px;
+		}
+		.section-hint .mobile-only { display: none; }
+		@media (max-width: 768px) {
+			.section-hint .desktop-only { display: none; }
+			.section-hint .mobile-only { display: inline; }
+		}
+
 		.section-content { margin-bottom: 70px; }
 		.about-text p { max-width: 600px; margin: 0 auto; color: var(--sub-text-on-light); }
 		.about-text a { color: inherit; text-decoration: none; transition: color 0.2s; } /* 继承文字颜色，加个平滑过渡 */
 		.about-text a:hover { color: var(--primary-blue); }
 
 		/* --- 网格系统 --- */
+		/* 大事记部分 */
+		.milestone-wrapper {
+			display: flex;
+			gap: 20px;
+			position: relative; /* 确保坐标计算基准正确 */
+			padding: 20px; /* 恢复对称的正常内边距 */
+			overflow-x: auto; /* 允许横向滚动 */
+			-webkit-overflow-scrolling: touch; /* 移动端平滑滚动 */
+			scrollbar-width: none; /* Firefox 隐藏滚动条 */
+			-ms-overflow-style: none; /* IE 10+ 隐藏滚动条 */
+
+			/* 使用 CSS 变量由 JS 动态控制遮罩透明度 */
+			--mask-left: black;
+			--mask-right: transparent;
+			-webkit-mask-image: linear-gradient(to right, var(--mask-left), black 60px, black calc(100% - 60px), var(--mask-right));
+			mask-image: linear-gradient(to right, var(--mask-left), black 60px, black calc(100% - 60px), var(--mask-right));
+		}
+		
+		.milestone-container {
+			position: relative;
+			width: 100%;
+		}
+
+		.milestone-nav-btn {
+			position: absolute;
+			top: 50%;
+			translate: 0 -50%;
+			width: 44px;
+			height: 44px;
+			border-radius: 50%;
+			background: var(--navbar-bg, rgba(255, 255, 255, 0.9));
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			border: 1px solid rgba(0, 0, 0, 0.05);
+			box-shadow: 0 4px 12px rgba(14, 52, 112, 0.15);
+			cursor: pointer;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 10;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			color: var(--text-on-light);
+		}
+		.milestone-nav-btn:hover { scale: 1.1; box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); color: var(--primary-blue); }
+		.milestone-nav-btn.prev { left: -22px; }
+		.milestone-nav-btn.next { right: -22px; }
+		.milestone-nav-btn.hidden {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
+		.milestone-nav-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+		@media (max-width: 1100px) {
+			.milestone-nav-btn.prev { left: 10px; }
+			.milestone-nav-btn.next { right: 10px; }
+		}
+
+		@media (max-width: 768px) {
+			.milestone-nav-btn { display: none; }
+		}
+
+		.milestone-wrapper::-webkit-scrollbar {
+			display: none; /* Chrome/Safari 隐藏滚动条 */
+		}
+
+		.milestone-card {
+			flex: 0 0 300px; /* 固定宽度，不收缩 */
+			background: var(--card-bg); /* 使用主题变量 */
+			border-radius: var(--card-radius);
+			padding: 24px;
+			box-shadow: var(--card-shadow); /* 使用主题变量 */
+			transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+			border-top: 4px solid var(--primary-blue); /* 顶部蓝色边框，保持与其他卡片一致的视觉风格 */
+			text-align: justify; /* 卡片内容两端对齐 */
+		}
+
+		.milestone-card .date {
+			display: flex;
+			align-items: center;
+			font-weight: bold;
+			color: var(--primary-blue);
+			margin-bottom: 12px;
+			font-size: 0.9rem;
+		}
+
+		.milestone-tag {
+			display: inline-block;
+			padding: 2px 8px;
+			border-radius: 6px;
+			font-size: 0.75rem;
+			font-weight: 700;
+			margin-right: 10px;
+			line-height: 1.2;
+		}
+		.tag-channel { background: rgba(30, 102, 198, 0.1); color: var(--primary-blue); }
+		.tag-insync { background: rgba(180, 83, 9, 0.1); color: #b45309; }
+		.tag-academic { background: rgba(88, 204, 2, 0.1); color: var(--duolingo-green); }
+		.tag-life { background: rgba(107, 114, 128, 0.1); color: var(--sub-text-on-light); }
+		.tag-nation { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+		.tag-skill { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+		.tag-achievement { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
+		.tag-community { background: rgba(79, 70, 229, 0.1); color: #4f46e5; }
+		.tag-anecdote { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
+
+		.milestone-card h3 {
+			margin: 0 0 10px 0;
+			font-size: 1.25rem;
+			color: var(--text-on-light); /* 使用主题变量 */
+		}
+
+		/* 年份筛选器样式 */
+		.year-filter-container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 10px;
+			margin-bottom: 25px;
+			padding: 0 20px;
+		}
+		.year-filter-btn {
+			padding: 6px 16px;
+			border-radius: 20px;
+			background: var(--card-bg);
+			border: 1px solid rgba(0,0,0,0.05);
+			font-size: 0.85rem;
+			font-family: inherit; /* 确保字体一致 */
+			cursor: pointer;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			color: var(--sub-text-on-light);
+			box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+		}
+		.year-filter-btn:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+		.year-filter-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); box-shadow: 0 4px 10px rgba(30, 102, 198, 0.2); }
+
 		.works-grid, .tools-grid {
 			display: flex;
 			flex-wrap: wrap;
@@ -585,6 +817,12 @@
 		.card.douyin:hover .tiktok-cyan { fill: #00faf0; opacity: 1; }
 		.card.douyin:hover .tiktok-red { fill: #fe2c55; opacity: 1; }
 		.card.douyin:hover .tiktok-white { fill: #fff; opacity: 1; }
+		.milestone-card p {
+			color: var(--sub-text-on-light); /* 使用主题变量 */
+			font-size: 0.95rem;
+			line-height: 1.6;
+			text-align: justify;
+		}
 
 		/* 晃动动画 */
 		@keyframes shake {
@@ -729,7 +967,19 @@
 				--sub-text-on-light: #94a3b8;  /* 深色模式下的副标题颜色 */
 				--card-shadow: 0 10px 25px -5px rgba(2, 6, 23, 0.6), 0 8px 10px -6px rgba(2, 6, 23, 0.5);
 				--navbar-bg: rgba(15, 23, 42, 0.8);
+				--card-bg: #1e293b;
 			}
+			
+			html:not([data-theme='light']) .tag-channel { background: rgba(147, 197, 253, 0.15); }
+			html:not([data-theme='light']) .tag-insync { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+			html:not([data-theme='light']) .tag-academic { background: rgba(88, 204, 2, 0.15); }
+			html:not([data-theme='light']) .tag-life { background: rgba(148, 163, 184, 0.15); }
+			html:not([data-theme='light']) .tag-nation { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+			html:not([data-theme='light']) .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+			html:not([data-theme='light']) .tag-achievement { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; }
+			html:not([data-theme='light']) .tag-community { background: rgba(129, 140, 248, 0.15); color: #818cf8; }
+			html:not([data-theme='light']) .tag-anecdote { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
+
 			html:not([data-theme='light']) .navbar {
 				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 			}
@@ -739,6 +989,7 @@
 			}
 			html:not([data-theme='light']) .nav-dropdown a:hover { background: rgba(255, 255, 255, 0.05); }
 			html:not([data-theme='light']) .nav-avatar { border-color: rgba(255, 255, 255, 0.1); } /* 修复：这里应该有分号 */
+			html:not([data-theme='light']) .milestone-card { border-top: 4px solid var(--primary-blue); }
 			html:not([data-theme='light']) .card { background-color: #1e293b; border: 1px solid rgba(255, 255, 255, 0.05); }
 			html:not([data-theme='light']) footer, html:not([data-theme='light']) .footer-bottom { border-top-color: #1e293b; }
 			html:not([data-theme='light']) article.reward-modal { background: #1e293b; color: #f8fafc; }
@@ -751,6 +1002,12 @@
 			html:not([data-theme='light']) .lang-toggle-btn:hover,
 			html:not([data-theme='light']) .nav-theme-toggle:hover,
 			html:not([data-theme='light']) .nav-lang-toggle:hover { color: var(--primary-blue) !important; }
+			
+			html:not([data-theme='light']) .milestone-nav-btn {
+				background: rgba(30, 41, 59, 0.9);
+				border-color: rgba(255, 255, 255, 0.1);
+				color: #f8fafc;
+			}
 		}
 
 		/* 手动深色模式样式 (手动点击按钮时) */
@@ -761,6 +1018,7 @@
 			--sub-text-on-light: #94a3b8;
 			--card-shadow: 0 10px 25px -5px rgba(2, 6, 23, 0.6), 0 8px 10px -6px rgba(2, 6, 23, 0.5);
 			--navbar-bg: rgba(15, 23, 42, 0.8);
+			--card-bg: #1e293b;
 		}
 		[data-theme='dark'] .navbar { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 		[data-theme='dark'] .nav-dropdown { background: #1e293b; box-shadow: 0 20px 40px -12px rgba(2, 6, 23, 0.7); }
@@ -768,6 +1026,7 @@
 		[data-theme='dark'] .card { background-color: #1e293b; border: 1px solid rgba(255, 255, 255, 0.05); }
 		[data-theme='dark'] footer, [data-theme='dark'] .footer-bottom { border-top-color: #1e293b; } /* 修复1: 手动深色模式下页脚分隔线 */
 		[data-theme='dark'] .footer-column p, [data-theme='dark'] .footer-column span, [data-theme='dark'] .footer-column a { color: #94a3b8; }
+		[data-theme='dark'] .milestone-card { border-top: 4px solid var(--primary-blue); }
 		[data-theme='dark'] .footer-column a:hover { color: var(--primary-blue); }
 		[data-theme='dark'] .nav-avatar { border-color: rgba(255, 255, 255, 0.1); }
 		[data-theme='dark'] article.reward-modal { background: #1e293b; color: #f8fafc; }
@@ -783,6 +1042,22 @@
 		[data-theme='dark'] .lang-toggle-btn:hover,
 		[data-theme='dark'] .nav-theme-toggle:hover,
 		[data-theme='dark'] .nav-lang-toggle:hover { color: var(--primary-blue) !important; }
+
+		[data-theme='dark'] .milestone-nav-btn {
+			background: rgba(30, 41, 59, 0.9);
+			border-color: rgba(255, 255, 255, 0.1);
+			color: #f8fafc;
+		}
+
+		[data-theme='dark'] .tag-channel { background: rgba(147, 197, 253, 0.15); }
+		[data-theme='dark'] .tag-insync { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+		[data-theme='dark'] .tag-academic { background: rgba(88, 204, 2, 0.15); }
+		[data-theme='dark'] .tag-life { background: rgba(148, 163, 184, 0.15); }
+		[data-theme='dark'] .tag-nation { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+		[data-theme='dark'] .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+		[data-theme='dark'] .tag-achievement { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; }
+		[data-theme='dark'] .tag-community { background: rgba(129, 140, 248, 0.15); color: #818cf8; }
+		[data-theme='dark'] .tag-anecdote { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
 
 		/* --- 模式切换按钮 --- */
 		.theme-toggle-btn {
@@ -854,6 +1129,16 @@
 				pointer-events: auto !important;
 			}
 		}
+		/* 响应式调整 */
+		@media (max-width: 768px) {
+			.milestone-wrapper {
+				padding: 15px; /* 恢复对称内边距 */
+				/* 移动端也同步调整遮罩范围 */
+				-webkit-mask-image: linear-gradient(to right, var(--mask-left), black 30px, black calc(100% - 30px), var(--mask-right));
+				mask-image: linear-gradient(to right, var(--mask-left), black 30px, black calc(100% - 30px), var(--mask-right));
+			}
+			.milestone-card { flex: 0 0 85%; max-width: 300px; }
+		}
 
 		/* 深色模式下的按钮微调 */
 		@media (prefers-color-scheme: dark) {
@@ -891,8 +1176,9 @@
 			<div class="nav-links desktop-only">
 				<a href="#about">内心独白</a>
 				<a href="#works">频道列表</a>
-				<a href="#contact">联系支持</a>
 				<a href="#tools">小工具</a>
+				<a href="#milestones">大事记</a>
+				<a href="#contact">联系支持</a>
 				<button class="nav-theme-toggle" onclick="toggleTheme()">
 					<svg viewBox="0 0 48 48">
 						<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -913,8 +1199,9 @@
 		<div class="nav-dropdown" id="nav-dropdown">
 			<a href="#about" onclick="toggleMenu(false)">内心独白</a>
 			<a href="#works" onclick="toggleMenu(false)">频道列表</a>
+			<a href="#tools" onclick="toggleMenu(false)">工具</a>
+			<a href="#milestones" onclick="toggleMenu(false)">大事记</a>
 			<a href="#contact" onclick="toggleMenu(false)">联系支持</a>
-			<a href="#tools" onclick="toggleMenu(false)">小工具</a>
 		</div>
 	</nav>
 
@@ -948,7 +1235,7 @@
 				<p>努力爱着这个世界的 Ethan——</p>
 				<p>无论如何，会更好的。</p>
 				<p>最后，</p>
-				<p>爱你们，我的朋友们，</p>
+				<p>爱你们，朋友们，</p>
 				<p>你们每个人的出现，</p>
 				<p>都是我生命中的幸运；</p>
 				<p>爱你，深深，</p>
@@ -1001,6 +1288,275 @@
 						<p class="card-subtitle">Zjewel8159</p>
 					</a>
 				</section>
+			</section>
+
+			<section id="tools" class="section-content">
+				<h2 class="section-title">小工具</h2>
+				<section class="tools-grid">
+					<section class="tool-card-wrapper">
+						<a href="pitches" class="card tool-card">
+							<svg class="card-svg" viewBox="0 0 241.88 275.47"><path d="M241.88,187.67c0,10.22-2.56,19.06-7.66,26.52-5.11,7.47-11.74,13.26-19.89,17.38-8.15,4.12-16.94,6.19-26.37,6.19-6.68,0-12.92-1.81-18.71-5.45-5.8-3.63-8.69-9.08-8.69-16.35s2.55-13.7,7.66-19.89c5.1-6.19,11.59-11.2,19.44-15.03,7.85-3.83,15.81-5.74,23.87-5.74s13.85,1.28,18.56,3.83V45.67l-148.78,32.41v147.31c0,10.22-2.55,19.06-7.66,26.52-5.11,7.46-11.74,13.26-19.89,17.38-8.15,4.13-16.94,6.19-26.37,6.19-6.68,0-12.92-1.82-18.71-5.45-5.8-3.64-8.69-9.09-8.69-16.35s2.55-13.7,7.66-19.89c5.11-6.19,11.59-11.2,19.44-15.03,7.86-3.83,15.81-5.75,23.87-5.75s13.85,1.28,18.56,3.83V37.71L241.88,0v187.67Z"/></svg>
+							<p class="card-subtitle">音阶构成</p>
+						</a>
+					</section>
+				</section>
+			</section>
+
+			<section id="milestones" class="section-content">
+				<h2 class="section-title">大事记</h2>
+				<p class="section-hint">
+					<span class="desktop-only">点击翻页，或配合 Shift 键横向滚动</span>
+					<span class="mobile-only">横向滑动浏览</span>
+				</p>
+				<div class="year-filter-container">
+					<button class="year-filter-btn active" onclick="filterMilestones('all', this)">全部</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2011', this)">2011</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2017', this)">2017</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2018', this)">2018</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2019', this)">2019</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2020', this)">2020 / 2021</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2022', this)">2022</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2023', this)">2023</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2024', this)">2024</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2025', this)">2025</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2026', this)">2026</button>
+				</div>
+				<div class="milestone-container">
+					<button class="milestone-nav-btn prev" onclick="scrollMilestones(-1)" aria-label="上一个">
+						<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+					</button>
+					<div class="milestone-wrapper" id="milestoneScrollContainer">
+						<div class="milestone-card" data-year="2011">
+							<div class="date"><span class="milestone-tag tag-life">人生</span>2011.03.30</div>
+							<h3>世界，你好</h3>
+							<p>这一天，我来到了这个世界。那是一段漫长旅程的序章。</p>
+						</div>
+						<div class="milestone-card" data-year="2017">
+							<div class="date"><span class="milestone-tag tag-skill">技能</span>2017</div>
+							<h3>初探旋律</h3>
+							<p>我开始真正地接触音乐，在琴键与五线谱的世界里遨游。</p>
+						</div>
+						<div class="milestone-card" data-year="2017">
+							<div class="date"><span class="milestone-tag tag-academic">学业</span>2017.09</div>
+							<h3>学业伊始</h3>
+							<p>我踏入了小学的大门，开始了漫长而充实的学习之旅。</p>
+						</div>
+						<div class="milestone-card" data-year="2018">
+							<div class="date"><span class="milestone-tag tag-life">人生</span>2018.07</div>
+							<h3>生命的馈赠</h3>
+							<p>我可爱的妹妹的诞生，给生活中添加了成倍的欢笑。</p>
+						</div>
+						<div class="milestone-card" data-year="2019">
+							<div class="date"><span class="milestone-tag tag-nation">家国</span>2019.10.01</div>
+							<h3>盛世华诞</h3>
+							<p>中华人民共和国成立 70 周年。那次大会是我记忆中的第一次阅兵式。</p>
+						</div>
+						<div class="milestone-card" data-year="2020">
+							<div class="date"><span class="milestone-tag tag-insync">同频</span>2020.04</div>
+							<h3>初次邂逅，成为「生米」</h3>
+							<p>偶然，我听到了那纯净空灵的嗓音——那是周深的《大鱼》。我逐渐成为了一个「生米」。</p>
+						</div>
+						<div class="milestone-card" data-year="2020">
+							<div class="date"><span class="milestone-tag tag-skill">技能</span>2020 / 2021</div>
+							<h3>翰墨人生</h3>
+							<p>我开始学习毛笔书法。</p>
+						</div>
+						<div class="milestone-card" data-year="2022">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2022.01.03</div>
+							<h3>首次起航</h3>
+							<p>我在 Bilibili 发布了第一支早期视频。虽然它早已在时间中隐去，但创作热情自此点燃。</p>
+						</div>
+						<div class="milestone-card" data-year="2022">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2022.02.02</div>
+							<h3>万分之一的缘分</h3>
+							<p>Bilibili 频道迎来了第一位粉丝。这份微小的鼓励，却让我首次感受到热爱的力量。</p>
+						</div>
+						<div class="milestone-card" data-year="2022">
+							<div class="date">
+								<span class="milestone-tag tag-insync">同频</span>
+								<span class="milestone-tag tag-nation">家国</span>
+								2022.04
+							</div>
+							<h3>有你，有我</h3>
+							<p>《有我》在中国共青团将成立 100 周年之际发布，周深空灵但有力的歌声令人动容。</p>
+						</div>
+						<div class="milestone-card" data-year="2022">
+							<div class="date"><span class="milestone-tag tag-life">人生</span>2022.06.25</div>
+							<h3>数字窗口</h3>
+							<p>我拥有了第一台专属于我的手机。</p>
+						</div>
+						<div class="milestone-card" data-year="2022">
+							<div class="date"><span class="milestone-tag tag-insync">同频</span>2022.09</div>
+							<h3>花开忘忧，愿你无忧</h3>
+							<p>听着《花开忘忧》，我竟不自觉落了泪，或许是触动了内心深处最温柔的防线吧。</p>
+						</div>
+						<div class="milestone-card" data-year="2022">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2022.12.29</div>
+							<h3>音高探索</h3>
+							<p>我发布了首支「音高测量」系列视频。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2023.01.29</div>
+							<h3>百人同行</h3>
+							<p>Bilibili 频道粉丝突破 100。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-life">人生</span>2023.04.15</div>
+							<h3>首台电脑</h3>
+							<p>我拥有了人生第一台笔记本电脑。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2023.04</div>
+							<h3>更上一层楼</h3>
+							<p>视频剪辑工具从剪映专业版正式升级为 DaVinci Resolve。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-insync">同频</span>2023.05</div>
+							<h3>璀璨冒险人</h3>
+							<p>耳机里，那首《璀璨冒险人》已循环了上百遍。这首歌总能赋予我重新出发的勇气。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-academic">学业</span>2023.06</div>
+							<h3>告别童年</h3>
+							<p>小学毕业了。一段纯真时光的终点，也是通往更广阔天地的新起点。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2023.07</div>
+							<h3>专业进化</h3>
+							<p>工作流全面转向 Adobe Premiere <i>Pro</i>。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-life">人生</span>2023.08</div>
+							<h3>波折与磨砺</h3>
+							<p>这一个月以来，我经历了地震、交通事故和猫伤。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-academic">学业</span>2023.09</div>
+							<h3>少年的远征</h3>
+							<p>我正式升入初中。课业压力如约而至，但我知道，这是必须跨越的山峰。</p>
+						</div>
+						<div class="milestone-card" data-year="2023">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2023.11.04</div>
+							<h3>五百之约</h3>
+							<p>Bilibili 频道粉丝数达到 500。</p>
+						</div>
+						<div class="milestone-card" data-year="2024">
+							<div class="date">
+								<span class="milestone-tag tag-life">人生</span>
+								<span class="milestone-tag tag-insync">同频</span>
+								2024.03.30
+							</div>
+							<h3>13 岁与《蜃楼》</h3>
+							<p>13 岁生日当天，二专先行曲《蜃楼》官宣。这是时空交错下，最完美的生日礼物。</p>
+						</div>
+						<div class="milestone-card" data-year="2024">
+							<div class="date"><span class="milestone-tag tag-insync">同频</span>2024.05.19</div>
+							<h3>《反深代词》</h3>
+							<p>周深新专辑《反深代词》终于开售！毫不犹豫首发购入，去探索更深邃的音乐宇宙。</p>
+						</div>
+						<div class="milestone-card" data-year="2024">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2024.06.26</div>
+							<h3>千人同行</h3>
+							<p>Bilibili 频道粉丝破千了！</p>
+						</div>
+						<div class="milestone-card" data-year="2024">
+							<div class="date"><span class="milestone-tag tag-community">社群</span>2024.07.29</div>
+							<h3>温暖港湾</h3>
+							<p>QQ 交流群正式建立。</p>
+						</div>
+						<div class="milestone-card" data-year="2024">
+							<div class="date"><span class="milestone-tag tag-anecdote">轶事</span>2024.08.09</div>
+							<h3>连胜挑战</h3>
+							<p>在多邻国开启了第 1 天连胜，延续至今。</p>
+						</div>
+						<div class="milestone-card" data-year="2024">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2023 - 2024</div>
+							<h3>质的飞跃</h3>
+							<p>经历了长时间的摸索，我的视频质量有了质的提升，我找到了自己的节奏。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2025.01</div>
+							<h3>两千份信任</h3>
+							<p>Bilibili 频道粉丝数达到 2000！</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-achievement">成就</span>2025.01.29</div>
+							<h3>跨洋共鸣</h3>
+							<p>收到 Armando 的回信，在全中文互联网首个获得了《山鹰之歌》的原始歌词。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-academic">学业</span>2025.06.15</div>
+							<h3>首场战斗</h3>
+							<p>迎来初二地理生物中考。这是我学业生涯的第一次正式亮剑。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-insync">同频</span>2025.06.28</div>
+							<h3>「深深的」青岛站</h3>
+							<p>深深，我们在「深深的」相遇了！在彼此的人生日记上，我们都留下了浓墨重彩的一笔。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2025.07.31</div>
+							<h3>走向世界</h3>
+							<p>正式开通 YouTube 频道。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-achievement">成就</span>2025.08.19</div>
+							<h3>《重逢之约》极高音？</h3>
+							<p>收到 Brian Cheng 老师的回复，结束了《重逢之约》中所谓「极高音」的乌龙。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-nation">家国</span>2025.09.03</div>
+							<h3>回望历史</h3>
+							<p>纪念抗战胜利 80 周年。中国再也不会受到那样的屈辱了。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-insync">同频</span>2025.09.29</div>
+							<h3>提前的祝愿</h3>
+							<p>为深深精心创作生贺视频。预判到高中生活的忙碌，我提前寄存了未来几年的祝福。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2025.10.01</div>
+							<h3>多维分享</h3>
+							<p>开通小红书频道。</p>
+						</div>
+						<div class="milestone-card" data-year="2025">
+							<div class="date"><span class="milestone-tag tag-channel">频道</span>2025.10</div>
+							<h3>三千份热爱</h3>
+							<p>Bilibili 频道粉丝数达到 3000。</p>
+						</div>
+						<div class="milestone-card" data-year="2026">
+							<div class="date">
+								<span class="milestone-tag tag-channel">频道</span>
+								<span class="milestone-tag tag-academic">学业</span>
+								2026
+							</div>
+							<h3>潜龙在渊</h3>
+							<p>为了迎接至关重要的中考，更新速度明显放缓。短暂的沉寂，是为了更好的爆发。</p>
+						</div>
+						<div class="milestone-card" data-year="2026">
+							<div class="date">
+								<span class="milestone-tag tag-channel">频道</span>
+								<span class="milestone-tag tag-nation">家国</span>
+								2026.03.04
+							</div>
+							<h3>多元民族</h3>
+							<p>发布《吉量》民族标注版，向世界传递中华文化的光芒。</p>
+						</div>
+						<div class="milestone-card" data-year="2026">
+							<div class="date"><span class="milestone-tag tag-academic">学业</span>2026.05</div>
+							<h3>沃土开花</h3>
+							<p>通过市一中「沃土计划」考试，理想高中的大门已近在眼前。</p>
+						</div>
+						<div class="milestone-card" data-year="all">
+							<div class="date">Future</div>
+							<h3>未完待续</h3>
+							<p>更多的经历，更多的冒险。时间的长河还在流淌，我的人生日记仍在继续书写……</p>
+						</div>
+					</div>
+					<button class="milestone-nav-btn next" onclick="scrollMilestones(1)" aria-label="下一个">
+						<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+					</button>
+				</div>
 			</section>
 
 			<section id="contact" class="section-content">
@@ -1072,18 +1628,6 @@
 						</svg>
 						<p class="card-subtitle">多邻国</p>
 					</a>
-				</section>
-			</section>
-
-			<section id="tools" class="section-content">
-				<h2 class="section-title">小工具</h2>
-				<section class="tools-grid">
-					<section class="tool-card-wrapper">
-						<a href="pitches" class="card tool-card">
-							<svg class="card-svg" viewBox="0 0 241.88 275.47"><path d="M241.88,187.67c0,10.22-2.56,19.06-7.66,26.52-5.11,7.47-11.74,13.26-19.89,17.38-8.15,4.12-16.94,6.19-26.37,6.19-6.68,0-12.92-1.81-18.71-5.45-5.8-3.63-8.69-9.08-8.69-16.35s2.55-13.7,7.66-19.89c5.1-6.19,11.59-11.2,19.44-15.03,7.85-3.83,15.81-5.74,23.87-5.74s13.85,1.28,18.56,3.83V45.67l-148.78,32.41v147.31c0,10.22-2.55,19.06-7.66,26.52-5.11,7.46-11.74,13.26-19.89,17.38-8.15,4.13-16.94,6.19-26.37,6.19-6.68,0-12.92-1.82-18.71-5.45-5.8-3.64-8.69-9.09-8.69-16.35s2.55-13.7,7.66-19.89c5.11-6.19,11.59-11.2,19.44-15.03,7.86-3.83,15.81-5.75,23.87-5.75s13.85,1.28,18.56,3.83V37.71L241.88,0v187.67Z"/></svg>
-							<p class="card-subtitle">音阶构成</p>
-						</a>
-					</section>
 				</section>
 			</section>
 
