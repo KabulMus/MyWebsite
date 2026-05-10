@@ -612,12 +612,6 @@
 			margin-bottom: 30px;
 			display: flex;
 			justify-content: center;
-			gap: 5px;
-		}
-		.section-hint .mobile-only { display: none; }
-		@media (max-width: 768px) {
-			.section-hint .desktop-only { display: none; }
-			.section-hint .mobile-only { display: inline; }
 		}
 
 		.section-content { margin-bottom: 70px; }
@@ -710,6 +704,7 @@
 			color: var(--primary-blue);
 			margin-bottom: 12px;
 			font-size: 0.9rem;
+			font-variant-numeric: tabular-nums;
 		}
 
 		.milestone-tag {
@@ -747,19 +742,23 @@
 			padding: 0 20px;
 		}
 		.year-filter-btn {
-			padding: 6px 16px;
-			border-radius: 20px;
+			width: 70px;
+			padding: 8px 0;
+			border-radius: 8px;
 			background: var(--card-bg);
-			border: 1px solid rgba(0,0,0,0.05);
+			border: 1px solid rgba(30, 102, 198, 0.1);
 			font-size: 0.85rem;
-			font-family: inherit; /* 确保字体一致 */
+			font-weight: 400;
+			font-family: inherit;
+			font-variant-numeric: tabular-nums;
 			cursor: pointer;
+			text-align: center;
 			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			color: var(--sub-text-on-light);
-			box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+			box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
 		}
-		.year-filter-btn:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
-		.year-filter-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); box-shadow: 0 4px 10px rgba(30, 102, 198, 0.2); }
+		.year-filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); }
+		.year-filter-btn.active { background: #1e66c6 !important; color: white !important; border-color: #1e66c6 !important; box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); }
 
 		.works-grid, .tools-grid {
 			display: flex;
@@ -1008,6 +1007,9 @@
 				border-color: rgba(255, 255, 255, 0.1);
 				color: #f8fafc;
 			}
+
+			html:not([data-theme='light']) .year-filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
+			html:not([data-theme='light']) .year-filter-btn:hover { color: var(--primary-blue); }
 		}
 
 		/* 手动深色模式样式 (手动点击按钮时) */
@@ -1042,6 +1044,9 @@
 		[data-theme='dark'] .lang-toggle-btn:hover,
 		[data-theme='dark'] .nav-theme-toggle:hover,
 		[data-theme='dark'] .nav-lang-toggle:hover { color: var(--primary-blue) !important; }
+
+		[data-theme='dark'] .year-filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
+		[data-theme='dark'] .year-filter-btn:hover { color: var(--primary-blue); }
 
 		[data-theme='dark'] .milestone-nav-btn {
 			background: rgba(30, 41, 59, 0.9);
@@ -1304,17 +1309,14 @@
 
 			<section id="milestones" class="section-content">
 				<h2 class="section-title">大事记</h2>
-				<p class="section-hint">
-					<span class="desktop-only">点击翻页，或配合 Shift 键横向滚动</span>
-					<span class="mobile-only">横向滑动浏览</span>
-				</p>
+				<p class="section-hint">左右滑动浏览</p>
 				<div class="year-filter-container">
 					<button class="year-filter-btn active" onclick="filterMilestones('all', this)">全部</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2011', this)">2011</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2017', this)">2017</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2018', this)">2018</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2019', this)">2019</button>
-					<button class="year-filter-btn" onclick="filterMilestones('2020', this)">2020 / 2021</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2020', this)">2020</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2022', this)">2022</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2023', this)">2023</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2024', this)">2024</button>
@@ -1357,7 +1359,7 @@
 							<p>偶然，我听到了那纯净空灵的嗓音——那是周深的《大鱼》。我逐渐成为了一个「生米」。</p>
 						</div>
 						<div class="milestone-card" data-year="2020">
-							<div class="date"><span class="milestone-tag tag-skill">技能</span>2020 / 2021</div>
+							<div class="date"><span class="milestone-tag tag-skill">技能</span>2020</div>
 							<h3>翰墨人生</h3>
 							<p>我开始学习毛笔书法。</p>
 						</div>
@@ -1477,7 +1479,7 @@
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-channel">频道</span>2025.01</div>
 							<h3>两千份信任</h3>
-							<p>Bilibili 频道粉丝数达到 2000！</p>
+							<p>Bilibili 频道粉丝数达到 2,000！</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-achievement">成就</span>2025.01.29</div>
@@ -1512,7 +1514,7 @@
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-insync">同频</span>2025.09.29</div>
 							<h3>提前的祝愿</h3>
-							<p>为深深精心创作生贺视频。预判到高中生活的忙碌，我提前寄存了未来几年的祝福。</p>
+							<p>为深深精心创作生贺视频。预见到高中生活的忙碌，我提前寄存了未来几年的祝福。</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-channel">频道</span>2025.10.01</div>
@@ -1522,7 +1524,7 @@
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-channel">频道</span>2025.10</div>
 							<h3>三千份热爱</h3>
-							<p>Bilibili 频道粉丝数达到 3000。</p>
+							<p>Bilibili 频道粉丝数达到 3,000。</p>
 						</div>
 						<div class="milestone-card" data-year="2026">
 							<div class="date">

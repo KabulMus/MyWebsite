@@ -44,8 +44,51 @@
 			}
 		}
 
+		// 符号切换逻辑
+		let currentNotation = 'flat';
+		const flatKeys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+		const sharpKeys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+		function updateGridNotation(type, animate = false) {
+			const cards = document.querySelectorAll('.scale-card');
+			cards.forEach(c => {
+				const name = c.querySelector('.scale-name').textContent.trim();
+				const shouldHide = (type === 'flat' && (name.startsWith('C# ') || name.startsWith('D# ') || name.startsWith('F# ') || name.startsWith('G# ') || name.startsWith('A# '))) ||
+								   (type === 'sharp' && (name.startsWith('Db ') || name.startsWith('Eb ') || name.startsWith('Gb ') || name.startsWith('Ab ') || name.startsWith('Bb ')));
+				c.style.display = shouldHide ? 'none' : 'flex';
+				if (animate && !shouldHide) {
+					c.classList.remove('appearing');
+					void c.offsetWidth;
+					c.classList.add('appearing');
+				}
+			});
+		}
+
+		function setNotation(type, btn) {
+			currentNotation = type;
+			document.querySelectorAll('.notation-btn').forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			
+			const filterBtns = document.querySelectorAll('.filter-btn');
+			const keys = type === 'flat' ? flatKeys : sharpKeys;
+			let activeKey = null;
+			
+			filterBtns.forEach((b, i) => {
+				const wasActive = b.classList.contains('active');
+				b.textContent = keys[i];
+				if (wasActive) {
+					activeKey = keys[i];
+					b.classList.remove('active');
+					filterScale(b);
+				}
+			});
+
+			if (!activeKey) updateGridNotation(type, true);
+		}
+
 		// 音阶筛选逻辑
-		function filterScale(key, btn) {
+		function filterScale(btn) {
+			const key = btn.textContent.trim();
 			const grid = document.querySelector('.scales-grid');
 			const cards = document.querySelectorAll('.scale-card');
 			const btns = document.querySelectorAll('.filter-btn');
@@ -57,17 +100,7 @@
 			if (isActive) {
 				// 如果是取消选择：让所有卡片丝滑地“归位”
 				grid.classList.remove('filtered');
-				cards.forEach(c => {
-					if (c.style.display === 'none') {
-						c.style.display = 'flex';
-						// 重新触发动画
-						c.classList.remove('appearing');
-						void c.offsetWidth; // 触发重绘以重置动画
-						c.classList.add('appearing');
-					} else {
-						c.classList.remove('appearing');
-					}
-				});
+				updateGridNotation(currentNotation, true);
 			} else {
 				// 如果是选中某个调：执行筛选
 				btn.classList.add('active');
@@ -145,6 +178,8 @@
 				const moonInner = '<path d="M28.0527 4.41085C22.5828 5.83695 18.5455 10.8106 18.5455 16.7273C18.5455 23.7564 24.2436 29.4545 31.2727 29.4545C37.1894 29.4545 42.1631 25.4172 43.5891 19.9473C43.8585 21.256 44 22.6115 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C25.3885 4 26.744 4.14149 28.0527 4.41085Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>';
 				document.querySelectorAll('.nav-theme-toggle svg, .theme-toggle-btn svg').forEach(s => s.innerHTML = moonInner);
 			}
+			// 初始化显示逻辑
+			updateGridNotation(currentNotation);
 		});
 	</script>
 	<style>
@@ -817,22 +852,55 @@
 		}
 
 		/* --- 音阶特有样式 --- */
+		.notation-toggle {
+			display: flex;
+			justify-content: center;
+			gap: 12px;
+			margin-bottom: 25px;
+		}
+		.notation-btn {
+			width: 44px;
+			height: 44px;
+			border-radius: 50%;
+			border: 1px solid rgba(30, 102, 198, 0.1);
+			background: white;
+			font-family: 'Musical', sans-serif;
+			font-size: 1.2rem;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			color: var(--sub-text-on-light);
+			box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
+			font-feature-settings: normal;
+		}
+		.notation-btn:hover { transform: scale(1.1); color: var(--primary-blue); }
+		.notation-btn.active {
+			background: #1e66c6 !important;
+			color: white !important;
+			border-color: #1e66c6 !important;
+			box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3);
+		}
+
 		.filter-container {
-			display: grid;
-			grid-template-columns: repeat(12, 1fr);
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
 			gap: 10px;
 			margin: 20px auto 0;
 			width: 100%;
 			max-width: 1000px;
 		}
 		.filter-btn {
+			width: 60px;
 			background: white;
 			border: 1px solid rgba(30, 102, 198, 0.1);
 			border-radius: 8px;
-			padding: 12px 0;
-			font-weight: 700;
-			font-size: 1.2rem;
-			color: var(--text-on-light);
+			padding: 8px 0;
+			font-weight: 400;
+			font-size: 1rem;
+			color: var(--sub-text-on-light);
 			cursor: pointer;
 			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			text-align: center;
@@ -840,14 +908,18 @@
 			font-family: 'Musical', sans-serif;
 			font-feature-settings: normal;
 		}
-		.filter-btn:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); color: var(--primary-blue); }
+		.filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); }
 		.filter-btn.active { background: #1e66c6 !important; color: white !important; border-color: #1e66c6 !important; box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); }
 		
-		[data-theme='dark'] .filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: #f8fafc; }
+		[data-theme='dark'] .filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
 		[data-theme='dark'] .filter-btn:hover { color: var(--primary-blue); }
+		[data-theme='dark'] .notation-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
+		[data-theme='dark'] .notation-btn:hover { color: var(--primary-blue); }
 		@media (prefers-color-scheme: dark) { 
-			html:not([data-theme='light']) .filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: #f8fafc; }
+			html:not([data-theme='light']) .filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
 			html:not([data-theme='light']) .filter-btn:hover { color: var(--primary-blue); }
+			html:not([data-theme='light']) .notation-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
+			html:not([data-theme='light']) .notation-btn:hover { color: var(--primary-blue); }
 		}
 
 		.scales-grid {
@@ -884,7 +956,8 @@
 			.desktop-only { display: none; }
 			.menu-toggle.mobile-only { display: flex; }
 			.hero-section h1 { font-size: 2rem; }
-			.filter-container { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+			.filter-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+			.filter-btn { width: auto; }
 			.scales-grid { grid-template-columns: 1fr; } /* 放在最后确保能覆盖双列设置 */
 			.footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
 			.footer-column { align-items: center; }
@@ -908,19 +981,24 @@
 
 	<main class="content-section">
 		<section class="container">
+			<div class="notation-toggle">
+				<button class="notation-btn" onclick="setNotation('sharp', this)">#</button>
+				<button class="notation-btn active" onclick="setNotation('flat', this)">b</button>
+			</div>
+
 			<div class="filter-container">
-				<button class="filter-btn" onclick="filterScale('C', this)">C</button>
-				<button class="filter-btn" onclick="filterScale('Db', this)">Db</button>
-				<button class="filter-btn" onclick="filterScale('D', this)">D</button>
-				<button class="filter-btn" onclick="filterScale('Eb', this)">Eb</button>
-				<button class="filter-btn" onclick="filterScale('E', this)">E</button>
-				<button class="filter-btn" onclick="filterScale('F', this)">F</button>
-				<button class="filter-btn" onclick="filterScale('Gb', this)">Gb</button>
-				<button class="filter-btn" onclick="filterScale('G', this)">G</button>
-				<button class="filter-btn" onclick="filterScale('Ab', this)">Ab</button>
-				<button class="filter-btn" onclick="filterScale('A', this)">A</button>
-				<button class="filter-btn" onclick="filterScale('Bb', this)">Bb</button>
-				<button class="filter-btn" onclick="filterScale('B', this)">B</button>
+				<button class="filter-btn" onclick="filterScale(this)">C</button>
+				<button class="filter-btn" onclick="filterScale(this)">Db</button>
+				<button class="filter-btn" onclick="filterScale(this)">D</button>
+				<button class="filter-btn" onclick="filterScale(this)">Eb</button>
+				<button class="filter-btn" onclick="filterScale(this)">E</button>
+				<button class="filter-btn" onclick="filterScale(this)">F</button>
+				<button class="filter-btn" onclick="filterScale(this)">Gb</button>
+				<button class="filter-btn" onclick="filterScale(this)">G</button>
+				<button class="filter-btn" onclick="filterScale(this)">Ab</button>
+				<button class="filter-btn" onclick="filterScale(this)">A</button>
+				<button class="filter-btn" onclick="filterScale(this)">Bb</button>
+				<button class="filter-btn" onclick="filterScale(this)">B</button>
 			</div>
 
 			<div class="scales-grid">
@@ -953,6 +1031,31 @@
 				<div class="card scale-card">
 					<div class="scale-header"><span class="scale-name"><span class="musical-key">B</span> Major</span><span class="scale-type"><span class="musical-key">G#</span> minor</span></div>
 					<div class="note-list"><span class="note-badge"><i>I</i><span>B</span></span><span class="note-badge"><i>II</i><span>C#</span></span><span class="note-badge"><i>III</i><span>D#</span></span><span class="note-badge"><i>IV</i><span>E</span></span><span class="note-badge"><i>V</i><span>F#</span></span><span class="note-badge"><i>VI</i><span>G#</span></span><span class="note-badge"><i>VII</i><span>A#</span></span></div>
+				</div>
+				<!-- F# Major -->
+				<div class="card scale-card">
+					<div class="scale-header"><span class="scale-name"><span class="musical-key">F#</span> Major</span><span class="scale-type"><span class="musical-key">D#</span> minor</span></div>
+					<div class="note-list"><span class="note-badge"><i>I</i><span>F#</span></span><span class="note-badge"><i>II</i><span>G#</span></span><span class="note-badge"><i>III</i><span>A#</span></span><span class="note-badge"><i>IV</i><span>B</span></span><span class="note-badge"><i>V</i><span>C#</span></span><span class="note-badge"><i>VI</i><span>D#</span></span><span class="note-badge"><i>VII</i><span><b style="font-weight: 600;">F</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">E#</b></span></span></div>
+				</div>
+				<!-- C# Major -->
+				<div class="card scale-card">
+					<div class="scale-header"><span class="scale-name"><span class="musical-key">C#</span> Major</span><span class="scale-type"><span class="musical-key">A#</span> minor</span></div>
+					<div class="note-list"><span class="note-badge"><i>I</i><span>C#</span></span><span class="note-badge"><i>II</i><span>D#</span></span><span class="note-badge"><i>III</i><span><b style="font-weight: 600;">F</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">E#</b></span></span><span class="note-badge"><i>IV</i><span>F#</span></span><span class="note-badge"><i>V</i><span>G#</span></span><span class="note-badge"><i>VI</i><span>A#</span></span><span class="note-badge"><i>VII</i><span><b style="font-weight: 600;">C</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">B#</b></span></span></div>
+				</div>
+				<!-- G# Major -->
+				<div class="card scale-card">
+					<div class="scale-header"><span class="scale-name"><span class="musical-key">G#</span> Major</span><span class="scale-type"><span class="musical-key">E#</span> minor</span></div>
+					<div class="note-list"><span class="note-badge"><i>I</i><span>G#</span></span><span class="note-badge"><i>II</i><span>A#</span></span><span class="note-badge"><i>III</i><span><b style="font-weight: 600;">C</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">B#</b></span></span><span class="note-badge"><i>IV</i><span>C#</span></span><span class="note-badge"><i>V</i><span>D#</span></span><span class="note-badge"><i>VI</i><span><b style="font-weight: 600;">F</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">E#</b></span></span><span class="note-badge"><i>VII</i><span><b style="font-weight: 600;">G</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">Fx</b></span></span></div>
+				</div>
+				<!-- D# Major -->
+				<div class="card scale-card">
+					<div class="scale-header"><span class="scale-name"><span class="musical-key">D#</span> Major</span><span class="scale-type"><span class="musical-key">B#</span> minor</span></div>
+					<div class="note-list"><span class="note-badge"><i>I</i><span>D#</span></span><span class="note-badge"><i>II</i><span><b style="font-weight: 600;">F</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">E#</b></span></span><span class="note-badge"><i>III</i><span><b style="font-weight: 600;">G</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">Fx</b></span></span><span class="note-badge"><i>IV</i><span>G#</span></span><span class="note-badge"><i>V</i><span>A#</span></span><span class="note-badge"><i>VI</i><span><b style="font-weight: 600;">C</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">B#</b></span></span><span class="note-badge"><i>VII</i><span><b style="font-weight: 600;">D</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">Cx</b></span></span></div>
+				</div>
+				<!-- A# Major -->
+				<div class="card scale-card">
+					<div class="scale-header"><span class="scale-name"><span class="musical-key">A#</span> Major</span><span class="scale-type"><span class="musical-key">Fx</span> minor</span></div>
+					<div class="note-list"><span class="note-badge"><i>I</i><span>A#</span></span><span class="note-badge"><i>II</i><span><b style="font-weight: 600;">C</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">B#</b></span></span><span class="note-badge"><i>III</i><span><b style="font-weight: 600;">D</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">Cx</b></span></span><span class="note-badge"><i>IV</i><span>D#</span></span><span class="note-badge"><i>V</i><span><b style="font-weight: 600;">F</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">E#</b></span></span><span class="note-badge"><i>VI</i><span><b style="font-weight: 600;">G</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">Fx</b></span></span><span class="note-badge"><i>VII</i><span><b style="font-weight: 600;">A</b><span style="font-weight: 300; opacity: 0.5; margin: 0 4px;">/</span><b style="font-weight: 600;">Gx</b></span></span></div>
 				</div>
 				<!-- Gb Major -->
 				<div class="card scale-card">

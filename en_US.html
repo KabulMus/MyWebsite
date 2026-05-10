@@ -611,12 +611,6 @@
 			margin-bottom: 30px;
 			display: flex;
 			justify-content: center;
-			gap: 5px;
-		}
-		.section-hint .mobile-only { display: none; }
-		@media (max-width: 768px) {
-			.section-hint .desktop-only { display: none; }
-			.section-hint .mobile-only { display: inline; }
 		}
 
 		.section-content { margin-bottom: 70px; }
@@ -712,6 +706,7 @@
 			color: var(--primary-blue);
 			margin-bottom: 12px;
 			font-size: 0.9rem;
+			font-variant-numeric: tabular-nums;
 		}
 
 		.milestone-tag {
@@ -750,19 +745,23 @@
 			padding: 0 20px;
 		}
 		.year-filter-btn {
-			padding: 6px 16px;
-			border-radius: 20px;
+			width: 70px;
+			padding: 8px 0;
+			border-radius: 8px;
 			background: var(--card-bg);
-			border: 1px solid rgba(0,0,0,0.05);
+			border: 1px solid rgba(30, 102, 198, 0.1);
 			font-size: 0.85rem;
-			font-family: inherit; /* Ensure consistent font */
+			font-weight: 400;
+			font-family: inherit;
+			font-variant-numeric: tabular-nums;
 			cursor: pointer;
+			text-align: center;
 			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			color: var(--sub-text-on-light);
-			box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+			box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
 		}
-		.year-filter-btn:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
-		.year-filter-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); box-shadow: 0 4px 10px rgba(30, 102, 198, 0.2); }
+		.year-filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); }
+		.year-filter-btn.active { background: #1e66c6 !important; color: white !important; border-color: #1e66c6 !important; box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); }
 
 		.works-grid, .tools-grid {
 			display: flex;
@@ -1010,6 +1009,9 @@
 				border-color: rgba(255, 255, 255, 0.1);
 				color: #f8fafc;
 			}
+
+			html:not([data-theme='light']) .year-filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
+			html:not([data-theme='light']) .year-filter-btn:hover { color: var(--primary-blue); }
 		}
 
 		/* 手动深色模式样式 (手动点击按钮时) */
@@ -1044,6 +1046,9 @@
 		[data-theme='dark'] .lang-toggle-btn:hover,
 		[data-theme='dark'] .nav-theme-toggle:hover,
 		[data-theme='dark'] .nav-lang-toggle:hover { color: var(--primary-blue) !important; }
+
+		[data-theme='dark'] .year-filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
+		[data-theme='dark'] .year-filter-btn:hover { color: var(--primary-blue); }
 
 		[data-theme='dark'] .milestone-nav-btn {
 			background: rgba(30, 41, 59, 0.9);
@@ -1231,7 +1236,7 @@
 				<p>“Floating in the Night Sky”</p>
 				<p>(Chinese: 游夜空漂浮);</p>
 				<p>or more stylishly, “Melody of Charlie’s”;</p>
-				<p>or more randomly, “Zjewel8159”...</p>
+				<p>or more randomly, “Zjewel8159”…</p>
 				<p>As a content creator,</p>
 				<p>I’m proud to have 3,000+ followers on <a href="https://space.bilibili.com/1863501530">Bilibili</a>.</p>
 				<p>To me, updating videos is a way to unwind,</p>
@@ -1316,17 +1321,14 @@
 
 			<section id="milestones" class="section-content">
 				<h2 class="section-title">Milestones</h2>
-				<p class="section-hint">
-					<span class="desktop-only">Click to flip, or Shift + Scroll to slide</span>
-					<span class="mobile-only">Swipe to browse</span>
-				</p>
+				<p class="section-hint">Swipe to browse</p>
 				<div class="year-filter-container">
 					<button class="year-filter-btn active" onclick="filterMilestones('all', this)">All</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2011', this)">2011</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2017', this)">2017</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2018', this)">2018</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2019', this)">2019</button>
-					<button class="year-filter-btn" onclick="filterMilestones('2020', this)">2020 / 2021</button>
+					<button class="year-filter-btn" onclick="filterMilestones('2020', this)">2020</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2022', this)">2022</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2023', this)">2023</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2024', this)">2024</button>
@@ -1341,12 +1343,12 @@
 						<div class="milestone-card" data-year="2011">
 							<div class="date"><span class="milestone-tag tag-life">Life</span>2011.03.30</div>
 							<h3>Hello World</h3>
-							<p>On this day, I came into this world. It marks the prologue of a long journey.</p>
+							<p>On this day, I was born into this world. It marked the prologue of a long journey.</p>
 						</div>
 						<div class="milestone-card" data-year="2017">
 							<div class="date"><span class="milestone-tag tag-skill">Skill</span>2017</div>
 							<h3>Initial Melodies</h3>
-							<p>I began to truly engage with music, wandering in the world of keys and staves.</p>
+							<p>I began to truly connect with music, wandering through the world of keys and staves.</p>
 						</div>
 						<div class="milestone-card" data-year="2017">
 							<div class="date"><span class="milestone-tag tag-academic">Academic</span>2017.09</div>
@@ -1356,32 +1358,32 @@
 						<div class="milestone-card" data-year="2018">
 							<div class="date"><span class="milestone-tag tag-life">Life</span>2018.07</div>
 							<h3>A Gift of Life</h3>
-							<p>The birth of my lovely younger sister added doubled laughter to our lives.</p>
+							<p>The birth of my lovely younger sister brought times more laughter to our lives.</p>
 						</div>
 						<div class="milestone-card" data-year="2019">
 							<div class="date"><span class="milestone-tag tag-nation">Nation</span>2019.10.01</div>
 							<h3>Grand Celebration</h3>
-							<p>70th anniversary of the PRC. That ceremony was the first military parade in my memory.</p>
+							<p>The 70th anniversary of the PRC. That event was the first military parade in my memory.</p>
 						</div>
 						<div class="milestone-card" data-year="2020">
 							<div class="date"><span class="milestone-tag tag-insync">In-sync</span>2020.04</div>
 							<h3>First Encounter, Becoming a “Shengmi”</h3>
-							<p>By chance, I heard that pure and ethereal voice—it was Zhou Shen’s <i>Big Fish</i>. I gradually became a “Shengmi”.</p>
+							<p>By chance, I heard that pure and ethereal voice—it was Charlie’s <i>Big Fish</i>. I gradually became a “Shengmi.”</p>
 						</div>
 						<div class="milestone-card" data-year="2020">
-							<div class="date"><span class="milestone-tag tag-skill">Skill</span>2020 / 2021</div>
+							<div class="date"><span class="milestone-tag tag-skill">Skill</span>2020</div>
 							<h3>Ink Life</h3>
 							<p>I began learning brush calligraphy.</p>
 						</div>
 						<div class="milestone-card" data-year="2022">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2022.01.03</div>
 							<h3>First Departure</h3>
-							<p>Released my first early video on Bilibili. Although it has long since faded into time, the creative passion was ignited.</p>
+							<p>I released my first early video on Bilibili. Although it has long since faded with time, the creative passion was ignited.</p>
 						</div>
 						<div class="milestone-card" data-year="2022">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2022.02.02</div>
-							<h3>One in a Ten Thousand Chance</h3>
-							<p>The Bilibili channel welcomed its first follower. This tiny encouragement made me feel the power of passion for the first time.</p>
+							<h3>A One-in-a-Million Chance</h3>
+							<p>My Bilibili channel welcomed its first follower. This tiny bit of encouragement made me feel the power of passion for the first time.</p>
 						</div>
 						<div class="milestone-card" data-year="2022">
 							<div class="date">
@@ -1390,17 +1392,17 @@
 								2022.04
 							</div>
 							<h3>With You, With Me</h3>
-							<p><i>With Me</i> was released on the 100th anniversary of the CYLC. Zhou Shen’s ethereal yet powerful voice was moving.</p>
+							<p><i>With Me</i> was released on the 100th anniversary of the CYLC. Charlie’s ethereal yet powerful voice was deeply moving.</p>
 						</div>
 						<div class="milestone-card" data-year="2022">
 							<div class="date"><span class="milestone-tag tag-life">Life</span>2022.06.25</div>
 							<h3>Digital Window</h3>
-							<p>I owned my first smartphone dedicated to me.</p>
+							<p>I got my first personal smartphone.</p>
 						</div>
 						<div class="milestone-card" data-year="2022">
 							<div class="date"><span class="milestone-tag tag-insync">In-sync</span>2022.09</div>
-							<h3>Flowers Bloom, Worries Forgot</h3>
-							<p>Listening to <i>Worry-Free When Blossom</i>, I couldn’t help but shed tears; perhaps it touched the most tender defense line deep within.</p>
+							<h3>Flowers Bloom, Forget Worries</h3>
+							<p>Listening to <i>Worry-Free When Blossom</i>, I couldn’t help but shed tears; perhaps it touched the most tender defense line deep within my heart.</p>
 						</div>
 						<div class="milestone-card" data-year="2022">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2022.12.29</div>
@@ -1415,7 +1417,7 @@
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-life">Life</span>2023.04.15</div>
 							<h3>First Computer</h3>
-							<p>I owned my first laptop computer.</p>
+							<p>I got my first personal laptop computer.</p>
 						</div>
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2023.04</div>
@@ -1425,7 +1427,7 @@
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-insync">In-sync</span>2023.05</div>
 							<h3>Brilliant Adventurer</h3>
-							<p>In my headphones, <i>Brilliant Adventurer</i> has been looped hundreds of times. This song gives me the courage to start again.</p>
+							<p>In my headphones, <i>Brilliant Adventurer</i> has been playing on repeat for hundreds of times. This song gives me the courage to start again.</p>
 						</div>
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-academic">Academic</span>2023.06</div>
@@ -1435,7 +1437,7 @@
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2023.07</div>
 							<h3>Professional Evolution</h3>
-							<p>Workflow fully transitioned to Adobe Premiere <i>Pro</i>.</p>
+							<p>My workflow fully transitioned to Adobe Premiere <i>Pro</i>.</p>
 						</div>
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-life">Life</span>2023.08</div>
@@ -1445,11 +1447,11 @@
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-academic">Academic</span>2023.09</div>
 							<h3>Youth’s Expedition</h3>
-							<p>Entered middle school. Crossing the mountain of academic pressure.</p>
+							<p>Entered middle school, beginning to face the challenges of academic pressure.</p>
 						</div>
 						<div class="milestone-card" data-year="2023">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2023.11.04</div>
-							<h3>500 Member Promise</h3>
+							<h3>500-Member Promise</h3>
 							<p>Bilibili channel followers reached 500.</p>
 						</div>
 						<div class="milestone-card" data-year="2024">
@@ -1459,12 +1461,12 @@
 								2024.03.30
 							</div>
 							<h3>13 Years Old and <i>Mirage</i></h3>
-							<p>On my 13th birthday, the announcement of <i>Mirage</i> was the most perfect birthday gift.</p>
+							<p>On my 13th birthday, the announcement of the pre-release single <i>Mirage</i> from Charlie’s second album was the most perfect birthday gift imaginable.</p>
 						</div>
 						<div class="milestone-card" data-year="2024">
 							<div class="date"><span class="milestone-tag tag-insync">In-sync</span>2024.05.19</div>
 							<h3><i>Shenself</i></h3>
-							<p>Purchased the long-awaited <i>Shenself</i> album immediately to explore a deeper musical universe.</p>
+							<p>I purchased the long-awaited <i>Shenself</i> album immediately to explore a deeper musical universe.</p>
 						</div>
 						<div class="milestone-card" data-year="2024">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2024.06.26</div>
@@ -1479,12 +1481,12 @@
 						<div class="milestone-card" data-year="2024">
 							<div class="date"><span class="milestone-tag tag-anecdote">Anecdote</span>2024.08.09</div>
 							<h3>Streak Challenge</h3>
-							<p>Started the 1st day streak on Duolingo, continuing to this day.</p>
+							<p>Started my 1st day streak on Duolingo, which continues to this day.</p>
 						</div>
 						<div class="milestone-card" data-year="2024">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2023 - 2024</div>
 							<h3>Qualitative Leap</h3>
-							<p>Video quality improved qualitatively after long exploration; I found my own rhythm.</p>
+							<p>My video quality improved significantly after much exploration; I had found my own rhythm.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2025.01</div>
@@ -1494,17 +1496,17 @@
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-achievement">Achievement</span>2025.01.29</div>
 							<h3>Resonance Across the Ocean</h3>
-							<p>Reply from Armando. First in the Chinese internet to obtain original lyrics of <i>El Cóndor Pasa</i>.</p>
+							<p>I received a reply from Armando Vértiz Cayo, becoming the first in the entire Chinese internet to obtain original lyrics of <i>El Cóndor Pasa</i>.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-academic">Academic</span>2025.06.15</div>
 							<h3>First Battle</h3>
-							<p>Geography and Biology graduation exams. This is my academic career’s first official sword-drawing.</p>
+							<p>Geography and Biology graduation exams. This is the first time I’ve truly shown my mettle in my academic career.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-insync">In-sync</span>2025.06.28</div>
-							<h3>“Shenshen’s” Qingdao Station</h3>
-							<p>Met in “Shenshen’s”! We both left a heavy stroke in each other’s life diaries.</p>
+							<h3>“Shenshen’s” in Qingdao</h3>
+							<p>We finally met in “Shenshen’s” Concert! We both left a meaningful mark in each other’s life diaries.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2025.07.31</div>
@@ -1513,27 +1515,27 @@
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-achievement">Achievement</span>2025.08.19</div>
-							<h3><i>Promise of Reunion</i> High Note?</h3>
-							<p>Brian Cheng’s reply ended the misunderstanding about the so-called “extreme high note” in <i>Promise of Reunion</i>.</p>
+							<h3>Extreme High Note in <i>Promise of Reunion</i>?</h3>
+							<p>Brian Cheng’s reply to me ended the misunderstanding about the so-called “extreme high note” in <i>Promise of Reunion</i>.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-nation">Nation</span>2025.09.03</div>
 							<h3>Looking Back at History</h3>
-							<p>Commemorating the 80th anniversary of victory. China will never suffer such humiliation again.</p>
+							<p>Commemorating the 80th anniversary of the victory in the War of Resistance against Japanese Aggression. China will never suffer such humiliation again.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-insync">In-sync</span>2025.09.29</div>
 							<h3>Early Wishes</h3>
-							<p>Birthday celebration video for Charlie with deposited future wishes.</p>
+							<p>I created a birthday celebration video for Charlie with deposited future wishes, anticipating the busyness of high school life.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2025.10.01</div>
-							<h3>Multi-dimensional Sharing</h3>
+							<h3>Multi-platform Sharing</h3>
 							<p>RedNote channel launched.</p>
 						</div>
 						<div class="milestone-card" data-year="2025">
 							<div class="date"><span class="milestone-tag tag-channel">Channel</span>2025.10</div>
-							<h3>3,000 Degrees of Passion</h3>
+							<h3>3,000 Passions</h3>
 							<p>Bilibili channel followers reached 3,000.</p>
 						</div>
 						<div class="milestone-card" data-year="2026">
@@ -1542,8 +1544,8 @@
 								<span class="milestone-tag tag-academic">Academic</span>
 								2026
 							</div>
-							<h3>Hidden Dragon in the Depths</h3>
-							<p>Updates slowed down for HSEE preparation. Brief silence for a better explosion.</p>
+							<h3>Hidden Talent Awaiting His Moment</h3>
+							<p>Updates slowed down for the High School Entrance Examination preparation. Brief silence for a better explosion.</p>
 						</div>
 						<div class="milestone-card" data-year="2026">
 							<div class="date">
@@ -1552,17 +1554,17 @@
 								2026.03.04
 							</div>
 							<h3>Diverse Nations</h3>
-							<p>Released <i>Jiliang</i> ethnic edition, conveying the light of Chinese culture to the world.</p>
+							<p>Released <i>Jiliang</i> ethnic-labeled edition, spreading the brilliance of Chinese culture to the world.</p>
 						</div>
 						<div class="milestone-card" data-year="2026">
 							<div class="date"><span class="milestone-tag tag-academic">Academic</span>2026.05</div>
-							<h3>Wotu Blooms</h3>
-							<p>Passed “Wotu Plan” exam. Dream school is in sight.</p>
+							<h3>Blooming on Fertile Soil</h3>
+							<p>Passed the “Fertile Soil Plan” exam. Dream school is in sight.</p>
 						</div>
 						<div class="milestone-card" data-year="all">
 							<div class="date">Future</div>
-							<h3>To be continued</h3>
-							<p>More experiences, more adventures. My life diary is still being written...</p>
+							<h3>To be continued…</h3>
+							<p>More experiences, more adventures. My life diary is still being written…</p>
 						</div>
 					</div>
 					<button class="milestone-nav-btn next" onclick="scrollMilestones(1)" aria-label="Next">
@@ -1694,7 +1696,7 @@
 			<p style="font-size: 1.2rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">671065700</p>
 			<div style="text-align: left; line-break: strict; overflow-wrap: break-word;">
 				<p style="text-align: center; font-size: 0.85rem; color: var(--sub-text-on-light); margin-bottom: 10px;">Welcome to our group!</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light);"><strong>NOTE　</strong>The group files contain vocal pitch analysis for Zhou Shen’s album <em>Shenself</em>, which is currently on sale. To protect copyright, we only welcome members who can verify they have legal access to the album, including:</p>
+				<p style="font-size: 0.85rem; color: var(--sub-text-on-light);"><strong>NOTE　</strong>The group files contain vocal pitch analysis for Charlie Zhou Shen’s album <em>Shenself</em>, which is currently on sale. To protect copyright, we only welcome members who can verify they have legal access to the album, including:</p>
 				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
 					<span style="flex-shrink: 0; width: 1.6em;">1.</span>
 					<span>Purchased at least one digital copy on Chinese music platforms;</span>
