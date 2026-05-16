@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>个人主页 | Ethan Shaw</title>
-	<link rel="icon" href="favicon.png" type="image/png">
+	<link rel="icon" href="favicon.webp" type="image/png">
 	<script>
 		// 页面滚动逻辑
 		window.addEventListener('scroll', () => {
@@ -70,8 +70,8 @@
 
 			const rewardImg = document.querySelector('#reward-overlay .reward-qr');
 			const rewardSource = document.querySelector('#reward-overlay picture source');
-			const lightQrSrc = "reward_code.png";
-			const darkQrSrc = "reward_code_dark.png";
+			const lightQrSrc = "reward_code.webp";
+			const darkQrSrc = "reward_code_dark.webp";
 			
 			// 图标路径
 			const svgs = document.querySelectorAll('.nav-theme-toggle svg, .theme-toggle-btn svg');
@@ -111,7 +111,7 @@
 			}, 400);
 		}
 
-		// 大事记横向滚动控制 - 实现卡片居中翻页
+		// 里程碑横向滚动控制 - 实现卡片居中翻页
 		function scrollMilestones(direction) {
 			const container = document.getElementById('milestoneScrollContainer');
 			if (!container) return;
@@ -142,7 +142,7 @@
 			container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
 		}
 
-		// 大事记年份筛选
+		// 里程碑年份筛选
 		function filterMilestones(year, btn) {
 			const container = document.getElementById('milestoneScrollContainer');
 			const cards = container.querySelectorAll('.milestone-card');
@@ -162,7 +162,7 @@
 			updateMilestoneButtons();
 		}
 
-		// 更新大事记按钮可见性及遮罩渐变
+		// 更新里程碑按钮可见性及遮罩渐变
 		function updateMilestoneButtons() {
 			const container = document.getElementById('milestoneScrollContainer');
 			const prevBtn = document.querySelector('.milestone-nav-btn.prev');
@@ -224,7 +224,7 @@
 				}
 			}, true); // 使用捕获模式以拦截事件
 			
-			// 初始化大事记滚动按钮状态
+			// 初始化里程碑滚动按钮状态
 			const milestoneScrollContainer = document.getElementById('milestoneScrollContainer');
 			if (milestoneScrollContainer) {
 				milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
@@ -620,7 +620,7 @@
 		.about-text a:hover { color: var(--primary-blue); }
 
 		/* --- 网格系统 --- */
-		/* 大事记部分 */
+		/* 里程碑部分 */
 		.milestone-wrapper {
 			display: flex;
 			gap: 20px;
@@ -1182,7 +1182,7 @@
 				<a href="#about">内心独白</a>
 				<a href="#works">频道列表</a>
 				<a href="#tools">小工具</a>
-				<a href="#milestones">大事记</a>
+				<a href="#milestones">里程碑</a>
 				<a href="#contact">联系支持</a>
 				<button class="nav-theme-toggle" onclick="toggleTheme()">
 					<svg viewBox="0 0 48 48">
@@ -1204,8 +1204,8 @@
 		<div class="nav-dropdown" id="nav-dropdown">
 			<a href="#about" onclick="toggleMenu(false)">内心独白</a>
 			<a href="#works" onclick="toggleMenu(false)">频道列表</a>
-			<a href="#tools" onclick="toggleMenu(false)">工具</a>
-			<a href="#milestones" onclick="toggleMenu(false)">大事记</a>
+			<a href="#tools" onclick="toggleMenu(false)">小工具</a>
+			<a href="#milestones" onclick="toggleMenu(false)">里程碑</a>
 			<a href="#contact" onclick="toggleMenu(false)">联系支持</a>
 		</div>
 	</nav>
@@ -1216,7 +1216,7 @@
 			<h1>Ethan Shaw</h1>
 			<p class="tagline">一颗尘埃 一枚星星</p>
 		</section>
-		<img src="ZhouShenALPHA.png" alt="Person" class="person-img">
+		<img src="ZhouShenALPHA.webp" alt="Person" class="person-img">
 	</header>
 
 	<main class="content-section">
@@ -1308,7 +1308,7 @@
 			</section>
 
 			<section id="milestones" class="section-content">
-				<h2 class="section-title">大事记</h2>
+				<h2 class="section-title">里程碑</h2>
 				<p class="section-hint">左右滑动浏览</p>
 				<div class="year-filter-container">
 					<button class="year-filter-btn active" onclick="filterMilestones('all', this)">全部</button>
@@ -1787,8 +1787,8 @@
 			</button>
 			<h4 style="margin-bottom: 20px; color: var(--text-on-light); font-weight: 600;">微信赞赏码</h4>
 			<picture>
-				<source srcset="reward_code_dark.png" media="(prefers-color-scheme: dark)">
-				<img src="reward_code.png" alt="微信赞赏码" class="reward-qr">
+				<source srcset="reward_code_dark.webp" media="(prefers-color-scheme: dark)">
+				<img src="reward_code.webp" alt="微信赞赏码" class="reward-qr">
 			</picture>
 			<p style="margin-top: 15px; font-size: 0.85rem; color: var(--sub-text-on-light);">感谢您的鼓励与支持！</p>
 		</article>
