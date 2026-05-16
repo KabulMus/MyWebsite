@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实时频率与音高分析仪</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #333; }
+        .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
+        #meter { width: 100%; height: 120px; position: relative; border-bottom: 2px solid #eee; margin-bottom: 20px; }
+        #pointer { width: 4px; height: 80px; background: #ea4c89; position: absolute; bottom: 0; left: 50%; transform-origin: bottom center; transition: transform 0.1s ease-out; margin-left: -2px; }
+        .center-line { position: absolute; bottom: 0; left: 50%; width: 2px; height: 100px; background: #2ecc71; margin-left: -1px; opacity: 0.5; }
+        .info { margin: 20px 0; font-size: 1.5rem; color: #666; }
+        .current-note { font-size: 3rem; font-weight: bold; color: #ea4c89; margin: 10px 0; }
+        .frequency-val { font-size: 2.5rem; color: #333; margin-bottom: 10px; }
+        #start-btn { padding: 15px 30px; background: #ea4c89; color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 1rem; }
+        #start-btn:hover { background: #d4437a; }
+        .status { color: #999; font-size: 0.9rem; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="margin-top:0">音频分析仪</h2>
+    <p style="color:#888">实时物理频率与音准监测</p>
+
+    <div id="meter">
+        <div class="center-line"></div>
+        <div id="pointer"></div>
+    </div>
+
+    <div class="current-note" id="note-display">--</div>
+    
+    <div class="frequency-val">
+        <span id="hz-display">0.0</span> <small style="font-size: 1rem">Hz</small>
+    </div>
+
+    <button id="start-btn">开始分析</button>
+    <div class="status" id="status">点击按钮并授权麦克风</div>
+</div>
+
+<script>
+/**
+ * 调音器逻辑类
+ */
+class FrequencyAnalyzer {
+    constructor() {
+        this.audioContext = null;
+        this.analyser = null;
+        this.buffer = null;
+        this.isRunning = false;
+        this.sampleRate = 0;
+        this.lastFreq = 0; // 用于平滑处理
+        this.smoothedFreq = 0;
+    }
+
+    async start() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.sampleRate = this.audioContext.sampleRate;
+            this.analyser = this.audioContext.createAnalyser();
+            this.analyser.fftSize = 4096; // 增加缓冲区大小以提高低频分辨率
+            this.buffer = new Float32Array(this.analyser.fftSize);
+            
+            const source = this.audioContext.createMediaStreamSource(stream);
+
+            // 增加低通滤波器，过滤掉高频噪音
+            const filter = this.audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1000, this.audioContext.currentTime);
+            filter.Q.setValueAtTime(1, this.audioContext.currentTime);
+
+            source.connect(filter);
+            filter.connect(this.analyser);
+            
+            this.isRunning = true;
+            this.update();
+            return true;
+        } catch (e) {
+            console.error("无法访问麦克风:", e);
+            return false;
+        }
+    }
+
+    update() {
+        if (!this.isRunning) return;
+        
+        this.analyser.getFloatTimeDomainData(this.buffer);
+        const freq = this.autoCorrelate(this.buffer, this.sampleRate);
+        
+        if (freq !== -1) {
+            this.onPitchDetected(freq);
+        }
+        
+        requestAnimationFrame(() => this.update());
+    }
+
+    /**
+     * 核心算法：自相关 (Autocorrelation) 寻找周期
+     */
+    autoCorrelate(buffer, sampleRate) {
+        let size = buffer.length;
+        let rms = 0;
+        for (let i = 0; i < size; i++) { rms += buffer[i] * buffer[i]; }
+        rms = Math.sqrt(rms / size);
+        if (rms < 0.01) return -1; // 音量太小
+
+        let r1 = 0, r2 = size - 1, thres = 0.2;
+        for (let i = 0; i < size / 2; i++) if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
+        for (let i = 1; i < size / 2; i++) if (Math.abs(buffer[size - i]) < thres) { r2 = size - i; break; }
+
+        const buf = buffer.slice(r1, r2);
+        size = buf.length;
+
+        let c = new Float32Array(size).fill(0);
+        for (let i = 0; i < size; i++)
+            for (let j = 0; j < size - i; j++)
+                c[i] = c[i] + buf[j] * buf[j + i];
+
+        let d = 0; while (c[d] > c[d + 1]) d++;
+        let maxval = -1, maxpos = -1;
+        for (let i = d; i < size; i++) {
+            if (c[i] > maxval) {
+                maxval = c[i];
+                maxpos = i;
+            }
+        }
+        
+        // 抛物线插值提高精度 (Parabolic Interpolation)
+        let T0 = maxpos; 
+        if (maxpos > 0 && maxpos < size - 1) {
+            const y1 = c[maxpos - 1];
+            const y2 = c[maxpos];
+            const y3 = c[maxpos + 1];
+            const delta = (y3 - y1) / (2 * (2 * y2 - y1 - y3));
+            T0 = maxpos + delta;
+        }
+
+        return sampleRate / T0;
+    }
+
+    onPitchDetected(freq) {
+        // 1. 稳定性过滤：如果频率跳变过大（例如超过两个八度），视为杂音
+        if (this.lastFreq > 0 && (freq > this.lastFreq * 4 || freq < this.lastFreq / 4)) {
+            return;
+        }
+        this.lastFreq = freq;
+
+        // 2. 指数平滑滤波：让数值变化更柔和
+        const alpha = 0.2; // 平滑系数，越小越稳定，越大越灵敏
+        this.smoothedFreq = (alpha * freq) + (1 - alpha) * this.smoothedFreq;
+        if (Math.abs(this.smoothedFreq - freq) > 20) this.smoothedFreq = freq; // 如果偏差太大则快速跟进
+
+        const currentFreq = this.smoothedFreq;
+
+        // 寻找最接近的科学音高 (Scientific Pitch Notation)
+        // 基于 A4 = 440Hz 计算
+        const names = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const n = Math.round(12 * Math.log2(currentFreq / 440)) + 69;
+        const octave = Math.floor(n / 12) - 1;
+        const noteName = names[n % 12] + octave;
+
+        // 计算对应的标准频率
+        const standardFreq = 440 * Math.pow(2, (n - 69) / 12);
+
+        // 计算美分偏差 (Cents)
+        const cents = 1200 * Math.log2(currentFreq / standardFreq);
+        
+        this.uiUpdate(currentFreq, noteName, cents);
+    }
+
+    uiUpdate(freq, noteName, cents) {
+        document.getElementById('hz-display').innerText = freq.toFixed(1);
+        document.getElementById('note-display').innerText = noteName;
+        
+        // 指针偏移，限制在 -45deg 到 45deg
+        // 偏差 50 cents 即为半个半音，仪表盘映射为 45度
+        const angle = Math.max(-50, Math.min(50, cents)) * 0.9; 
+        document.getElementById('pointer').style.transform = `rotate(${angle.toFixed(1)}deg)`;
+    }
+}
+
+const analyzerApp = new FrequencyAnalyzer();
+const startBtn = document.getElementById('start-btn');
+
+startBtn.onclick = async () => {
+    if (!analyzerApp.isRunning) {
+        const success = await analyzerApp.start();
+        if (success) {
+            startBtn.innerText = "停止分析";
+            startBtn.disabled = true;
+            document.getElementById('status').innerText = "正在监听音频...";
+        }
+    }
+};
+</script>
+</body>
+</html>

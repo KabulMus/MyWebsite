@@ -1,0 +1,201 @@
+/* --- 1. 字体声明 --- */
+@font-face { font-family: 'Inter Var'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/InterVariable.woff2') format('woff2-variations'); }
+@font-face { font-family: 'Inter Var'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('../fonts/InterVariable-Italic.woff2') format('woff2-variations'); }
+
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-SemiBold.woff2') format('woff2'); font-weight: 500 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-LightItalic.woff2') format('woff2'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-SemiBoldItalic.woff2') format('woff2'); font-weight: 500 600; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Sarasa Gothic'; src: url('../fonts/SarasaGothicSC-BoldItalic.woff2') format('woff2'); font-weight: 700; font-style: italic; font-display: swap; }
+/* ... 其他字重根据需要添加 ... */
+
+/* --- 2. 颜色变量 --- */
+:root {
+    --primary-blue: #1e66c6;
+    --bg-light: #f1f5f9;
+    --text-main: #1D1D1F;
+    --text-sub: #6b7280;
+    --navbar-bg: rgba(255, 255, 255, 0.8);
+    --card-bg: #ffffff;
+    --card-shadow: 0 8px 20px -4px rgba(14, 52, 112, 0.12), 0 4px 8px -2px rgba(14, 52, 112, 0.08);
+    --card-hover-shadow: 0 12px 30px rgba(14, 52, 112, 0.2);
+    --item-border: rgba(0, 0, 0, 0.08);
+    --card-radius: 12px;
+    --on-primary: #ffffff; /* 初始为白色 */
+}
+
+/* 深色模式变量 */
+:root[data-theme='dark'] {
+    --primary-blue: #93c5fd;
+    --bg-light: #0f172a;
+    --text-main: #F5F5F7;
+    --text-sub: #94a3b8;
+    --navbar-bg: rgba(15, 23, 42, 0.8);
+    --card-bg: #1e293b;
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    --card-hover-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.7);
+    --item-border: rgba(255, 255, 255, 0.08);
+    --on-primary: #0f172a; /* 深色模式下设为与背景相同的深蓝色/黑色 */
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        --primary-blue: #93c5fd;
+        --bg-light: #0f172a;
+        --text-main: #F5F5F7;
+        --text-sub: #94a3b8;
+        --navbar-bg: rgba(15, 23, 42, 0.8);
+        --card-bg: #1e293b;
+        --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        --card-hover-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.7);
+        --item-border: rgba(255, 255, 255, 0.08);
+        --on-primary: #0f172a;
+    }
+}
+
+/* --- 3. 基础复位 --- */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+/* 彻底隐藏所有滚动条，但保留滑动/滚动功能 */
+*::-webkit-scrollbar { display: none; } /* Chrome, Safari, Edge */
+* {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
+body {
+    font-family: 'Inter Var', 'Sarasa Gothic', -apple-system, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    line-height: 1.6;
+    line-break: strict;
+    font-feature-settings: "liga" 1, "calt" 1, "halt" 1, "chws" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- 4. 共有布局: 英雄区块 --- */
+.hero-section {
+    color: white !important;
+    text-align: center;
+    background: linear-gradient(180deg, #90befc 0%, #0e347a 66%, #0b122a 100%);
+}
+
+.hero-section h1 {
+    color: white !important;
+}
+
+/* --- 4. 共有组件: 导航栏 --- */
+.navbar {
+    position: fixed; top: 0; width: 100%; height: 60px;
+    background: var(--navbar-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    z-index: 100; display: flex; transform: translateY(-100%);
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+    box-shadow: none;
+    border-bottom: none;
+}
+.navbar.visible { 
+    transform: translateY(0); 
+    box-shadow: 0 4px 12px -2px rgba(14, 52, 112, 0.08);
+    border-bottom: 1px solid var(--item-border);
+}
+
+/* --- 5. 共有组件: 弹窗 --- */
+.reward-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;
+    z-index: 1000; backdrop-filter: blur(4px); visibility: hidden; opacity: 0; transition: all 0.3s ease;
+}
+.reward-overlay.active { visibility: visible; opacity: 1; }
+.reward-modal {
+    background: var(--card-bg); border-radius: var(--card-radius); text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(2, 6, 23, 0.5); position: relative;
+    transform: translateY(20px) scale(0.95); transition: all 0.4s ease;
+    overflow: hidden; /* 确保内部滚动时不超出圆角 */
+    display: flex; flex-direction: column;
+    width: 90%; 
+    max-width: 340px; 
+}
+.reward-overlay.active .reward-modal { transform: translateY(0) scale(1); }
+
+.reward-body {
+    padding: 30px;
+    max-height: 90vh; /* 将高度限制移至此处 */
+    overflow-y: auto; /* 仅此处允许滚动 */
+    width: 100%;
+}
+@media (max-width: 480px) {
+    .reward-body {
+        padding: 25px 20px; /* 极窄屏下进一步压缩内边距，给文字留空间 */
+    }
+}
+
+/* 弹窗内部组件 */
+.close-btn {
+    position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
+    display: flex; justify-content: center; align-items: center;
+    border: none; background: transparent; cursor: pointer;
+}
+.close-btn svg { width: 18px; height: 18px; fill: none; stroke: #94a3b8; stroke-width: 2.5; stroke-linecap: round; transition: stroke 0.2s; }
+.close-btn:hover svg { stroke: var(--primary-blue); }
+
+.modal-btn {
+    display: inline-block; margin-top: 20px; padding: 10px 35px;
+    background-color: var(--primary-blue); color: var(--on-primary) !important;
+    text-decoration: none; border-radius: 8px; font-weight: 600; 
+    transition: opacity 0.2s;
+}
+.modal-btn:hover { opacity: 0.85; }
+
+/* --- 6. 按钮与切换器 --- */
+.theme-toggle-btn, .lang-toggle-btn, .back-home-btn {
+    position: fixed; right: 25px; width: 44px; height: 44px; z-index: 101;
+    border-radius: 50%; background: var(--card-bg); color: var(--text-main);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--item-border);
+    box-shadow: var(--card-shadow);
+    display: flex; justify-content: center; align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+    text-decoration: none;
+}
+.theme-toggle-btn { bottom: 25px; }
+.lang-toggle-btn { bottom: 80px; }
+.back-home-btn { top: 25px; left: 20px; right: auto; } /* 返回首页按钮位置 */
+
+.milestone-card { border: 1px solid var(--item-border); }
+
+.theme-toggle-btn svg, .lang-toggle-btn svg, .back-home-btn svg { 
+    width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
+}
+.theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover { 
+    transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); 
+}
+
+/* --- 8. 响应式显隐控制 --- */
+.mobile-only { display: none !important; }
+
+/* 桌面端自动隐藏逻辑 */
+@media (min-width: 769px) {
+    .navbar.visible ~ .theme-toggle-btn, .navbar.visible ~ .lang-toggle-btn {
+        opacity: 0; visibility: hidden; pointer-events: none;
+    }
+}
+@media (max-width: 768px) {
+    .desktop-only { display: none !important; }
+    .mobile-only { display: flex !important; }
+    .nav-theme-toggle, .nav-lang-toggle { display: none !important; }
+}
+
+/* --- 7. 页脚 --- */
+footer {
+    margin-top: 80px; padding: 60px 0 30px; border-top: 1px solid var(--item-border);
+    text-align: center;
+}
+
+footer p, footer a {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    margin: 4px 0;
+    text-decoration: none;
+}

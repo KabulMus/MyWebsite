@@ -5,1173 +5,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>个人主页 | Ethan Shaw</title>
-	<link rel="icon" href="favicon.webp" type="image/png">
-	<script>
-		// 页面滚动逻辑
-		window.addEventListener('scroll', () => {
-			const navbar = document.getElementById('top-nav');
-			const hero = document.querySelector('.hero-section');
-			if (navbar && hero) {
-				// 稍微提前一点触发（减去导航栏高度），确保锚点跳转后顶栏能正常显示
-				if (window.scrollY >= hero.offsetHeight - 20) {
-					navbar.classList.add('visible');
-				} else {
-					navbar.classList.remove('visible');
-				}
-			}
-		});
-
-
-		// 移动端导航菜单控制
-		function toggleMenu(show) {
-			const dropdown = document.getElementById('nav-dropdown');
-			const toggleBtn = document.querySelector('.menu-toggle');
-			const shouldShow = show === undefined ? !dropdown.classList.contains('active') : show;
-
-			dropdown.classList.toggle('active', shouldShow);
-			if (toggleBtn) toggleBtn.classList.toggle('active', shouldShow);
-		}
-
-		// 通用弹窗控制逻辑
-		function toggleModal(id, show) {
-			const overlay = document.getElementById(id);
-			const navbar = document.getElementById('top-nav');
-			if (!overlay) return;
-
-			if (show) {
-				// 计算滚动条宽度并补偿内边距，防止页面抖动
-				const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-				document.body.style.paddingRight = scrollbarWidth + 'px';
-				if (navbar) navbar.style.paddingRight = scrollbarWidth + 'px';
-				document.body.style.overflow = 'hidden';
-				overlay.classList.add('active');
-			} else {
-				overlay.classList.remove('active');
-				// 延迟恢复页面滚动，等待淡出动画（300ms）结束后再显示滚动条，防止内容瞬移
-				setTimeout(() => {
-					// 检查是否还有其他激活的弹窗，避免在连续操作时误删状态
-					if (!document.querySelector('.reward-overlay.active')) {
-						document.body.style.overflow = '';
-						document.body.style.paddingRight = '';
-						if (navbar) navbar.style.paddingRight = '';
-					}
-				}, 300);
-			}
-		}
-
-		// 亮暗模式切换逻辑（仅本次有效）
-		function toggleTheme() {
-			const html = document.documentElement;
-			const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			const currentTheme = html.getAttribute('data-theme');
-			
-			// 计算当前实际处于什么模式
-			const isDarkNow = currentTheme === 'dark' || (!currentTheme && systemDark);
-
-			const rewardImg = document.querySelector('#reward-overlay .reward-qr');
-			const rewardSource = document.querySelector('#reward-overlay picture source');
-			const lightQrSrc = "reward_code.webp";
-			const darkQrSrc = "reward_code_dark.webp";
-			
-			// 图标路径
-			const svgs = document.querySelectorAll('.nav-theme-toggle svg, .theme-toggle-btn svg');
-			const sunInner = '<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>';
-			const moonInner = '<path d="M28.0527 4.41085C22.5828 5.83695 18.5455 10.8106 18.5455 16.7273C18.5455 23.7564 24.2436 29.4545 31.2727 29.4545C37.1894 29.4545 42.1631 25.4172 43.5891 19.9473C43.8585 21.256 44 22.6115 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C25.3885 4 26.744 4.14149 28.0527 4.41085Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>';
-
-			if (isDarkNow) {
-				// 如果当前是深色，则强制切换到亮色
-				html.setAttribute('data-theme', 'light');
-				if (rewardImg) rewardImg.src = lightQrSrc;
-				if (rewardSource) rewardSource.srcset = lightQrSrc; // 覆盖 picture 的媒体查询
-				svgs.forEach(s => s.innerHTML = sunInner);
-			} else {
-				// 如果当前是亮色，则强制切换到深色
-				html.setAttribute('data-theme', 'dark');
-				if (rewardImg) rewardImg.src = darkQrSrc;
-				if (rewardSource) rewardSource.srcset = darkQrSrc; // 覆盖 picture 的媒体查询
-				svgs.forEach(s => s.innerHTML = moonInner);
-			}
-		}
-
-		// 语言切换逻辑
-		function toggleLanguage() {
-			const currentPath = window.location.pathname;
-			if (currentPath.includes('en_US')) {
-				window.location.href = './';
-			} else {
-				window.location.href = 'en_US';
-			}
-		}
-
-		// 暂未开通卡片点击晃动效果
-		function shakeCard(el) {
-			el.classList.add('shake');
-			setTimeout(() => {
-				el.classList.remove('shake');
-			}, 400);
-		}
-
-		// 里程碑横向滚动控制 - 实现卡片居中翻页
-		function scrollMilestones(direction) {
-			const container = document.getElementById('milestoneScrollContainer');
-			if (!container) return;
-			const cards = container.querySelectorAll('.milestone-card');
-			if (cards.length === 0) return;
-
-			const containerWidth = container.offsetWidth;
-			const centerLine = container.scrollLeft + containerWidth / 2;
-
-			// 寻找当前最靠近中心的卡片索引
-			let minDiff = Infinity;
-			let currentIndex = 0;
-			cards.forEach((card, index) => {
-				const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-				const diff = Math.abs(centerLine - cardCenter);
-				if (diff < minDiff) {
-					minDiff = diff;
-					currentIndex = index;
-				}
-			});
-
-			let targetIndex = currentIndex + direction;
-			targetIndex = Math.max(0, Math.min(targetIndex, cards.length - 1));
-
-			const targetCard = cards[targetIndex];
-			// 计算让目标卡片居中的滚动位置
-			const targetScrollLeft = targetCard.offsetLeft - (containerWidth / 2) + (targetCard.offsetWidth / 2);
-			container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
-		}
-
-		// 里程碑年份筛选
-		function filterMilestones(year, btn) {
-			const container = document.getElementById('milestoneScrollContainer');
-			const cards = container.querySelectorAll('.milestone-card');
-			const buttons = document.querySelectorAll('.year-filter-btn');
-			
-			buttons.forEach(b => b.classList.remove('active'));
-			btn.classList.add('active');
-
-			cards.forEach(card => {
-				if (year === 'all' || card.getAttribute('data-year') === year) {
-					card.style.display = 'block';
-				} else {
-					card.style.display = 'none';
-				}
-			});
-			container.scrollLeft = 0;
-			updateMilestoneButtons();
-		}
-
-		// 更新里程碑按钮可见性及遮罩渐变
-		function updateMilestoneButtons() {
-			const container = document.getElementById('milestoneScrollContainer');
-			const prevBtn = document.querySelector('.milestone-nav-btn.prev');
-			const nextBtn = document.querySelector('.milestone-nav-btn.next');
-			if (!container || !prevBtn || !nextBtn) return;
-
-			const scrollLeft = container.scrollLeft;
-			const maxScroll = container.scrollWidth - container.offsetWidth;
-
-			// 按钮显示/隐藏逻辑
-			prevBtn.classList.toggle('hidden', scrollLeft <= 5);
-			nextBtn.classList.toggle('hidden', scrollLeft >= maxScroll - 5);
-
-			// 动态更新遮罩：0px 时 alpha=1 (不透明，遮罩消失)，60px 时 alpha=0 (透明，遮罩全开)
-			// 使用 Math.min/max 确保数值在 0-1 之间
-			const leftAlpha = Math.min(1, Math.max(0, 1 - (scrollLeft / 60)));
-			const rightAlpha = Math.min(1, Math.max(0, 1 - ((maxScroll - scrollLeft) / 60)));
-
-			container.style.setProperty('--mask-left', `rgba(0,0,0,${leftAlpha})`);
-			container.style.setProperty('--mask-right', `rgba(0,0,0,${rightAlpha})`);
-		}
-
-		// 复制到剪贴板功能
-		function copyToClipboard(text, btn) {
-			navigator.clipboard.writeText(text).then(() => {
-				const originalText = btn.textContent;
-				btn.textContent = window.location.pathname.includes('en_US') ? 'Copied!' : '已复制！';
-				setTimeout(() => { btn.textContent = originalText; }, 2000);
-			}).catch(err => {
-				console.error('Failed to copy: ', err);
-			});
-		}
-
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape') {
-				toggleModal('reward-overlay', false);
-				toggleModal('email-overlay', false);
-				toggleModal('qq-overlay', false);
-				toggleModal('discord-overlay', false);
-				toggleModal('font-copyright-overlay', false);
-			}
-		});
-
-		document.addEventListener('DOMContentLoaded', () => {
-			// 初始化图标状态：如果是系统深色模式，将图标设为月亮
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				const moonInner = '<path d="M28.0527 4.41085C22.5828 5.83695 18.5455 10.8106 18.5455 16.7273C18.5455 23.7564 24.2436 29.4545 31.2727 29.4545C37.1894 29.4545 42.1631 25.4172 43.5891 19.9473C43.8585 21.256 44 22.6115 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C25.3885 4 26.744 4.14149 28.0527 4.41085Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>';
-				document.querySelectorAll('.nav-theme-toggle svg, .theme-toggle-btn svg').forEach(s => s.innerHTML = moonInner);
-			}
-
-			// 点击页面外部时收起菜单，且不触发下方元素的交互
-			document.addEventListener('click', (e) => {
-				const dropdown = document.getElementById('nav-dropdown');
-				const toggleBtn = document.querySelector('.menu-toggle');
-				if (dropdown.classList.contains('active') && !dropdown.contains(e.target) && !toggleBtn.contains(e.target)) {
-					toggleMenu(false);
-					e.preventDefault();
-					e.stopPropagation();
-				}
-			}, true); // 使用捕获模式以拦截事件
-			
-			// 初始化里程碑滚动按钮状态
-			const milestoneScrollContainer = document.getElementById('milestoneScrollContainer');
-			if (milestoneScrollContainer) {
-				milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
-				updateMilestoneButtons();
-			}
-		});
-	</script>
-	<style>
-		/* Inter Variable Font */
-		@font-face {
-			font-family: 'Inter Var';
-			font-style: normal;
-			font-weight: 100 900; /* Inter 字重范围通常为 100 到 900 */
-			font-display: swap;
-			src: url('InterVariable.woff2') format('woff2-variations');
-		}
-		@font-face {
-			font-family: 'Inter Var';
-			font-style: italic;
-			font-weight: 100 900;
-			font-display: swap;
-			src: url('InterVariable-Italic.woff2') format('woff2-variations');
-		}
-		/* Main Chinese Font - Local Files */
-		@font-face {
-			font-family: 'Main Font';
-			src: url('Font_Light.woff2') format('woff2');
-			font-weight: 300;
-			font-style: normal;
-			font-display: swap;
-		}
-		@font-face {
-			font-family: 'Main Font';
-			src: url('Font_Semilight.woff2') format('woff2');
-			font-weight: 350;
-			font-style: normal;
-			font-display: swap;
-		}
-		@font-face {
-			font-family: 'Main Font';
-			src: url('Font_Regular.woff2') format('woff2');
-			font-weight: 400;
-			font-style: normal;
-			font-display: swap;
-		}
-		@font-face {
-			font-family: 'Main Font';
-			src: url('Font_Semibold.woff2') format('woff2');
-			font-weight: 500 600;
-			font-style: normal;
-			font-display: swap;
-		}
-		@font-face {
-			font-family: 'Main Font';
-			src: url('Font_Bold.woff2') format('woff2');
-			font-weight: 700;
-			font-style: normal;
-			font-display: swap;
-		}
-		/* Iosevka - 用于特殊符号排版 */
-		@font-face {
-			font-family: 'Iosevka';
-			src: url('Iosevka-Regular.woff2') format('woff2');
-			font-weight: 400;
-			font-style: normal;
-			font-display: swap;
-		}
-		:root {
-			--primary-blue: #1e66c6;
-			--bg-dark: #070a1a;
-			--bg-light: #f1f5f9;
-			--text-on-light: #1D1D1F;
-			--sub-text-on-light: #6b7280;
-			--text-on-dark: #ffffff;
-			--card-shadow: 0 8px 20px -4px rgba(14, 52, 112, 0.12), 0 4px 8px -2px rgba(14, 52, 112, 0.08);
-			--card-radius: 12px;
-			--navbar-bg: rgba(255, 255, 255, 0.8);
-			--card-bg: #ffffff;
-			--bilibili-blue: #0cb6f2;
-			--bilibili-pink: #ff6699;
-			--xhs-red: #ff2442;
-			--youtube-red: #ff0033;
-			--discord-blurple: #5865f2;
-			--douyin-black: #161823;
-			--qq-brand: #0052d9;
-			--wechat-green: #07C160;
-			--duolingo-green: #58cc02;
-		}
-
-		* { 
-			margin: 0; 
-			padding: 0; 
-			box-sizing: border-box; 
-			-webkit-tap-highlight-color: transparent; 
-		}
-
-		html {
-			scroll-behavior: smooth;
-			scroll-padding-top: 60px; /* 匹配导航栏高度，防止跳转后由于偏移过大露出英雄区背景 */
-		}
-
-		body {
-			font-family: 'Inter Var', 'Main Font', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-			font-optical-sizing: auto; /* 启用可变字体的 Optical Size 功能 */
-			background-color: var(--bg-light);
-			color: var(--text-on-light);
-			line-height: 1.6;
-			line-break: strict;                /* 强制执行最严谨的避头尾规则 */
-			/* 同时开启 halt (强制半宽) 和 chws (上下文间距调整) */
-			/* halt 优先级较高，如果不支持则 chws 会生效，提供更智能的间距挤压 */
-			font-feature-settings: "liga" 1, "calt" 1, "halt" 1, "chws" 1;
-			transition: background-color 0.3s ease, color 0.3s ease;
-		}
-
-		/* --- 顶部导航栏 --- */
-		.navbar {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 60px;
-			background: var(--navbar-bg);
-			backdrop-filter: blur(12px);
-			-webkit-backdrop-filter: blur(12px);
-			z-index: 100;
-			display: flex;
-			box-shadow: 0 4px 12px -2px rgba(14, 52, 112, 0.08);
-			transform: translateY(-100%);
-			transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), background-color 0.3s ease;
-		}
-
-		.navbar.visible { transform: translateY(0); }
-
-		.nav-container {
-			width: 100%;
-			max-width: 1000px;
-			margin: 0 auto;
-			padding: 0 20px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
-
-		.nav-brand {
-			display: flex;
-			align-items: center;
-			gap: 10px;
-			text-decoration: none;
-			color: var(--text-on-light);
-			font-weight: 700;
-			font-size: 1.1rem;
-			transition: opacity 0.2s;
-		}
-
-		.nav-brand:hover { opacity: 0.8; }
-
-		.nav-avatar {
-			width: 32px;
-			height: 32px;
-			border-radius: 50%;
-			object-fit: cover;
-			border: 1px solid rgba(0,0,0,0.05);
-		}
-
-		.nav-links {
-			display: flex;
-			gap: 30px;
-		}
-
-		.menu-toggle {
-			display: none;
-			background: none;
-			border: none;
-			color: var(--text-on-light);
-			cursor: pointer;
-			padding: 5px;
-			align-items: center;
-			justify-content: center;
-			transition: color 0.3s ease;
-		}
-
-		.menu-toggle.active { color: var(--primary-blue); }
-
-		.menu-toggle svg { width: 24px; height: 24px; stroke: currentColor; }
-
-		.nav-links a {
-			text-decoration: none;
-			color: var(--text-on-light);
-			font-size: 0.9rem;
-			font-weight: 500;
-			transition: color 0.2s;
-			position: relative;
-			padding: 4px 0;
-		}
-
-		.nav-links a::after {
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			width: 0;
-			height: 2px;
-			background-color: var(--primary-blue);
-			transition: width 0.3s ease;
-		}
-
-		.nav-links a:hover { color: var(--primary-blue); }
-		.nav-links a:hover::after { width: 100%; }
-
-		/* --- 导航栏切换按钮 --- */
-		.nav-theme-toggle {
-			background: none;
-			border: none;
-			color: var(--text-on-light);
-			cursor: pointer;
-			padding: 5px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			transition: color 0.3s ease;
-		}
-		.nav-theme-toggle:hover { color: var(--primary-blue); }
-		.nav-theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-		/* --- 导航栏语言切换按钮 --- */
-		.nav-lang-toggle {
-			background: none;
-			border: none;
-			color: var(--text-on-light);
-			cursor: pointer;
-			padding: 5px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			transition: color 0.3s ease;
-		}
-		.nav-lang-toggle:hover { color: var(--primary-blue); }
-		.nav-lang-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-		/* --- 移动端下拉菜单 --- */
-		.nav-dropdown {
-			position: absolute;
-			top: 70px;
-			right: 20px;
-			background: white;
-			border-radius: 12px;
-			box-shadow: 0 12px 30px -5px rgba(14, 52, 112, 0.2);
-			display: flex;
-			flex-direction: column;
-			min-width: 150px;
-			padding: 8px;
-			opacity: 0;
-			visibility: hidden;
-			transform: translateY(-10px);
-			transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-			z-index: 101;
-		}
-
-		.nav-dropdown.active {
-			opacity: 1;
-			visibility: visible;
-			transform: translateY(0);
-		}
-
-		.nav-dropdown a {
-			text-decoration: none;
-			color: var(--text-on-light);
-			padding: 12px 16px;
-			font-size: 0.95rem;
-			border-radius: 8px;
-			transition: background 0.2s;
-		}
-		.nav-dropdown a:hover { background: rgba(30, 102, 198, 0.1); color: var(--primary-blue); }
-
-		/* --- 弹窗按钮样式 --- */
-		.modal-btn {
-			display: inline-block;
-			margin-top: 20px;
-			padding: 10px 35px;
-			background-color: #1e66c6;
-			color: white !important;
-			text-decoration: none;
-			border-radius: 8px;
-			font-weight: 500;
-			transition: opacity 0.2s;
-		}
-		.modal-btn:hover { opacity: 0.85; }
-
-		/* --- 英雄区块 (Hero Section) --- */
-		.hero-section {
-			position: relative;
-			width: 100%;
-			min-height: 450px;
-			overflow: hidden;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			padding-top: 80px;
-			color: var(--text-on-dark);
-			text-align: center;
-			background: linear-gradient(180deg, #90befc 0%, #0e347a 66%, #0b122a 100%);
-		}
-
-		section.hero-content {
-			position: relative;
-			z-index: 2;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			width: 100%;
-		}
-
-		.avatar {
-			width: 130px;
-			height: 130px;
-			border-radius: 50%;
-			margin-bottom: 25px;
-			object-fit: cover;
-			border: 3px solid rgba(255, 255, 255, 0.2);
-			background: white;
-			box-shadow: 0 12px 40px -8px rgba(8, 15, 38, 0.4);
-		}
-
-		.hero-section h1 {
-			font-size: 2.8rem;
-			margin-bottom: 5px;
-			text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
-		}
-
-		.hero-section .tagline {
-			font-size: 1rem;
-			color: rgba(255, 255, 255, 0.9);
-			max-width: 600px;
-			margin-bottom: 10px;
-			padding: 0 20px;
-		}
-
-		.person-img {
-			max-height: 300px;
-			position: relative;
-			z-index: 3;
-			margin-top: 20px;
-			margin-bottom: -1px;
-			display: block;
-		}
-
-		/* --- 内容区域布局 --- */
-		.content-section {
-			background-color: var(--bg-light);
-			padding: 60px 20px;
-			text-align: center;
-			position: relative;
-			z-index: 2;
-		}
-
-		section.container {
-			width: 100%;
-			max-width: 1000px;
-			margin: 0 auto;
-		}
-
-		.section-title {
-			font-size: 1.3rem;
-			font-weight: 500;
-			margin-bottom: 40px;
-			position: relative;
-			display: inline-block;
-		}
-
-		.section-title::after {
-			content: '';
-			position: absolute;
-			left: 50%;
-			transform: translateX(-50%);
-			bottom: -8px;
-			width: 30px;
-			height: 3px;
-			background-color: var(--primary-blue);
-		}
-
-		.section-hint {
-			font-size: 0.85rem;
-			color: var(--sub-text-on-light);
-			margin-top: -25px;
-			margin-bottom: 30px;
-			display: flex;
-			justify-content: center;
-		}
-
-		.section-content { margin-bottom: 70px; }
-		.about-text p { max-width: 600px; margin: 0 auto; color: var(--sub-text-on-light); }
-		.about-text a { color: inherit; text-decoration: none; transition: color 0.2s; } /* 继承文字颜色，加个平滑过渡 */
-		.about-text a:hover { color: var(--primary-blue); }
-
-		/* --- 网格系统 --- */
-		/* 里程碑部分 */
-		.milestone-wrapper {
-			display: flex;
-			gap: 20px;
-			position: relative; /* 确保坐标计算基准正确 */
-			padding: 20px; /* 恢复对称的正常内边距 */
-			overflow-x: auto; /* 允许横向滚动 */
-			-webkit-overflow-scrolling: touch; /* 移动端平滑滚动 */
-			scrollbar-width: none; /* Firefox 隐藏滚动条 */
-			-ms-overflow-style: none; /* IE 10+ 隐藏滚动条 */
-
-			/* 使用 CSS 变量由 JS 动态控制遮罩透明度 */
-			--mask-left: black;
-			--mask-right: transparent;
-			-webkit-mask-image: linear-gradient(to right, var(--mask-left), black 60px, black calc(100% - 60px), var(--mask-right));
-			mask-image: linear-gradient(to right, var(--mask-left), black 60px, black calc(100% - 60px), var(--mask-right));
-		}
-		
-		.milestone-container {
-			position: relative;
-			width: 100%;
-		}
-
-		.milestone-nav-btn {
-			position: absolute;
-			top: 50%;
-			translate: 0 -50%;
-			width: 44px;
-			height: 44px;
-			border-radius: 50%;
-			background: var(--navbar-bg, rgba(255, 255, 255, 0.9));
-			backdrop-filter: blur(10px);
-			-webkit-backdrop-filter: blur(10px);
-			border: 1px solid rgba(0, 0, 0, 0.05);
-			box-shadow: 0 4px 12px rgba(14, 52, 112, 0.15);
-			cursor: pointer;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 10;
-			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			color: var(--text-on-light);
-		}
-		.milestone-nav-btn:hover { scale: 1.1; box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); color: var(--primary-blue); }
-		.milestone-nav-btn.prev { left: -22px; }
-		.milestone-nav-btn.next { right: -22px; }
-		.milestone-nav-btn.hidden {
-			opacity: 0;
-			visibility: hidden;
-			pointer-events: none;
-		}
-		.milestone-nav-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-
-		@media (max-width: 1100px) {
-			.milestone-nav-btn.prev { left: 10px; }
-			.milestone-nav-btn.next { right: 10px; }
-		}
-
-		@media (max-width: 768px) {
-			.milestone-nav-btn { display: none; }
-		}
-
-		.milestone-wrapper::-webkit-scrollbar {
-			display: none; /* Chrome/Safari 隐藏滚动条 */
-		}
-
-		.milestone-card {
-			flex: 0 0 300px; /* 固定宽度，不收缩 */
-			background: var(--card-bg); /* 使用主题变量 */
-			border-radius: var(--card-radius);
-			padding: 24px;
-			box-shadow: var(--card-shadow); /* 使用主题变量 */
-			transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-			border-top: 4px solid var(--primary-blue); /* 顶部蓝色边框，保持与其他卡片一致的视觉风格 */
-			text-align: justify; /* 卡片内容两端对齐 */
-		}
-
-		.milestone-card .date {
-			display: flex;
-			align-items: center;
-			font-weight: bold;
-			color: var(--primary-blue);
-			margin-bottom: 12px;
-			font-size: 0.9rem;
-			font-variant-numeric: tabular-nums;
-		}
-
-		.milestone-tag {
-			display: inline-block;
-			padding: 2px 8px;
-			border-radius: 6px;
-			font-size: 0.75rem;
-			font-weight: 700;
-			margin-right: 10px;
-			line-height: 1.2;
-		}
-		.tag-channel { background: rgba(30, 102, 198, 0.1); color: var(--primary-blue); }
-		.tag-insync { background: rgba(180, 83, 9, 0.1); color: #b45309; }
-		.tag-academic { background: rgba(88, 204, 2, 0.1); color: var(--duolingo-green); }
-		.tag-life { background: rgba(107, 114, 128, 0.1); color: var(--sub-text-on-light); }
-		.tag-nation { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-		.tag-skill { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
-		.tag-achievement { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
-		.tag-community { background: rgba(79, 70, 229, 0.1); color: #4f46e5; }
-		.tag-anecdote { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
-
-		.milestone-card h3 {
-			margin: 0 0 10px 0;
-			font-size: 1.25rem;
-			color: var(--text-on-light); /* 使用主题变量 */
-		}
-
-		/* 年份筛选器样式 */
-		.year-filter-container {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			gap: 10px;
-			margin-bottom: 25px;
-			padding: 0 20px;
-		}
-		.year-filter-btn {
-			width: 70px;
-			padding: 8px 0;
-			border-radius: 8px;
-			background: var(--card-bg);
-			border: 1px solid rgba(30, 102, 198, 0.1);
-			font-size: 0.85rem;
-			font-weight: 400;
-			font-family: inherit;
-			font-variant-numeric: tabular-nums;
-			cursor: pointer;
-			text-align: center;
-			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			color: var(--sub-text-on-light);
-			box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
-		}
-		.year-filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); }
-		.year-filter-btn.active { background: #1e66c6 !important; color: white !important; border-color: #1e66c6 !important; box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); }
-
-		.works-grid, .tools-grid {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			gap: 25px;
-			margin-top: 30px;
-		}
-
-		.card {
-			background-color: white;
-			border-radius: var(--card-radius);
-			padding: 30px;
-			box-shadow: var(--card-shadow);
-			text-decoration: none;
-			color: var(--text-on-light);
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			translate: 0;
-			transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-			cursor: pointer;
-			height: 100%;
-			width: 280px;
-		}
-
-		.card-svg {
-			height: 35px;
-			width: auto;
-			max-width: 200px;
-			margin-bottom: 15px;
-			fill: currentColor;
-			overflow: visible;
-		}
-
-		.card-subtitle { font-size: 0.9rem; font-weight: 500; }
-		.card:hover { color: white; box-shadow: 0 12px 30px rgba(14, 52, 112, 0.2); }
-		.card.bilibili:hover { background-color: var(--bilibili-blue); }
-		.card.bilibili-pink:hover { background-color: var(--bilibili-pink); }
-		.card.xhs:hover { background-color: var(--xhs-red); }
-		.card.youtube:hover { background-color: var(--youtube-red); }
-		.card.tool-card:hover { background-color: #1e66c6; }
-		.card.discord:hover { background-color: var(--discord-blurple); }
-		.card.qq:hover { background-color: var(--qq-brand); }
-		.card.wechat:hover { background-color: var(--wechat-green); }
-		.card.duolingo:hover { background-color: var(--duolingo-green); }
-		.card.douyin:hover { background-color: var(--douyin-black); color: #fff; }
-		/* 抖音故障效果切换逻辑 */
-		.card.douyin .tiktok-base-idle { opacity: 1; transition: opacity 0.2s ease; }
-		.card.douyin:hover .tiktok-base-idle { opacity: 0; }
-		.card.douyin .tiktok-cyan, .card.douyin .tiktok-red, .card.douyin .tiktok-white { 
-			opacity: 0; transition: opacity 0.2s ease; 
-		}
-		.card.douyin:hover .tiktok-cyan { fill: #00faf0; opacity: 1; }
-		.card.douyin:hover .tiktok-red { fill: #fe2c55; opacity: 1; }
-		.card.douyin:hover .tiktok-white { fill: #fff; opacity: 1; }
-		.milestone-card p {
-			color: var(--sub-text-on-light); /* 使用主题变量 */
-			font-size: 0.95rem;
-			line-height: 1.6;
-			text-align: justify;
-		}
-
-		/* 晃动动画 */
-		@keyframes shake {
-			0%, 100% { translate: 0; }
-			25% { translate: -8px; }
-			50% { translate: 8px; }
-			75% { translate: -8px; }
-		}
-		.shake { animation: shake 0.4s ease-in-out; }
-
-		/* --- 页脚设计 --- */
-		footer {
-			margin-top: 80px;
-			padding: 60px 0 30px;
-			border-top: 1px solid #e2e8f0;
-			width: 100%;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			transition: border-color 0.3s ease;
-		}
-
-		.footer-grid {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: 40px;
-			width: 100%;
-			max-width: 900px;
-			margin: 0 auto;
-		}
-
-		.footer-column {
-			display: flex;
-			flex-direction: column;
-			align-items: flex-start;
-		}
-
-		.footer-column h4 {
-			font-size: 0.95rem;
-			color: var(--text-on-light);
-			margin-bottom: 15px;
-			font-weight: 500 600;
-		}
-
-		section.footer-column p, section.footer-column a {
-			font-size: 0.85rem;
-			color: #64748b;
-			line-height: 2;
-			text-decoration: none;
-			white-space: nowrap;
-		}
-
-		section.footer-column a { transition: color 0.3s; cursor: pointer; }
-		section.footer-column a:hover { color: var(--primary-blue); }
-
-		.footer-bottom {
-			text-align: center;
-			margin-top: 50px;
-			padding-top: 20px;
-			border-top: 1px solid #f1f5f9;
-			font-size: 0.8rem;
-			color: #94a3b8;
-			width: 90%;
-			max-width: 900px;
-			transition: border-color 0.3s ease;
-		}
-
-		/* --- 赞赏弹窗 --- */
-		.reward-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.5);
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 1000;
-			backdrop-filter: blur(4px);
-			visibility: hidden;
-			opacity: 0;
-			transition: all 0.3s ease;
-		}
-
-		.reward-overlay.active { visibility: visible; opacity: 1; }
-
-		.reward-modal {
-			background: white;
-			padding: 40px;
-			border-radius: var(--card-radius);
-			box-shadow: 0 25px 50px -12px rgba(2, 6, 23, 0.5);
-			position: relative;
-			text-align: center;
-			transform: translateY(20px) scale(0.95);
-			opacity: 0;
-			transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.3s ease, background-color 0.3s ease;
-		}
-
-		.reward-overlay.active .reward-modal { transform: translateY(0) scale(1); opacity: 1; }
-
-		.reward-qr {
-			width: 220px;
-			height: 220px;
-		}
-
-		.close-btn {
-			position: absolute;
-			top: 10px;
-			right: 10px;
-			width: 32px;
-			height: 32px;
-			display: flex; /* 使用 flex 布局 */
-			justify-content: center; /* 水平居中 */
-			align-items: center; /* 垂直居中 */
-			padding: 0; /* 清除内边距 */
-			border: none; /* 清除默认边框 */
-			background: transparent; /* 背景透明 */
-			cursor: pointer;
-			line-height: 0; /* 消除行高对居中的影响 */
-		}
-		
-		.close-btn svg { 
-			width: 18px; /* 稍微缩小一点，视觉重心更稳 */
-			height: 18px; 
-			display: block;
-			fill: none; 
-			stroke: #94a3b8; 
-			stroke-width: 2.5; 
-			stroke-linecap: round; 
-			transition: stroke 0.2s; 
-		}
-		.close-btn:hover svg { stroke: var(--primary-blue); }
-
-		/* --- 自动深色模式 (跟随浏览器设置) --- */
-		/* 逻辑：如果是手动设为 dark，或者系统是 dark 且没有手动设为 light */
-		@media (prefers-color-scheme: dark) { 
-			:root:not([data-theme='light']) {
-				--primary-blue: #93c5fd;
-				--bg-light: #0f172a;           /* 深色背景 */
-				--text-on-light: #F5F5F7;      /* 浅色文字 */
-				--sub-text-on-light: #94a3b8;  /* 深色模式下的副标题颜色 */
-				--card-shadow: 0 10px 25px -5px rgba(2, 6, 23, 0.6), 0 8px 10px -6px rgba(2, 6, 23, 0.5);
-				--navbar-bg: rgba(15, 23, 42, 0.8);
-				--card-bg: #1e293b;
-			}
-			
-			html:not([data-theme='light']) .tag-channel { background: rgba(147, 197, 253, 0.15); }
-			html:not([data-theme='light']) .tag-insync { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
-			html:not([data-theme='light']) .tag-academic { background: rgba(88, 204, 2, 0.15); }
-			html:not([data-theme='light']) .tag-life { background: rgba(148, 163, 184, 0.15); }
-			html:not([data-theme='light']) .tag-nation { background: rgba(248, 113, 113, 0.15); color: #f87171; }
-			html:not([data-theme='light']) .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
-			html:not([data-theme='light']) .tag-achievement { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; }
-			html:not([data-theme='light']) .tag-community { background: rgba(129, 140, 248, 0.15); color: #818cf8; }
-			html:not([data-theme='light']) .tag-anecdote { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
-
-			html:not([data-theme='light']) .navbar {
-				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-			}
-			html:not([data-theme='light']) .nav-dropdown {
-				background: #1e293b;
-				box-shadow: 0 20px 40px -12px rgba(2, 6, 23, 0.7);
-			}
-			html:not([data-theme='light']) .nav-dropdown a:hover { background: rgba(255, 255, 255, 0.05); }
-			html:not([data-theme='light']) .nav-avatar { border-color: rgba(255, 255, 255, 0.1); } /* 修复：这里应该有分号 */
-			html:not([data-theme='light']) .milestone-card { border-top: 4px solid var(--primary-blue); }
-			html:not([data-theme='light']) .card { background-color: #1e293b; border: 1px solid rgba(255, 255, 255, 0.05); }
-			html:not([data-theme='light']) footer, html:not([data-theme='light']) .footer-bottom { border-top-color: #1e293b; }
-			html:not([data-theme='light']) article.reward-modal { background: #1e293b; color: #f8fafc; }
-			html:not([data-theme='light']) .footer-column p, html:not([data-theme='light']) .footer-column span, html:not([data-theme='light']) .footer-column a { color: #94a3b8; }
-			html:not([data-theme='light']) .footer-column a:hover { color: var(--primary-blue); }
-			html:not([data-theme='light']) .hero-section { background-color: #070a1a; }
-			html:not([data-theme='light']) .card.douyin:hover { background-color: #f9f9fa; color: #161823; }
-			html:not([data-theme='light']) .card.douyin:hover .tiktok-white { fill: #161823; }
-			html:not([data-theme='light']) .theme-toggle-btn:hover,
-			html:not([data-theme='light']) .lang-toggle-btn:hover,
-			html:not([data-theme='light']) .nav-theme-toggle:hover,
-			html:not([data-theme='light']) .nav-lang-toggle:hover { color: var(--primary-blue) !important; }
-			
-			html:not([data-theme='light']) .milestone-nav-btn {
-				background: rgba(30, 41, 59, 0.9);
-				border-color: rgba(255, 255, 255, 0.1);
-				color: #f8fafc;
-			}
-
-			html:not([data-theme='light']) .year-filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
-			html:not([data-theme='light']) .year-filter-btn:hover { color: var(--primary-blue); }
-		}
-
-		/* 手动深色模式样式 (手动点击按钮时) */
-		[data-theme='dark'] {
-			--primary-blue: #93c5fd;
-			--bg-light: #0f172a;
-			--text-on-light: #F5F5F7;
-			--sub-text-on-light: #94a3b8;
-			--card-shadow: 0 10px 25px -5px rgba(2, 6, 23, 0.6), 0 8px 10px -6px rgba(2, 6, 23, 0.5);
-			--navbar-bg: rgba(15, 23, 42, 0.8);
-			--card-bg: #1e293b;
-		}
-		[data-theme='dark'] .navbar { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-		[data-theme='dark'] .nav-dropdown { background: #1e293b; box-shadow: 0 20px 40px -12px rgba(2, 6, 23, 0.7); }
-		[data-theme='dark'] .nav-dropdown a:hover { background: rgba(255, 255, 255, 0.05); }
-		[data-theme='dark'] .card { background-color: #1e293b; border: 1px solid rgba(255, 255, 255, 0.05); }
-		[data-theme='dark'] footer, [data-theme='dark'] .footer-bottom { border-top-color: #1e293b; } /* 修复1: 手动深色模式下页脚分隔线 */
-		[data-theme='dark'] .footer-column p, [data-theme='dark'] .footer-column span, [data-theme='dark'] .footer-column a { color: #94a3b8; }
-		[data-theme='dark'] .milestone-card { border-top: 4px solid var(--primary-blue); }
-		[data-theme='dark'] .footer-column a:hover { color: var(--primary-blue); }
-		[data-theme='dark'] .nav-avatar { border-color: rgba(255, 255, 255, 0.1); }
-		[data-theme='dark'] article.reward-modal { background: #1e293b; color: #f8fafc; }
-		[data-theme='dark'] .hero-section { background-color: #070a1a; }
-		[data-theme='dark'] .card.douyin:hover { background-color: #f9f9fa; color: #161823; }
-		[data-theme='dark'] .card.douyin:hover .tiktok-white { fill: #161823; }
-		[data-theme='dark'] .theme-toggle-btn, [data-theme='dark'] .lang-toggle-btn {
-			background: rgba(30, 41, 59, 0.9);
-			border-color: rgba(255, 255, 255, 0.1);
-			color: #f8fafc;
-		}
-		[data-theme='dark'] .theme-toggle-btn:hover, 
-		[data-theme='dark'] .lang-toggle-btn:hover,
-		[data-theme='dark'] .nav-theme-toggle:hover,
-		[data-theme='dark'] .nav-lang-toggle:hover { color: var(--primary-blue) !important; }
-
-		[data-theme='dark'] .year-filter-btn { background: #1e293b; border-color: rgba(255, 255, 255, 0.05); color: var(--sub-text-on-light); }
-		[data-theme='dark'] .year-filter-btn:hover { color: var(--primary-blue); }
-
-		[data-theme='dark'] .milestone-nav-btn {
-			background: rgba(30, 41, 59, 0.9);
-			border-color: rgba(255, 255, 255, 0.1);
-			color: #f8fafc;
-		}
-
-		[data-theme='dark'] .tag-channel { background: rgba(147, 197, 253, 0.15); }
-		[data-theme='dark'] .tag-insync { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
-		[data-theme='dark'] .tag-academic { background: rgba(88, 204, 2, 0.15); }
-		[data-theme='dark'] .tag-life { background: rgba(148, 163, 184, 0.15); }
-		[data-theme='dark'] .tag-nation { background: rgba(248, 113, 113, 0.15); color: #f87171; }
-		[data-theme='dark'] .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
-		[data-theme='dark'] .tag-achievement { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; }
-		[data-theme='dark'] .tag-community { background: rgba(129, 140, 248, 0.15); color: #818cf8; }
-		[data-theme='dark'] .tag-anecdote { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
-
-		/* --- 模式切换按钮 --- */
-		.theme-toggle-btn {
-			position: fixed;
-			bottom: 25px;
-			right: 25px;
-			width: 44px;
-			height: 44px;
-			border-radius: 50%;
-			background: var(--navbar-bg, rgba(255, 255, 255, 0.9));
-			backdrop-filter: blur(10px);
-			-webkit-backdrop-filter: blur(10px);
-			border: 1px solid rgba(0, 0, 0, 0.05);
-			box-shadow: 0 4px 12px rgba(14, 52, 112, 0.15);
-			cursor: pointer;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 99;
-			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			color: var(--text-on-light);
-		}
-
-		.theme-toggle-btn:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); color: var(--primary-blue); }
-
-		/* --- 语言切换悬浮按钮 --- */
-		.lang-toggle-btn {
-			position: fixed;
-			bottom: 80px; /* 位于主题按钮上方 */
-			right: 25px;
-			width: 44px;
-			height: 44px;
-			border-radius: 50%;
-			background: var(--navbar-bg, rgba(255, 255, 255, 0.9));
-			backdrop-filter: blur(10px);
-			-webkit-backdrop-filter: blur(10px);
-			border: 1px solid rgba(0, 0, 0, 0.05);
-			box-shadow: 0 4px 12px rgba(14, 52, 112, 0.15);
-			cursor: pointer;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 99;
-			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			color: var(--text-on-light);
-		}
-		.lang-toggle-btn:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); color: var(--primary-blue); }
-
-		.theme-toggle-btn svg, .lang-toggle-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-		
-		/* 切换逻辑样式 */
-		@media (min-width: 769px) {
-			/* 桌面端：导航栏显示时，隐藏悬浮按钮 */
-			.navbar.visible ~ .theme-toggle-btn, .navbar.visible ~ .lang-toggle-btn {
-				opacity: 0;
-				visibility: hidden;
-				pointer-events: none;
-			}
-			/* 导航栏内的切换按钮仅在桌面端显示 */
-			.nav-theme-toggle, .nav-lang-toggle { display: flex; }
-		}
-
-		@media (max-width: 768px) {
-			/* 移动端：隐藏导航栏内的切换按钮，悬浮按钮始终显示 */
-			.nav-theme-toggle, .nav-lang-toggle { display: none; }
-			.theme-toggle-btn, .lang-toggle-btn {
-				opacity: 1 !important;
-				visibility: visible !important;
-				pointer-events: auto !important;
-			}
-		}
-		/* 响应式调整 */
-		@media (max-width: 768px) {
-			.milestone-wrapper {
-				padding: 15px; /* 恢复对称内边距 */
-				/* 移动端也同步调整遮罩范围 */
-				-webkit-mask-image: linear-gradient(to right, var(--mask-left), black 30px, black calc(100% - 30px), var(--mask-right));
-				mask-image: linear-gradient(to right, var(--mask-left), black 30px, black calc(100% - 30px), var(--mask-right));
-			}
-			.milestone-card { flex: 0 0 85%; max-width: 300px; }
-		}
-
-		/* 深色模式下的按钮微调 */
-		@media (prefers-color-scheme: dark) {
-			html:not([data-theme='light']) .theme-toggle-btn,
-			html:not([data-theme='light']) .lang-toggle-btn {
-				background: rgba(30, 41, 59, 0.9);
-				border-color: rgba(255, 255, 255, 0.1);
-				color: #f8fafc;
-			}
-		}
-
-		/* --- 响应式适配 --- */
-		@media (max-width: 768px) {
-			.desktop-only { display: none; }
-			.menu-toggle.mobile-only { display: flex; }
-			.hero-section h1 { font-size: 2rem; }
-			.card { width: 100%; }
-			.tool-card-wrapper { width: 100%; }
-			.person-img { max-height: 180px; }
-			.footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-			.footer-column { align-items: center; }
-			.footer-column p, .footer-column span, .footer-column a { white-space: normal; }
-			.reward-modal { padding: 30px; width: 85%; }
-		}
-	</style>
+	<link rel="icon" href="favicon.webp" type="image/webp">
+	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./css/home.css">
+	<script src="./js/core.js" defer></script>
+	<script src="./js/home.js" defer></script>
 </head>
 <body>
-
 	<nav class="navbar" id="top-nav">
 		<div class="nav-container">
 			<a href="#" class="nav-brand">
@@ -1189,9 +29,9 @@
 						<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 					</svg>
 				</button>
-				<button class="nav-lang-toggle" onclick="toggleLanguage()">
+				<a href="en_US" class="nav-lang-toggle">
 					<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-				</button>
+				</a>
 			</div>
 			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -1216,7 +56,7 @@
 			<h1>Ethan Shaw</h1>
 			<p class="tagline">一颗尘埃 一枚星星</p>
 		</section>
-		<img src="ZhouShenALPHA.webp" alt="Person" class="person-img">
+		<img src="../images/ZhouShenALPHA.webp" alt="Person" class="person-img">
 	</header>
 
 	<main class="content-section">
@@ -1311,7 +151,6 @@
 				<h2 class="section-title">里程碑</h2>
 				<p class="section-hint">左右滑动浏览</p>
 				<div class="year-filter-container">
-					<button class="year-filter-btn active" onclick="filterMilestones('all', this)">全部</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2011', this)">2011</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2017', this)">2017</button>
 					<button class="year-filter-btn" onclick="filterMilestones('2018', this)">2018</button>
@@ -1640,7 +479,7 @@
 						<p>由 <a href="https://host-intro.retiehe.com/" target="_blank">热铁盒网页托管</a></p>
 						<p>头像取于 <a href="https://i2.hdslb.com/bfs/face/fc65f0eb630fe0b35f46062548b7184f40eefeb9.jpg" target="_blank">Bilibili API</a>
 						<p>由 <a href="https://gemini.google.com/" target="_blank">Gemini</a> 全权编写</p>
-						<a href="https://github.com/KabulMus/MyWebsite">Github 仓库</a>
+						<a href="https://github.com/KabulMus/MyWebsite" target="_blank">GitHub 仓库</a>
 					</section>
 					<section class="footer-column">
 						<h4>关于周深</h4>
@@ -1673,109 +512,127 @@
 			<button class="close-btn" onclick="toggleModal('email-overlay', false)" aria-label="关闭弹窗">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
 			</button>
-			<h4 style="margin-bottom: 12px; color: var(--text-on-light); font-weight: 600;">联系邮箱</h4>
-			<p style="font-size: 1.2rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">szs_123456@outlook.com</p>
-			<p style="font-size: 0.85rem; color: var(--sub-text-on-light);">期待与您的友好交流。</p>
-			<a href="mailto:szs_123456@outlook.com" class="modal-btn">联系</a>
+			<div class="reward-body">
+				<h4 style="margin-bottom: 12px; color: var(--text-main); font-weight: 600;">联系邮箱</h4>
+				<p style="font-size: 1.2rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">szs_123456@outlook.com</p>
+				<p style="font-size: 0.85rem; color: var(--text-sub);">期待与您的友好交流。</p>
+				<a href="mailto:szs_123456@outlook.com" class="modal-btn">联系</a>
+			</div>
 		</article>
 	</section>
 
 	<!-- QQ群弹窗 -->
 	<section id="qq-overlay" class="reward-overlay" onclick="toggleModal('qq-overlay', false)">
-		<article class="reward-modal" style="max-width: 380px; width: 90%;" onclick="event.stopPropagation()">
+		<article class="reward-modal" onclick="event.stopPropagation()">
 			<button class="close-btn" onclick="toggleModal('qq-overlay', false)" aria-label="关闭弹窗">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
 			</button>
-			<h4 style="margin-bottom: 12px; color: var(--text-on-light); font-weight: 600;">QQ 群聊</h4>
-			<p style="font-size: 1.2rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">671065700</p>
-			<div style="text-align: justify; text-justify: inter-ideograph; line-break: strict; overflow-wrap: break-word;">
-				<p style="text-align: center; font-size: 0.85rem; color: var(--sub-text-on-light); margin-bottom: 10px;">欢迎加入我们的群聊！</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light);"><strong>注意　</strong>群文件含有周深专辑《反深代词》全曲音测，而该专辑现仍在售卖。为保护版权，本群只接收可证明自己能够合法收听该专辑的人员。其包括：</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
-					<span style="flex-shrink: 0; width: 1.6em;">1.</span>
-					<span>在国内音乐平台已购买至少 1 张数字专辑的；</span>
-				</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
-					<span style="flex-shrink: 0; width: 1.6em;">2.</span>
-					<span>订阅 Apple Music、Spotify Premium 或其他国际付费音乐服务的。不接受免费及试用用户。</span>
-				</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); margin-top: 10px;">前往收听或购买（RMB 30.00/张）：<a href="https://y.qq.com/n/ryqq_v2/albumDetail/003szpvI3LMhQ7" target="_blank" style="color: var(--primary-blue); text-decoration: none;">QQ 音乐</a>
-					 / <a href="http://music.163.com/album/190605791/?userid=6339430442" target="_blank" style="color: var(--primary-blue); text-decoration: none;">网易云音乐</a>
-					 / <a href="https://www.kugou.com/album/info/1k1d40ed/" target="_blank" style="color: var(--primary-blue); text-decoration: none;">酷狗音乐</a>
-					 / <a href="https://www.kuwo.cn/album_detail/52082482" target="_blank" style="color: var(--primary-blue); text-decoration: none;">酷我音乐</a>
-					 / <a href="https://music.apple.com/cn/album/%E5%8F%8D%E6%B7%B1%E4%BB%A3%E8%AF%8D/1770685141" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Apple Music</a>
-					 / <a href="https://open.spotify.com/album/6IcyslRZfwWzpdhnFML6cd" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Spotify</a>。</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); margin-top: 10px;">如您欲加群且可合法收听，请您通过 <a href="https://message.bilibili.com/?spm_id_from=333.1387.0.0#/whisper/mid1863501530"  target="_blank" style="color: var(--primary-blue); text-decoration: none;">B 站私信</a>或<a href="mailto:szs_123456@outlook.com"  target="_blank" style="color: var(--primary-blue); text-decoration: none;">我的个人邮箱</a>联系我，审核通过后会向您发送一串密码。之后，在 QQ 搜索群号并按照流程加群即可。</p>
+			<div class="reward-body">
+				<h4 style="margin-bottom: 12px; color: var(--text-main); font-weight: 600;">QQ 群聊</h4>
+				<p style="font-size: 1.2rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">671065700</p>
+				<div style="text-align: justify; text-justify: inter-ideograph; line-break: strict; overflow-wrap: break-word;">
+					<p style="text-align: center; font-size: 0.85rem; color: var(--text-sub); margin-bottom: 10px;">欢迎加入我们的群聊！</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub);"><strong>注意　</strong>群文件含有周深专辑《反深代词》全曲音测，而该专辑现仍在售卖。为保护版权，本群只接收可证明自己能够合法收听该专辑的人员。其包括：</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">1.</span>
+						<span>在国内音乐平台已购买至少 1 张数字专辑的；</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">2.</span>
+						<span>订阅 Apple Music、Spotify Premium 或其他国际付费音乐服务的。不接受免费及试用用户。</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px;">前往收听或购买（RMB 30.00/张）：<a href="https://y.qq.com/n/ryqq_v2/albumDetail/003szpvI3LMhQ7" target="_blank" style="color: var(--primary-blue); text-decoration: none;">QQ 音乐</a>
+						 / <a href="http://music.163.com/album/190605791/?userid=6339430442" target="_blank" style="color: var(--primary-blue); text-decoration: none;">网易云音乐</a>
+						 / <a href="https://www.kugou.com/album/info/1k1d40ed/" target="_blank" style="color: var(--primary-blue); text-decoration: none;">酷狗音乐</a>
+						 / <a href="https://www.kuwo.cn/album_detail/52082482" target="_blank" style="color: var(--primary-blue); text-decoration: none;">酷我音乐</a>
+						 / <a href="https://music.apple.com/cn/album/%E5%8F%8D%E6%B7%B1%E4%BB%A3%E8%AF%8D/1770685141" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Apple Music</a>
+						 / <a href="https://open.spotify.com/album/6IcyslRZfwWzpdhnFML6cd" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Spotify</a>。</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px;">如您欲加群且可合法收听，请您通过 <a href="https://message.bilibili.com/?spm_id_from=333.1387.0.0#/whisper/mid1863501530"  target="_blank" style="color: var(--primary-blue); text-decoration: none;">B 站私信</a>或<a href="mailto:szs_123456@outlook.com"  target="_blank" style="color: var(--primary-blue); text-decoration: none;">我的个人邮箱</a>联系我，审核通过后会向您发送一串密码。之后，在 QQ 搜索群号并按照流程加群即可。</p>
+				</div>
+				<a href="javascript:void(0);" class="modal-btn" onclick="copyToClipboard('671065700', this)">复制群号</a>
 			</div>
-			<a href="javascript:void(0);" class="modal-btn" onclick="copyToClipboard('671065700', this)">复制群号</a>
 		</article>
 	</section>
 
 	<!-- Discord 弹窗 -->
 	<section id="discord-overlay" class="reward-overlay" onclick="toggleModal('discord-overlay', false)">
-		<article class="reward-modal" style="max-width: 380px; width: 90%;" onclick="event.stopPropagation()">
+		<article class="reward-modal" onclick="event.stopPropagation()">
 			<button class="close-btn" onclick="toggleModal('discord-overlay', false)" aria-label="关闭弹窗">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
 			</button>
-			<h4 style="margin-bottom: 12px; color: var(--text-on-light); font-weight: 600;">Discord 服务器</h4>
-			<p style="font-size: 1.2rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">Charlie’s Melody Bag</p>
-			<div style="text-align: justify; text-justify: inter-ideograph; line-break: strict; overflow-wrap: break-word;">
-				<p style="text-align: center; font-size: 0.85rem; color: var(--sub-text-on-light); margin-bottom: 10px;">欢迎加入我们的服务器！</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light);"><strong>注意　</strong>加入服务器需提交申请，问题为：「Who is your favorite Chinese pop singer?」（您最喜欢的中国流行歌手是谁？）输入「周深」（或「Zhou Shen」「Charlie Zhou」等）后等待审核通过即可。</p>
+			<div class="reward-body">
+				<h4 style="margin-bottom: 12px; color: var(--text-main); font-weight: 600;">Discord 服务器</h4>
+				<p style="font-size: 1.2rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">Charlie’s Melody Bag</p>
+				<div style="text-align: justify; text-justify: inter-ideograph; line-break: strict; overflow-wrap: break-word;">
+					<p style="text-align: center; font-size: 0.85rem; color: var(--text-sub); margin-bottom: 10px;">欢迎加入我们的服务器！</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub);"><strong>注意　</strong>加入服务器需提交申请，问题为：「Who is your favorite Chinese pop singer?」（您最喜欢的中国流行歌手是谁？）输入「周深」（或「Zhou Shen」「Charlie Zhou」等）后等待审核通过即可。</p>
+				</div>
+				<a href="https://discord.gg/ffpcn44j38" target="_blank" class="modal-btn">加入服务器</a>
 			</div>
-			<a href="https://discord.gg/ffpcn44j38" target="_blank" class="modal-btn">加入服务器</a>
 		</article>
 	</section>
 
 	<!-- 字体版权弹窗 -->
 	<section id="font-copyright-overlay" class="reward-overlay" onclick="toggleModal('font-copyright-overlay', false)">
-		<article class="reward-modal" style="max-width: 420px; width: 90%;" onclick="event.stopPropagation()">
+		<article class="reward-modal" style="max-width: 400px;" onclick="event.stopPropagation()">
 			<button class="close-btn" onclick="toggleModal('font-copyright-overlay', false)" aria-label="Close">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
 			</button>
-			<h4 style="margin-bottom: 12px; color: var(--text-on-light); font-weight: 600;">字体版权说明</h4>
-			<div style="text-align: left; margin-bottom: 8px;">
-				<a href="https://github.com/rsms/inter" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Inter</a>
+			<div class="reward-body">
+				<h4 style="margin-bottom: 12px; color: var(--text-main); font-weight: 600;">字体版权说明</h4>
+				<div style="text-align: left; margin-bottom: 8px;">
+					<a href="https://github.com/rsms/inter" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Inter</a>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>Copyright 2016 The Inter Project Authors.</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em; font-family: 'Iosevka', monospace; font-feature-settings: normal;">TM</span>
+						<span>Inter UI and Inter is a trademark of rsms.</span>
+					</p>
+				</div>
+				<div style="text-align: left; margin-top: 8px;  margin-bottom: 8px;">
+					<p style="color: var(--primary-blue); text-decoration: none; font-weight: 400; font-size: 0.95rem;"><a href="https://github.com/adobe-fonts/source-han-sans" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">思源黑体</a>（<a href="https://github.com/be5invis/sarasa-gothic" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 400; font-size: 0.95rem;"><i>更纱黑体</i></a>的原型）</p>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>2014-2021 Adobe (<a href="http://www.adobe.com/" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://www.adobe.com/</a>), with Reserved Font Name 'Source'.</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em; font-family: 'Iosevka', monospace; font-feature-settings: normal;">TM</span>
+						<span>Source is a trademark of Adobe in the United States and/or other countries.</span>
+					</p>
+				</div>
+				<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
+					<p style="color: var(--primary-blue); text-decoration: none; font-weight: 400; font-size: 0.95rem;"><a href="https://github.com/jpt/barlow/" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Barlow</a>（<i>Musical</i> 的原型）</p>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>Copyright 2017 The Barlow Project Authors (<a href="https://github.com/jpt/barlow" target="_blank" style="color: var(--primary-blue); text-decoration: none;">https://github.com/jpt/barlow</a>)</span>
+					</p>
+				</div>
+				<div style="text-align: justify; text-justify: inter-ideograph; line-break: strict; font-size: 0.85rem; color: var(--text-sub);">
+				</div>
+				<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
+					<a href="https://github.com/be5invis/Iosevka" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Iosevka</a>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net).</span>
+					</p>
+					<p>Spatial efficient monospace font family for programming. Built from code. <a href="http://be5invis.github.io/Iosevka" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://be5invis.github.io/Iosevka</a></p>
+				</div>
+				
+				<div style="text-align: left; margin-top: 8px; font-size: 0.85rem; color: var(--text-sub);">
+					<p><i>中文字体文件已使用 <a href="https://www.python.org/" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Python</a> 库 <a href="https://github.com/fonttools/fonttools" target="_blank" style="color: var(--primary-blue); text-decoration: none;">FontTools</a> 进行子集化压缩。</i></p>
+					<p><i>这些字体软件根据 SIL 开源字体许可证（SIL Open Font License）1.1 版进行许可。该许可证及其常见问题解答可在以下网址查阅：<a href="http://scripts.sil.org/OFL" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://scripts.sil.org/OFL</a>。</i></p>
+				</div>
 			</div>
-			<div style="text-align: left; font-size: 0.85rem; color: var(--sub-text-on-light);">
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
-					<span style="flex-shrink: 0; width: 1.6em;">©</span>
-					<span>Copyright 2016 The Inter Project Authors.</span>
-				</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
-					<span style="flex-shrink: 0; width: 1.6em; font-family: 'Iosevka', monospace; font-feature-settings: normal;">TM</span>
-					<span>Inter UI and Inter is a trademark of rsms.</span>
-				</p>
-				<p>This font software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: <a href="http://scripts.sil.org/OFL" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://scripts.sil.org/OFL</a>.</p>
-			</div>
-			<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
-				<a href="https://www.dynacw.com.cn/king/" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">苹方 / 华康金刚黑</a>
-			</div>
-			<div style="text-align: left; font-size: 0.85rem; color: var(--sub-text-on-light);">
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
-					<span style="flex-shrink: 0; width: 1.6em;">©</span>
-					<span>Copyright 2017 DynaComware Taiwan Inc. All rights reserved.</span>
-				</p>
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
-					<span style="flex-shrink: 0; width: 1.6em; font-family: 'Iosevka', monospace; font-feature-settings: normal;">TM</span>
-					<span>King Gothic is a trademark of DynaComware Taiwan Inc.</span>
-				</p>
-			</div>
-			<div style="text-align: justify; text-justify: inter-ideograph; line-break: strict; font-size: 0.85rem; color: var(--sub-text-on-light);">
-				<p>中文字体文件已使用 <a href="https://www.python.org/" target="_blank" style="color: var(--primary-blue); text-decoration: none;">Python</a> 库 <a href="https://github.com/fonttools/fonttools" target="_blank" style="color: var(--primary-blue); text-decoration: none;">FontTools</a> 进行子集化压缩。</p>
-			</div>
-			<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
-				<a href="https://github.com/be5invis/Iosevka" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Iosevka</a>
-			</div>
-			<div style="text-align: left; font-size: 0.85rem; color: var(--sub-text-on-light);">
-				<p style="font-size: 0.85rem; color: var(--sub-text-on-light); display: flex; align-items: flex-start;">
-					<span style="flex-shrink: 0; width: 1.6em;">©</span>
-					<span>Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net).</span>
-				</p>
-				<p>Spatial efficient monospace font family for programming. Built from code. <a href="http://be5invis.github.io/Iosevka" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://be5invis.github.io/Iosevka</a></p>
-				<p>This font software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: <a href="http://scripts.sil.org/OFL" target="_blank" style="color: var(--primary-blue); text-decoration: none;">http://scripts.sil.org/OFL</a>.</p>
-			</div>
-			
 		</article>
 	</section>
 
@@ -1785,19 +642,21 @@
 			<button class="close-btn" onclick="toggleModal('reward-overlay', false)" aria-label="关闭弹窗">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
 			</button>
-			<h4 style="margin-bottom: 20px; color: var(--text-on-light); font-weight: 600;">微信赞赏码</h4>
-			<picture>
-				<source srcset="reward_code_dark.webp" media="(prefers-color-scheme: dark)">
-				<img src="reward_code.webp" alt="微信赞赏码" class="reward-qr">
-			</picture>
-			<p style="margin-top: 15px; font-size: 0.85rem; color: var(--sub-text-on-light);">感谢您的鼓励与支持！</p>
+			<div class="reward-body">
+				<h4 style="margin-bottom: 20px; color: var(--text-main); font-weight: 600;">微信赞赏码</h4>
+				<picture>
+					<source srcset="../images/reward_code_dark.webp" media="(prefers-color-scheme: dark)">
+					<img src="../images/reward_code.webp" alt="微信赞赏码" class="reward-qr">
+				</picture>
+				<p style="margin-top: 15px; font-size: 0.85rem; color: var(--text-sub);">感谢您的鼓励与支持！</p>
+			</div>
 		</article>
 	</section>
 
 	<!-- 语言切换按钮 -->
-	<button class="lang-toggle-btn" onclick="toggleLanguage()" aria-label="切换语言">
+	<a href="en_US" class="lang-toggle-btn" aria-label="Switch to English">
 		<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-	</button>
+	</a>
 
 	<!-- 亮暗模式切换按钮 -->
 	<button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切换亮暗模式">

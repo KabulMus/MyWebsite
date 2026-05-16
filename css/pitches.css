@@ -1,0 +1,262 @@
+/* 页面特有字体 */
+@font-face {
+    font-family: 'Musical';
+    src: url('../fonts/Musical-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Musical';
+    src: url('../fonts/Musical-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Musical';
+    src: url('../fonts/Musical-Semibold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Musical';
+    src: url('../fonts/Musical-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* --- 英雄区块 (Hero Section) --- */
+.hero-section {
+    width: 100%;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+section.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    margin-bottom: 25px;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    background: white;
+    box-shadow: 0 12px 40px -8px rgba(8, 15, 38, 0.4);
+}
+
+.hero-section h1 {
+    font-size: 2.8rem;
+    margin-bottom: 5px;
+    text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
+}
+
+.hero-section .tagline {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin-bottom: 10px;
+    padding: 0 20px;
+}
+
+.person-img {
+    max-height: 300px;
+    position: relative;
+    z-index: 3;
+    margin-top: 20px;
+    margin-bottom: -1px;
+    display: block;
+}
+
+/* --- 内容区域布局 --- */
+.content-section {
+    background-color: var(--bg-light);
+    padding: 60px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+section.container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 40px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -8px;
+    width: 30px;
+    height: 3px;
+    background-color: var(--primary-blue);
+}
+
+.section-content { margin-bottom: 70px; }
+.about-text p { max-width: 600px; margin: 0 auto; color: var(--text-sub); }
+
+.tool-card-wrapper { grid-column: 2 / 3; }
+
+/* --- 响应式适配 --- */
+@media (max-width: 768px) {
+    .desktop-only { display: none; }
+    .menu-toggle.mobile-only { display: flex; }
+    .hero-section h1 { font-size: 2rem; }
+    .works-grid, .tools-grid, .scales-grid { grid-template-columns: 1fr; }
+    .tool-card-wrapper { grid-column: auto; }
+    .person-img { max-height: 180px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+    .footer-column { align-items: center; }
+    .footer-column p, .footer-column span, .footer-column a { white-space: normal; }
+}
+
+/* --- 音阶特有样式 --- */
+.notation-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+.notation-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--item-border);
+    background: var(--card-bg);
+    font-family: 'Musical', sans-serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-sub);
+    box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
+    font-feature-settings: normal;
+}
+.notation-btn:hover { transform: scale(1.1); color: var(--primary-blue); }
+.notation-btn.active {
+    background: var(--primary-blue) !important;
+    color: var(--on-primary) !important;
+    border-color: var(--primary-blue) !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3);
+}
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px auto 0;
+    width: 100%;
+    max-width: 1000px;
+}
+.filter-btn {
+    width: 60px; height: auto;
+    background: var(--card-bg);
+    border: 1px solid var(--item-border);
+    border-radius: 8px;
+    padding: 8px 0;
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
+    font-family: 'Musical', sans-serif;
+    font-feature-settings: normal;
+}
+.filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); }
+.filter-btn.active { 
+    background: var(--primary-blue) !important; 
+    color: var(--on-primary) !important; 
+    border-color: var(--primary-blue) !important; 
+    font-weight: 600 !important;
+    box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); 
+}
+
+[data-theme='dark'] .scale-header { border-bottom-color: rgba(255,255,255,0.05); }
+[data-theme='dark'] .scale-type { color: var(--text-sub); }
+
+.scales-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+}
+.scales-grid.filtered { display: flex; justify-content: center; }
+.scales-grid.filtered .scale-card { width: 100%; max-width: 320px; }
+
+/* 入场动画：轻微缩放 + 向上位移 + 淡入 */
+@keyframes cardAppear {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.appearing { animation: cardAppear 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--item-border);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+}
+
+.scale-card { 
+    padding: 25px; 
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    text-align: left;
+    width: auto; /* 在 Grid 中自适应 */
+}
+.scale-header { width: 100%; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+.scale-name { font-size: 1.4rem; font-weight: 700; color: var(--primary-blue); }
+.scale-type { font-size: 1rem; color: var(--text-sub); font-weight: normal; }
+.musical-key { font-family: 'Musical', sans-serif; font-feature-settings: normal; }
+.note-list { display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; }
+.note-badge { display: flex; align-items: center; background: rgba(30, 102, 198, 0.08); color: var(--primary-blue); padding: 8px 15px; border-radius: 6px; font-weight: 600; font-size: 1.4rem; }
+.note-badge i { font-style: normal; font-size: 0.75rem; opacity: 0.4; width: 1.6rem; text-align: left; font-weight: 400; }
+.note-badge span { flex: 1; text-align: center; margin-right: 1.6rem; font-family: 'Musical', sans-serif; font-feature-settings: normal; }
+[data-theme='dark'] .note-badge { background: rgba(147, 197, 253, 0.15); }
+
+/* --- 响应式适配 (移动端强制单列) --- */
+@media (max-width: 768px) {
+    .desktop-only { display: none; }
+    .menu-toggle.mobile-only { display: flex; }
+    .hero-section h1 { font-size: 2rem; }
+    .filter-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    .filter-btn { width: auto; }
+    .scales-grid { grid-template-columns: 1fr; } /* 放在最后确保能覆盖双列设置 */
+    .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+    .footer-column { align-items: center; }
+    .footer-column p, .footer-column span, .footer-column a { white-space: normal; }
+    .reward-modal { padding: 30px; width: 85%; }
+}
