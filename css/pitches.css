@@ -1,28 +1,28 @@
 /* 页面特有字体 */
 @font-face {
     font-family: 'Musical';
-    src: url('/fonts/Musical-Regular.woff2') format('woff2');
+    src: url('fonts/Musical-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Musical';
-    src: url('/fonts/Musical-Bold.woff2') format('woff2');
+    src: url('fonts/Musical-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Musical';
-    src: url('/fonts/Musical-Semibold.woff2') format('woff2');
+    src: url('fonts/Musical-Semibold.woff2') format('woff2');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Musical';
-    src: url('/fonts/Musical-Light.woff2') format('woff2');
+    src: url('fonts/Musical-Light.woff2') format('woff2');
     font-weight: 300;
     font-style: normal;
     font-display: swap;

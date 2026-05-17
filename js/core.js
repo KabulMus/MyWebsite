@@ -99,8 +99,8 @@ function toggleTheme() {
     // 更新赞赏码（如果存在）
     const qrImg = document.querySelector('.reward-qr');
     const qrSource = document.querySelector('#reward-overlay picture source');
-    if (qrImg) qrImg.src = isDarkNow ? "reward_code.webp" : "reward_code_dark.webp";
-    if (qrSource) qrSource.srcset = isDarkNow ? "reward_code.webp" : "reward_code_dark.webp";
+    if (qrImg) qrImg.src = isDarkNow ? "images/reward_code.webp" : "images/reward_code_dark.webp";
+    if (qrSource) qrSource.srcset = isDarkNow ? "images/reward_code.webp" : "images/reward_code_dark.webp";
 }
 
 // 弹窗控制
