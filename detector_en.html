@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta name="referrer" content="no-referrer">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Analyzer | Ethan Shaw</title>
+    <link rel="icon" href="favicon.webp" type="image/webp">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/detector.css">
+    <script src="./js/core.js" defer></script>
+</head>
+<body>
+
+    <header class="hero-section">
+        <a href="en_US" class="back-home-btn" aria-label="Back to Home">
+            <svg viewBox="0 0 24 24"><path d="M14 18l-6-6 6-6"></path></svg>
+        </a>
+        <section class="hero-content">
+            <div>
+                <h1>Audio Analyzer</h1>
+                <p class="tagline">Real-time frequency & pitch monitoring (Range: C2 - C7)</p>
+            </div>
+        </section>
+    </header>
+
+    <main class="content-section">
+        <section class="container">
+            <div class="notation-toggle">
+                <button class="notation-btn" onclick="analyzerApp.setNotation('sharp', this)">#</button>
+                <button class="notation-btn active" onclick="analyzerApp.setNotation('natural', this)">♮</button>
+                <button class="notation-btn" onclick="analyzerApp.setNotation('flat', this)">b</button>
+            </div>
+
+            <div class="card analyzer-card">
+                <div id="meter">
+                    <div class="center-line"></div>
+                    <div id="pointer"></div>
+                </div>
+
+                <div class="current-note" id="note-display">—</div>
+                
+                <div class="frequency-val">
+                    <span id="hz-display">0.0</span> <small>Hz</small>
+                </div>
+
+                <button id="start-btn" class="modal-btn">Start Analysis</button>
+                <div class="status" id="status">Click the button and grant microphone access</div>
+            </div>
+
+            <footer>
+                <p>©2026 Ethan Shaw</p>
+                <p>Built with love for Charlie and you all</p>
+            </footer>
+        </section>
+    </main>
+
+    <!-- Language Toggle Button -->
+    <a href="detector" class="lang-toggle-btn" aria-label="切换为中文">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+    </a>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+        <svg viewBox="0 0 48 48">
+            <path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
+<script>
+/**
+ * Frequency Analyzer Logic
+ */
+class FrequencyAnalyzer {
+    constructor() {
+        this.audioContext = null;
+        this.analyser = null;
+        this.buffer = null;
+        this.isRunning = false;
+        this.sampleRate = 0;
+        this.lastFreq = 0;
+        this.smoothedFreq = 0;
+        this.notation = 'natural';
+    }
+
+    async start() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.sampleRate = this.audioContext.sampleRate;
+            this.analyser = this.audioContext.createAnalyser();
+            this.analyser.fftSize = 4096;
+            this.buffer = new Float32Array(this.analyser.fftSize);
+            
+            const source = this.audioContext.createMediaStreamSource(stream);
+            const filter = this.audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2500, this.audioContext.currentTime);
+            filter.Q.setValueAtTime(1, this.audioContext.currentTime);
+
+            source.connect(filter);
+            filter.connect(this.analyser);
+            
+            this.isRunning = true;
+            this.stream = stream;
+            this.update();
+            return true;
+        } catch (e) {
+            console.error("Microphone access failed:", e);
+            return false;
+        }
+    }
+
+    stop() {
+        this.isRunning = false;
+        if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+        }
+        if (this.audioContext) {
+            this.audioContext.close();
+        }
+    }
+
+    setNotation(type, btn) {
+        this.notation = type;
+        document.querySelectorAll('.notation-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    update() {
+        if (!this.isRunning) return;
+        this.analyser.getFloatTimeDomainData(this.buffer);
+        const freq = this.autoCorrelate(this.buffer, this.sampleRate);
+        if (freq !== -1) this.onPitchDetected(freq);
+        requestAnimationFrame(() => this.update());
+    }
+
+    autoCorrelate(buffer, sampleRate) {
+        let size = buffer.length;
+        let rms = 0;
+        for (let i = 0; i < size; i++) { rms += buffer[i] * buffer[i]; }
+        rms = Math.sqrt(rms / size);
+        if (rms < 0.01) return -1;
+
+        let r1 = 0, r2 = size - 1, thres = 0.2;
+        for (let i = 0; i < size / 2; i++) if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
+        for (let i = 1; i < size / 2; i++) if (Math.abs(buffer[size - i]) < thres) { r2 = size - i; break; }
+
+        const buf = buffer.slice(r1, r2);
+        size = buf.length;
+        let c = new Float32Array(size).fill(0);
+        for (let i = 0; i < size; i++)
+            for (let j = 0; j < size - i; j++)
+                c[i] = c[i] + buf[j] * buf[j + i];
+
+        let d = 0; while (c[d] > c[d + 1]) d++;
+        let maxval = -1, maxpos = -1;
+        for (let i = d; i < size; i++) { if (c[i] > maxval) { maxval = c[i]; maxpos = i; } }
+        
+        let T0 = maxpos; 
+        if (maxpos > 0 && maxpos < size - 1) {
+            const y1 = c[maxpos - 1]; const y2 = c[maxpos]; const y3 = c[maxpos + 1];
+            const delta = (y3 - y1) / (2 * (2 * y2 - y1 - y3));
+            T0 = maxpos + delta;
+        }
+        return sampleRate / T0;
+    }
+
+    onPitchDetected(freq) {
+        if (this.lastFreq > 0 && (freq > this.lastFreq * 4 || freq < this.lastFreq / 4)) return;
+        this.lastFreq = freq;
+        const alpha = 0.2;
+        this.smoothedFreq = (alpha * freq) + (1 - alpha) * this.smoothedFreq;
+        if (Math.abs(this.smoothedFreq - freq) > 20) this.smoothedFreq = freq;
+        const currentFreq = this.smoothedFreq;
+        if (currentFreq < 60 || currentFreq > 2200) { this.uiUpdate(0, "—", 0); return; }
+        const notationMap = {
+            'sharp':   ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
+            'flat':    ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'],
+            'natural': ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
+        };
+        const names = notationMap[this.notation];
+        const n = Math.round(12 * Math.log2(currentFreq / 440)) + 69;
+        const octave = Math.floor(n / 12) - 1;
+        const noteName = names[n % 12] + octave;
+        const standardFreq = 440 * Math.pow(2, (n - 69) / 12);
+        const cents = 1200 * Math.log2(currentFreq / standardFreq);
+        this.uiUpdate(currentFreq, noteName, cents);
+    }
+
+    uiUpdate(freq, noteName, cents) {
+        if (freq === 0) {
+            document.getElementById('hz-display').innerText = "0.0";
+            document.getElementById('note-display').innerText = "—";
+            document.getElementById('pointer').style.transform = `translateX(-50%) rotate(0deg)`;
+            return;
+        }
+        document.getElementById('hz-display').innerText = freq.toFixed(1);
+        document.getElementById('note-display').innerText = noteName;
+        const angle = Math.max(-50, Math.min(50, cents)) * 0.9; 
+        document.getElementById('pointer').style.transform = `translateX(-50%) rotate(${angle.toFixed(1)}deg)`;
+    }
+}
+
+const analyzerApp = new FrequencyAnalyzer();
+const startBtn = document.getElementById('start-btn');
+
+    startBtn.onclick = async () => {
+        if (!analyzerApp.isRunning) {
+            const success = await analyzerApp.start();
+            if (success) {
+                startBtn.innerText = "Stop Analysis";
+                document.getElementById('status').innerText = "Listening to audio...";
+            }
+        } else {
+            analyzerApp.stop();
+            startBtn.innerText = "Start Analysis";
+            document.getElementById('status').innerText = "Click the button and grant microphone access";
+            document.getElementById('hz-display').innerText = "0.0";
+            document.getElementById('note-display').innerText = "—";
+            document.getElementById('pointer').style.transform = `translateX(-50%) rotate(0deg)`;
+        }
+    };
+</script>
+</body>
+</html>

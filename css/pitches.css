@@ -1,52 +1,4 @@
-/* 页面特有字体 */
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Semibold.woff2') format('woff2');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Light.woff2') format('woff2');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* --- 英雄区块 (Hero Section) --- */
-.hero-section {
-    width: 100%;
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-section.hero-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
+/* 页面特有样式 */
 .avatar {
     width: 130px;
     height: 130px;
@@ -58,20 +10,6 @@ section.hero-content {
     box-shadow: 0 12px 40px -8px rgba(8, 15, 38, 0.4);
 }
 
-.hero-section h1 {
-    font-size: 2.8rem;
-    margin-bottom: 5px;
-    text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
-}
-
-.hero-section .tagline {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
-    max-width: 600px;
-    margin-bottom: 10px;
-    padding: 0 20px;
-}
-
 .person-img {
     max-height: 300px;
     position: relative;
@@ -79,21 +17,6 @@ section.hero-content {
     margin-top: 20px;
     margin-bottom: -1px;
     display: block;
-}
-
-/* --- 内容区域布局 --- */
-.content-section {
-    background-color: var(--bg-light);
-    padding: 60px 20px;
-    text-align: center;
-    position: relative;
-    z-index: 2;
-}
-
-section.container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
 }
 
 .section-title {
@@ -124,13 +47,9 @@ section.container {
 @media (max-width: 768px) {
     .desktop-only { display: none; }
     .menu-toggle.mobile-only { display: flex; }
-    .hero-section h1 { font-size: 2rem; }
     .works-grid, .tools-grid, .scales-grid { grid-template-columns: 1fr; }
     .tool-card-wrapper { grid-column: auto; }
     .person-img { max-height: 180px; }
-    .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-    .footer-column { align-items: center; }
-    .footer-column p, .footer-column span, .footer-column a { white-space: normal; }
 }
 
 /* --- 音阶特有样式 --- */
@@ -161,7 +80,6 @@ section.container {
     background: var(--primary-blue) !important;
     color: var(--on-primary) !important;
     border-color: var(--primary-blue) !important;
-    font-weight: 600 !important;
     box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3);
 }
 

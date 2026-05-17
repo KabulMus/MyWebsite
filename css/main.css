@@ -1,4 +1,33 @@
 /* --- 1. 字体声明 --- */
+/* Musical - 乐谱符号字体 */
+@font-face {
+    font-family: 'Musical';
+    src: url('fonts/Musical-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Musical';
+    src: url('fonts/Musical-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Musical';
+    src: url('fonts/Musical-Semibold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Musical';
+    src: url('fonts/Musical-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
 @font-face { font-family: 'Inter Var'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable.woff2') format('woff2-variations'); }
 @font-face { font-family: 'Inter Var'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable-Italic.woff2') format('woff2-variations'); }
 
@@ -65,6 +94,9 @@
     scrollbar-width: none;     /* Firefox */
 }
 
+/* 确保表单元素继承页面字体 */
+button, input, select, textarea { font-family: inherit; }
+
 body {
     font-family: 'Inter Var', 'Sarasa Gothic', -apple-system, sans-serif;
     background-color: var(--bg-light);
@@ -77,13 +109,54 @@ body {
 
 /* --- 4. 共有布局: 英雄区块 --- */
 .hero-section {
+    width: 100%;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     color: white !important;
     text-align: center;
     background: linear-gradient(180deg, #90befc 0%, #0e347a 66%, #0b122a 100%);
 }
 
+section.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
 .hero-section h1 {
+    font-size: 2.8rem;
+    margin-bottom: 5px;
+    text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
     color: white !important;
+}
+
+.hero-section .tagline {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin-bottom: 10px;
+    padding: 0 20px;
+}
+
+/* --- 4. 共有布局: 内容区域 --- */
+.content-section {
+    background-color: var(--bg-light);
+    padding: 60px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+section.container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 /* --- 4. 共有组件: 导航栏 --- */
@@ -183,8 +256,12 @@ body {
 }
 @media (max-width: 768px) {
     .desktop-only { display: none !important; }
+    .hero-section h1 { font-size: 2rem; }
     .mobile-only { display: flex !important; }
     .nav-theme-toggle, .nav-lang-toggle { display: none !important; }
+    .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+    .footer-column { align-items: center; }
+    .footer-column p, .footer-column span, .footer-column a { white-space: normal; }
 }
 
 /* --- 7. 页脚 --- */
