@@ -1,0 +1,436 @@
+.piano-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    box-sizing: border-box;
+}
+
+/* 彻底破除页面通用 .container 的宽度限制 */
+.container.piano-full-width {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+/* 全键盘模式下取消 600px 限制，改为全宽 */
+.piano-container.full-range .piano-settings,
+.piano-container.full-range .piano-keyboard {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.piano-settings {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.setting-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0; /* 为按钮悬浮缩放和阴影预留充足的垂直空间 */
+    /* 针对多个属性设置平滑的过渡动画 */
+    transition: 
+        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+        max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+        margin 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+        padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 80px; /* 足够容纳按钮和 padding 的高度 */
+    opacity: 1;
+    transform: translateY(0);
+    overflow: visible; /* 展开时允许阴影和缩放溢出，防止裁切 */
+}
+
+.setting-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-sub);
+}
+
+/* --- 动画隐藏状态 --- */
+.setting-group.hidden {
+    display: flex !important; /* 覆盖 display: none 确保动画能运行 */
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: -10px; /* 向上收缩，抵消父容器的 gap */
+    transform: translateY(-20px); /* 纯粹向上平移 */
+    pointer-events: none; /* 隐藏时禁止点击 */
+    overflow: hidden; /* 只有在收起时才裁切内容 */
+}
+
+/* --- 质感复选框 (Checkbox) --- */
+.piano-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--item-border);
+    border-radius: 6px;
+    background: var(--card-bg);
+    cursor: pointer;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    will-change: transform;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                background-color 0.3s ease, 
+                border-color 0.3s ease, 
+                box-shadow 0.3s ease;
+    box-shadow: 0 2px 6px rgba(14, 52, 112, 0.05);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.piano-checkbox:hover {
+    transform: translateZ(0) scale(1.1);
+    border-color: var(--primary-blue);
+    box-shadow: 0 5px 12px rgba(14, 52, 112, 0.1);
+}
+
+.piano-checkbox:checked {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    box-shadow: 0 4px 12px rgba(30, 102, 198, 0.25);
+}
+
+.piano-checkbox::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background-color: var(--on-primary);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.piano-checkbox:checked::after {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+.notation-toggle {
+    display: flex;
+    gap: 12px;
+}
+
+.notation-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--item-border);
+    background: var(--card-bg);
+    font-family: 'Musical', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0; /* 消除行高对垂直居中的干扰 */
+    padding: 0;     /* 确保没有内边距挤压 */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-sub);
+    box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
+}
+
+.notation-btn:hover {
+    transform: scale(1.1);
+    color: var(--primary-blue);
+    box-shadow: 0 8px 20px rgba(14, 52, 112, 0.15);
+}
+
+/* 针对移调按钮里的加号进行视觉微调 */
+#transpose-group .notation-btn {
+    padding-bottom: 2px; /* 视觉补偿：让 + 和 - 在小圆圈里看起来更稳 */
+}
+
+.notation-btn.active {
+    background: var(--primary-blue) !important;
+    color: var(--on-primary) !important;
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3);
+}
+
+.notation-btn.active:hover {
+    color: var(--on-primary) !important;
+}
+
+.range-btn {
+    min-width: 76px;
+    height: 32px;
+    padding: 0 15px;
+    border-radius: 8px;
+    border: 1px solid var(--item-border);
+    background: var(--card-bg);
+    color: var(--text-sub);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.range-btn:hover {
+    transform: scale(1.05);
+    color: var(--primary-blue);
+    box-shadow: 0 5px 15px rgba(14, 52, 112, 0.1);
+}
+
+.range-btn.active {
+    background: var(--primary-blue);
+    color: var(--on-primary);
+    border-color: var(--primary-blue);
+}
+
+.range-btn.active:hover {
+    color: var(--on-primary);
+}
+
+.piano-keyboard {
+    display: flex;
+    position: relative;
+    background: var(--card-bg);
+    padding: 25px 20px 20px; /* 顶部增加 padding 以容纳黑键的 -5px 向上偏移 */
+    border-radius: 12px;
+    user-select: none;
+    box-shadow: var(--card-shadow), inset 0 2px 10px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+    overflow-x: auto; /* 支持 88 键横向滚动 */
+}
+
+.piano-keys {
+    display: flex;
+    position: relative;
+    width: fit-content;
+    min-width: 100%;
+    height: 210px;
+    padding-bottom: 10px;
+}
+
+.key {
+    position: relative;
+    cursor: pointer;
+    transition: background 0.1s, transform 0.05s, box-shadow 0.05s;
+    touch-action: none; /* 极其重要：防止移动端拖动时触发页面滚动，确保滑奏顺畅 */
+    -webkit-user-drag: none; /* 彻底禁用浏览器的原生图片/元素拖拽 */
+}
+
+.key.white {
+    flex: 1;
+    height: 100%;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    box-shadow: 0 6px 0 #e2e8f0;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 10px;
+    font-size: 0.8rem;
+    color: #888;
+    min-width: 0;
+    font-family: 'Musical', 'Inter Var', sans-serif;
+}
+
+.piano-keys.hide-labels .key span {
+    opacity: 0;
+}
+
+.key span {
+    pointer-events: none; /* 防止文字干扰鼠标事件 */
+    user-select: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.key.black {
+    position: absolute;
+    width: 9%; /* 修正为之前要求的 9% */
+    height: 60%;
+    background: #222;
+    border-radius: 4px;
+    z-index: 2;
+    top: -5px; /* 略微上移黑键 */
+    /* 居中于白键缝隙 */
+    margin-left: -4.5%; /* 还原回你调好的 -4.5% */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 0 #000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 8px;
+    font-size: 0.6rem;
+    color: #666;
+    font-family: 'Musical', 'Inter Var', sans-serif;
+}
+
+.key.active {
+    background: var(--primary-blue) !important;
+    color: white !important;
+    transform: translateY(5px);
+    box-shadow: 0 1px 0 #e2e8f0 !important; /* 还原按下时的浅色阴影 */
+    border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.key.black.active {
+    transform: translateY(5px);
+    box-shadow: 0 1px 0 #000 !important; /* 还原黑键按下后的不透明深色 */
+}
+
+/* --- 深色模式适配 --- */
+[data-theme='dark'] .key.white {
+    background: #334155;
+    border-color: #16202c;
+    box-shadow: 0 6px 0 #16202c;
+    color: #64748b;
+}
+
+[data-theme='dark'] .key.white.active {
+    box-shadow: 0 1px 0 #1e293b !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme='dark'] .key.black {
+    background: #111;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 0 #000;
+    color: #94a3b8;
+}
+
+[data-theme='dark'] .piano-keyboard {
+    box-shadow: var(--card-shadow), inset 0 2px 10px rgba(255, 255, 255, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme='light']) .key.white {
+        background: #334155;
+        border-color: #16202c; /* 还原为你指定的深色白键边框 */
+        box-shadow: 0 6px 0 #16202c; /* 还原为你指定的深色白键阴影 */
+        color: #64748b;
+    }
+
+    html:not([data-theme='light']) .key.white.active {
+        box-shadow: 0 1px 0 #1e293b !important;
+        border-color: rgba(0, 0, 0, 0.2) !important;
+    }
+
+    html:not([data-theme='light']) .key.black {
+        background: #111;
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 6px 0 #000;
+        color: #94a3b8;
+    }
+
+    html:not([data-theme='light']) .piano-keyboard {
+        box-shadow: var(--card-shadow), inset 0 2px 10px rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* 移动端特定微调 */
+@media (max-width: 768px) {
+    .piano-keys {
+        height: 160px;
+    }
+    .key span {
+        font-size: 10px;
+    }
+    .piano-container {
+        padding: 10px;
+    }
+    .piano-keyboard {
+        padding: 10px;
+    }
+    /* 移动端隐藏键盘相关设置，因为没有物理键盘 */
+    #range-group, #transpose-group, #piano-help-container {
+        display: none !important;
+    }
+}
+
+/* 键盘映射图变量 */
+:root {
+    --kbd-u: 44px;  /* 基础按键宽度单元 - 显著放大 */
+    --kbd-g: 4px;   /* 按键间距 */
+}
+
+/* --- 键盘映射图视觉样式 --- */
+.kbd-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    border: 1px solid var(--item-border);
+    width: fit-content;
+    min-width: 720px;
+    margin: 0 auto;
+}
+.kbd-row {
+    display: flex;
+    gap: 3px;
+    justify-content: flex-start;
+}
+.kbd-key {
+    width: var(--kbd-u);
+    height: 50px; /* 调高按键高度 */
+    background: var(--card-bg);
+    border: 1px solid var(--item-border);
+    border-bottom: 3px solid var(--item-border);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem; /* 统一原按键字母/名称的字号 */
+    font-weight: 400;
+    color: var(--text-main);
+    flex-shrink: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.kbd-key span {
+    font-family: 'Musical', 'Inter Var', 'Sarasa Gothic', sans-serif;
+    font-size: 1rem; /* 显著放大核心音高标注 */
+    color: var(--primary-blue);
+    margin-top: 0;
+    font-weight: 700;
+}
+.kbd-key.active-map { border-color: var(--primary-blue); background: rgba(30, 102, 198, 0.08); }
+.kbd-key.active-map span { color: var(--primary-blue); }
+.kbd-key:not(.active-map) { opacity: 0.5; background: var(--bg-light); color: var(--text-sub); }
+.kbd-key:not(.active-map) span { display: none; }
+
+/* 功能键宽度适配 */
+.kbd-key.k-tab { width: calc(var(--kbd-u) * 1.5); }
+.kbd-key.k-backspace { width: calc(var(--kbd-u) * 2); }
+.kbd-key.k-caps { width: calc(var(--kbd-u) * 1.8); }
+.kbd-key.k-enter { width: calc(var(--kbd-u) * 2.2 + 3px); }
+.kbd-key.k-backslash { width: calc(var(--kbd-u) * 1.5); }
+.kbd-key.k-shift-l { width: calc(var(--kbd-u) * 2.2); }
+.kbd-key.k-shift-r { width: calc(var(--kbd-u) * 2.8 + 6px); }
+.kbd-key.k-ctrl { width: calc(var(--kbd-u) * 1.25); }
+.kbd-key.k-win { width: calc(var(--kbd-u) * 1.25); }
+.kbd-key.k-alt { width: calc(var(--kbd-u) * 1.25); }
+.kbd-key.k-space { width: calc(var(--kbd-u) * 6.25 + 18px); }
+.kbd-key.active-map { border-color: var(--primary-blue); background: rgba(30, 102, 198, 0.05); }

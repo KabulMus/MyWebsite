@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Piano | Ethan Shaw</title>
+    <link rel="icon" href="favicon.webp" type="image/webp">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/piano.css">
+    <script src="./js/core.js" defer></script>
+    <script src="./js/soundfont-player.js"></script>
+    <script src="./js/acoustic_grand_piano-mp3.js"></script>
+</head>
+<body>
+    <header class="hero-section">
+        <a href="en_US" class="back-home-btn" aria-label="Back to Home">
+            <svg viewBox="0 0 24 24"><path d="M14 18l-6-6 6-6"></path></svg>
+        </a>
+        <section class="hero-content">
+            <div>
+                <h1>Online Piano</h1>
+                <p class="tagline">A simple Web-based piano keyboard</p>
+            </div>
+        </section>
+    </header>
+
+    <main class="content-section">
+        <section class="container">
+            <div class="piano-container">
+                <div class="piano-settings">
+                    <div class="setting-group">
+                        <label>Show Labels</label>
+                        <input type="checkbox" class="piano-checkbox" checked onchange="toggleLabels(this)" style="margin-left: 10px;">
+                    </div>
+                    <div class="setting-group" id="notation-group">
+                        <label>Black Key Notation</label>
+                        <div class="notation-toggle" style="margin-left: 10px;">
+                            <button class="notation-btn" onclick="setPianoNotation('sharp', this)">#</button>
+                            <button class="notation-btn active" onclick="setPianoNotation('natural', this)">♮</button>
+                            <button class="notation-btn" onclick="setPianoNotation('flat', this)">b</button>
+                        </div>
+                    </div>
+                    <div class="setting-group" id="transpose-group">
+                        <label>Transposition</label>
+                        <div class="notation-toggle" style="margin-left: 10px; display: flex; align-items: center;">
+                            <button class="notation-btn" style="width: 32px; height: 32px;" onclick="changeTranspose(-1)">−</button>
+                            <span id="transpose-display" style="min-width: 40px; font-weight: bold; color: var(--primary-blue); font-size: 1.1rem; text-align: center;">0</span>
+                            <button class="notation-btn" style="width: 32px; height: 32px;" onclick="changeTranspose(1)">+</button>
+                            <button class="range-btn" style="min-width: 50px; height: 32px; margin-left: 10px; padding: 0 10px;" onclick="changeTranspose(0, true)">Reset</button>
+                        </div>
+                    </div>
+                    <div class="setting-group" id="range-group">
+                        <label>Octave Range</label>
+                        <div class="notation-toggle" style="margin-left: 10px;">
+                            <button class="range-btn active" onclick="updateKeyboardRange('mini', this)">C4 ~ C5</button>
+                            <button class="range-btn" onclick="updateKeyboardRange('full', this)">88-Key Full</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="piano-keyboard">
+                    <div class="piano-keys" id="piano-keys-container"></div>
+                </div>
+
+                <div id="piano-help-container" style="margin-top: 20px;">
+                    <button class="range-btn" style="background: none; border-color: var(--primary-blue); color: var(--primary-blue); font-weight: 600;" onclick="toggleModal('piano-help-overlay', true)">Keyboard Map</button>
+                </div>
+            </div>
+
+            <footer>
+                <p>©2026 Ethan Shaw</p>
+                <p>Built with love for Charlie and you all</p>
+            </footer>
+        </section>
+    </main>
+
+    <a href="piano" class="lang-toggle-btn" aria-label="切换为中文">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+    </a>
+
+    <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+        <svg viewBox="0 0 48 48"><path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <!-- Piano Keyboard Help Modal -->
+    <section id="piano-help-overlay" class="reward-overlay" onclick="toggleModal('piano-help-overlay', false)">
+        <article class="reward-modal" style="max-width: 800px;" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="toggleModal('piano-help-overlay', false)" aria-label="Close Modal">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
+            </button>
+            <div class="reward-body" style="text-align: left; padding-top: 40px;">
+                <h4 style="margin-bottom: 15px; color: var(--text-main); font-weight: 600; text-align: center;">Keyboard Map</h4>
+                <div style="margin-bottom: 15px;">
+                    <div class="notation-toggle" style="margin-bottom: 15px; justify-content: center;">
+                        <button id="btn-help-mini" class="range-btn active" style="font-size: 0.75rem; min-width: 100px;" onclick="switchHelpView('mini')">C4 ~ C5</button>
+                        <button id="btn-help-full" class="range-btn" style="font-size: 0.75rem; min-width: 100px;" onclick="switchHelpView('full')">88-Key Full</button>
+                    </div>
+
+                    <div id="help-view-mini">
+                        <div class="kbd-container" style="transform: scale(0.95);">
+                            <div class="kbd-row">
+                                <div class="kbd-key">`</div>
+                                <div class="kbd-key">1</div><div class="kbd-key">2</div><div class="kbd-key">3</div><div class="kbd-key">4</div><div class="kbd-key">5</div>
+                                <div class="kbd-key">6</div><div class="kbd-key">7</div><div class="kbd-key">8</div><div class="kbd-key">9</div><div class="kbd-key">0</div>
+                                <div class="kbd-key">-</div><div class="kbd-key">=</div>
+                                <div class="kbd-key k-backspace">Back</div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-tab">Tab</div>
+                                <div class="kbd-key">Q</div><div class="kbd-key active-map">W<span>C#4</span></div><div class="kbd-key active-map">E<span>Eb4</span></div>
+                                <div class="kbd-key">R</div><div class="kbd-key active-map">T<span>F#4</span></div><div class="kbd-key active-map">Y<span>Ab4</span></div>
+                                <div class="kbd-key active-map">U<span>Bb4</span></div><div class="kbd-key">I</div><div class="kbd-key">O</div>
+                                <div class="kbd-key">P</div><div class="kbd-key">[</div><div class="kbd-key">]</div><div class="kbd-key k-backslash">\</div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-caps">Caps</div>
+                                <div class="kbd-key active-map">A<span>C4</span></div>
+                                <div class="kbd-key active-map">S<span>D4</span></div>
+                                <div class="kbd-key active-map">D<span>E4</span></div>
+                                <div class="kbd-key active-map">F<span>F4</span></div>
+                                <div class="kbd-key active-map">G<span>G4</span></div>
+                                <div class="kbd-key active-map">H<span>A4</span></div>
+                                <div class="kbd-key active-map">J<span>B4</span></div>
+                                <div class="kbd-key active-map">K<span>C5</span></div>
+                                <div class="kbd-key">L</div>
+                                <div class="kbd-key">;</div>
+                                <div class="kbd-key">'</div>
+                                <div class="kbd-key k-enter">Enter</div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-shift-l active-map">Shift<span>#</span></div>
+                                <div class="kbd-key">Z</div><div class="kbd-key">X</div><div class="kbd-key">C</div><div class="kbd-key">V</div>
+                                <div class="kbd-key">B</div><div class="kbd-key">N</div><div class="kbd-key">M</div><div class="kbd-key">,</div>
+                                <div class="kbd-key">.</div><div class="kbd-key">/</div>
+                                <div class="kbd-key k-shift-r active-map">Shift<span>#</span></div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-space active-map"><span>A4</span></div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-win">Menu</div>
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="help-view-full" style="display: none;">
+                        <div class="kbd-container" style="transform: scale(0.95);">
+                            <div class="kbd-row">
+                                <div class="kbd-key">`</div>
+                                <div class="kbd-key active-map">1<span>C6</span></div>
+                                <div class="kbd-key active-map">2<span>D6</span></div>
+                                <div class="kbd-key active-map">3<span>E6</span></div>
+                                <div class="kbd-key active-map">4<span>F6</span></div>
+                                <div class="kbd-key active-map">5<span>G6</span></div>
+                                <div class="kbd-key active-map">6<span>A6</span></div>
+                                <div class="kbd-key active-map">7<span>B6</span></div>
+                                <div class="kbd-key active-map">8<span>C7</span></div>
+                                <div class="kbd-key active-map">9<span>D7</span></div>
+                                <div class="kbd-key active-map">0<span>E7</span></div>
+                                <div class="kbd-key active-map">-<span>F7</span></div>
+                                <div class="kbd-key active-map">=<span>G7</span></div>
+                                <div class="kbd-key k-backspace">Back</div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-tab">Tab</div>
+                                <div class="kbd-key active-map">Q<span>C5</span></div>
+                                <div class="kbd-key active-map">W<span>D5</span></div>
+                                <div class="kbd-key active-map">E<span>E5</span></div>
+                                <div class="kbd-key active-map">R<span>F5</span></div>
+                                <div class="kbd-key active-map">T<span>G5</span></div>
+                                <div class="kbd-key active-map">Y<span>A5</span></div>
+                                <div class="kbd-key active-map">U<span>B5</span></div>
+                                <div class="kbd-key active-map">I<span>C6</span></div>
+                                <div class="kbd-key active-map">O<span>D6</span></div>
+                                <div class="kbd-key active-map">P<span>E6</span></div>
+                                <div class="kbd-key active-map">[<span>F6</span></div>
+                                <div class="kbd-key active-map">]<span>G6</span></div>
+                                <div class="kbd-key k-backslash active-map">\<span>A6</span></div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-caps">Caps</div>
+                                <div class="kbd-key active-map">A<span>C4</span></div>
+                                <div class="kbd-key active-map">S<span>D4</span></div>
+                                <div class="kbd-key active-map">D<span>E4</span></div>
+                                <div class="kbd-key active-map">F<span>F4</span></div>
+                                <div class="kbd-key active-map">G<span>G4</span></div>
+                                <div class="kbd-key active-map">H<span>A4</span></div>
+                                <div class="kbd-key active-map">J<span>B4</span></div>
+                                <div class="kbd-key active-map">K<span>C5</span></div>
+                                <div class="kbd-key active-map">L<span>D5</span></div>
+                                <div class="kbd-key active-map">;<span>E5</span></div>
+                                <div class="kbd-key active-map">'<span>F5</span></div>
+                                <div class="kbd-key k-enter">Enter</div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-shift-l active-map">Shift<span>#</span></div>
+                                <div class="kbd-key active-map">Z<span>C3</span></div>
+                                <div class="kbd-key active-map">X<span>D3</span></div>
+                                <div class="kbd-key active-map">C<span>E3</span></div>
+                                <div class="kbd-key active-map">V<span>F3</span></div>
+                                <div class="kbd-key active-map">B<span>G3</span></div>
+                                <div class="kbd-key active-map">N<span>A3</span></div>
+                                <div class="kbd-key active-map">M<span>B3</span></div>
+                                <div class="kbd-key active-map">,<span>C4</span></div>
+                                <div class="kbd-key active-map">.<span>D4</span></div>
+                                <div class="kbd-key active-map">/<span>E4</span></div>
+                                <div class="kbd-key k-shift-r active-map">Shift<span>#</span></div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-space active-map"><span>A4</span></div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-win">Menu</div>
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <div id="global-toast" class="toast-notice">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></svg>
+        <span></span>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const clarityFilter = audioCtx.createBiquadFilter();
+        clarityFilter.type = 'peaking';
+        clarityFilter.frequency.value = 400;
+        clarityFilter.Q.value = 1.0;
+        clarityFilter.gain.value = -4; 
+
+        const airShelf = audioCtx.createBiquadFilter();
+        airShelf.type = 'highshelf';
+        airShelf.frequency.value = 8000;
+        airShelf.gain.value = 4;
+
+        const masterGain = audioCtx.createGain();
+        masterGain.gain.value = 4.0;
+
+        const compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.value = -10; 
+        compressor.knee.value = 20;      
+        compressor.ratio.value = 8;     
+        compressor.attack.value = 0.003; 
+        compressor.release.value = 0.25; 
+
+        clarityFilter.connect(airShelf);
+        airShelf.connect(masterGain);
+        masterGain.connect(compressor);
+        compressor.connect(audioCtx.destination);
+
+        let settings = {
+            showLabels: true,
+            notation: 'natural', 
+            range: 'mini'      
+        };
+
+        const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const KEY_MAP_FULL = {
+            'KeyZ': 'C3', 'KeyX': 'D3', 'KeyC': 'E3', 'KeyV': 'F3', 'KeyB': 'G3', 'KeyN': 'A3', 'KeyM': 'B3', 'Comma': 'C4', 'Period': 'D4', 'Slash': 'E4',
+            'KeyA': 'C4', 'KeyS': 'D4', 'KeyD': 'E4', 'KeyF': 'F4', 'KeyG': 'G4', 'KeyH': 'A4', 'KeyJ': 'B4', 'KeyK': 'C5', 'KeyL': 'D5', 'Semicolon': 'E5', 'Quote': 'F5',
+            'KeyQ': 'C5', 'KeyW': 'D5', 'KeyE': 'E5', 'KeyR': 'F5', 'KeyT': 'G5', 'KeyY': 'A5', 'KeyU': 'B5', 'KeyI': 'C6', 'KeyO': 'D6', 'KeyP': 'E6', 'BracketLeft': 'F6', 'BracketRight': 'G6', 'Backslash': 'A6',
+            'Digit1': 'C6', 'Digit2': 'D6', 'Digit3': 'E6', 'Digit4': 'F6', 'Digit5': 'G6', 'Digit6': 'A6', 'Digit7': 'B6', 'Digit8': 'C7', 'Digit9': 'D7', 'Digit0': 'E7', 'Minus': 'F7', 'Equal': 'G7',
+            'Space': 'A4'
+        };
+
+        const KEY_MAP_MINI = {
+            'KeyA': 'C4', 'KeyS': 'D4', 'KeyD': 'E4', 'KeyF': 'F4', 'KeyG': 'G4', 'KeyH': 'A4', 'KeyJ': 'B4', 'KeyK': 'C5', 'KeyL': 'D5', 'Semicolon': 'E5', 'Quote': 'F5',
+            'KeyW': 'C#4', 'KeyE': 'D#4', 'KeyT': 'F#4', 'KeyY': 'G#4', 'KeyU': 'A#4', 'KeyO': 'C#5', 'KeyP': 'D#5',
+            'Space': 'A4'
+        };
+
+        let currentKeyMap = KEY_MAP_MINI;
+        let transposeAmount = 0;
+
+        function shiftNote(note, delta) {
+            if (!note || delta === 0) return note;
+            const name = note.slice(0, -1);
+            const octave = parseInt(note.slice(-1));
+            const index = NOTE_NAMES.indexOf(name);
+            if (index === -1) return note;
+            const totalIndex = octave * 12 + index + delta;
+            const newOctave = Math.floor(totalIndex / 12);
+            const newIndex = ((totalIndex % 12) + 12) % 12;
+            const result = NOTE_NAMES[newIndex] + newOctave;
+            return (newOctave >= 0 && newOctave <= 8) ? result : note;
+        }
+
+        function getDisplayNote(note, notation) {
+            if (!note.includes('#')) return note;
+            const octave = note.slice(-1);
+            const sharp = note.slice(0, -1);
+            const flats = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
+            if (notation === 'sharp') return sharp + octave;
+            if (notation === 'flat') return flats[sharp] + octave;
+            if (notation === 'natural') {
+                const naturals = { 'C#': 'C#', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
+                return naturals[sharp] + octave;
+            }
+            return sharp + '/' + flats[sharp] + octave;
+        }
+
+        function renderKeyboard() {
+            const container = document.getElementById('piano-keys-container');
+            container.innerHTML = '';
+            container.className = 'piano-keys' + (settings.showLabels ? '' : ' hide-labels');
+            let notes = [];
+            if (settings.range === 'mini') {
+                notes = ['C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4', 'C5'];
+            } else {
+                notes.push('A0', 'A#0', 'B0');
+                for (let i = 1; i <= 7; i++) { NOTE_NAMES.forEach(name => notes.push(name + i)); }
+                notes.push('C8');
+            }
+            const whiteNotes = notes.filter(n => !n.includes('#'));
+            const blackNotes = notes.filter(n => n.includes('#'));
+            const isMobile = window.innerWidth <= 768;
+            const minWhiteWidth = isMobile ? 35 : 40;
+            container.style.width = settings.range === 'full' ? `${whiteNotes.length * minWhiteWidth}px` : '100%';
+
+            whiteNotes.forEach(note => {
+                const keyEl = document.createElement('div');
+                keyEl.className = 'key white';
+                keyEl.dataset.note = note;
+                keyEl.innerHTML = `<span>${note}</span>`;
+                container.appendChild(keyEl);
+                bindKeyEvents(keyEl);
+            });
+            const whiteKeyWidthPercent = 100 / whiteNotes.length;
+            blackNotes.forEach(note => {
+                const keyEl = document.createElement('div');
+                keyEl.className = 'key black';
+                keyEl.dataset.note = note;
+                const baseNote = note[0];
+                const octave = note.slice(-1);
+                const prevWhiteNote = baseNote + octave;
+                const prevIndex = whiteNotes.indexOf(prevWhiteNote);
+                if (prevIndex !== -1) {
+                    keyEl.style.left = `${(prevIndex + 1) * whiteKeyWidthPercent}%`;
+                    keyEl.style.width = `${whiteKeyWidthPercent * 0.72}%`;
+                    keyEl.style.marginLeft = `${whiteKeyWidthPercent * -0.36}%`;
+                }
+                keyEl.innerHTML = `<span>${getDisplayNote(note, settings.notation)}</span>`;
+                container.appendChild(keyEl);
+                bindKeyEvents(keyEl);
+            });
+        }
+
+        window.toggleLabels = function(checkbox) {
+            settings.showLabels = checkbox.checked;
+            document.getElementById('piano-keys-container').classList.toggle('hide-labels', !settings.showLabels);
+            const notationGroup = document.getElementById('notation-group');
+            if (notationGroup) notationGroup.classList.toggle('hidden', !settings.showLabels);
+        };
+
+        window.changeTranspose = function(delta, reset = false) {
+            if (reset) { transposeAmount = 0; } else {
+                transposeAmount += delta;
+                transposeAmount = Math.max(-12, Math.min(12, transposeAmount));
+            }
+            const displayStr = (transposeAmount > 0 ? '+' : '') + transposeAmount;
+            document.getElementById('transpose-display').innerText = displayStr.replace('-', '−');
+        };
+
+        window.setPianoNotation = function(type, btn) {
+            settings.notation = type;
+            document.querySelectorAll('.notation-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderKeyboard();
+        };
+
+        window.updateKeyboardRange = function(range, btn) {
+            settings.range = range;
+            document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const pianoContainer = document.querySelector('.piano-container');
+            const pageContainer = pianoContainer.closest('.container');
+            if (settings.range === 'full') {
+                pianoContainer.classList.add('full-range');
+                if (pageContainer) pageContainer.classList.add('piano-full-width');
+                currentKeyMap = KEY_MAP_FULL;
+            } else {
+                pianoContainer.classList.remove('full-range');
+                if (pageContainer) pageContainer.classList.remove('piano-full-width');
+                currentKeyMap = KEY_MAP_MINI;
+            }
+            renderKeyboard();
+            const parent = document.querySelector('.piano-keyboard');
+            parent.scrollLeft = settings.range === 'full' ? parent.scrollWidth * 0.43 : 0; 
+        };
+
+        window.switchHelpView = function(view) {
+            const miniView = document.getElementById('help-view-mini');
+            const fullView = document.getElementById('help-view-full');
+            const btnMini = document.getElementById('btn-help-mini');
+            const btnFull = document.getElementById('btn-help-full');
+            if (view === 'mini') {
+                miniView.style.display = 'block'; fullView.style.display = 'none';
+                btnMini.classList.add('active'); btnFull.classList.remove('active');
+            } else {
+                miniView.style.display = 'none'; fullView.style.display = 'block';
+                btnMini.classList.remove('active'); btnFull.classList.add('active');
+            }
+        };
+
+        const playingNotes = new Map();
+        let pianoInstrument = null;
+        window.Soundfont = window.Soundfont || {};
+        if (window.MIDI && window.MIDI.Soundfont) { Object.assign(window.Soundfont, window.MIDI.Soundfont); }
+
+        Soundfont.instrument(audioCtx, 'acoustic_grand_piano', { destination: clarityFilter }).then(function (piano) {
+            pianoInstrument = piano; renderKeyboard(); showToast("Piano engine ready");
+        }).catch(err => {
+            showToast("Failed to load sound source", true); renderKeyboard();
+        });
+
+        function noteOn(note, el) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!pianoInstrument || !el || !el.classList.contains('active') || playingNotes.has(note)) return;
+            playingNotes.set(note, pianoInstrument.play(note));
+        }
+
+        function noteOff(note) {
+            const player = playingNotes.get(note);
+            if (!player) return;
+            playingNotes.delete(note);
+            player.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function bindKeyEvents(key) {
+            key.addEventListener('pointerdown', (e) => {
+                if (e.button !== 0) return;
+                e.preventDefault(); key.releasePointerCapture(e.pointerId);
+                key.classList.add('active'); noteOn(key.dataset.note, key);
+            });
+            key.addEventListener('pointerenter', (e) => { if (e.buttons === 1) { key.classList.add('active'); noteOn(key.dataset.note, key); } });
+            key.addEventListener('pointerleave', () => { noteOff(key.dataset.note); key.classList.remove('active'); });
+            key.addEventListener('dragstart', e => e.preventDefault());
+        }
+
+        const activePCKeys = new Map();
+        window.addEventListener('contextmenu', e => e.preventDefault());
+        window.addEventListener('pointerup', () => {
+            activePCKeys.forEach((note, code) => {
+                noteOff(note);
+                const el = document.querySelector(`.key[data-note="${note}"]`);
+                if (el) el.classList.remove('active');
+            });
+            activePCKeys.clear();
+        });
+
+        window.addEventListener('keydown', e => {
+            if (e.repeat) return;
+            const code = e.code;
+            if (code === 'Enter') {
+                const overlay = document.getElementById('piano-help-overlay');
+                toggleModal('piano-help-overlay', !(overlay && overlay.classList.contains('active')));
+                return;
+            }
+            if (currentKeyMap[code]) {
+                if (code === 'Space') e.preventDefault();
+                let note = shiftNote(currentKeyMap[code], transposeAmount);
+                if (e.shiftKey && code !== 'Space') note = shiftNote(note, 1);
+                const el = document.querySelector(`.key[data-note="${note}"]`);
+                if (el && !activePCKeys.has(code)) {
+                    el.classList.add('active'); noteOn(note, el); activePCKeys.set(code, note);
+                }
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            const code = e.code;
+            if (activePCKeys.has(code)) {
+                const note = activePCKeys.get(code); noteOff(note);
+                const el = document.querySelector(`.key[data-note="${note}"]`);
+                if (el) el.classList.remove('active');
+                activePCKeys.delete(code);
+            }
+        });
+    </script>
+</body>
+</html>

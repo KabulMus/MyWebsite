@@ -131,12 +131,35 @@ function toggleMenu(show) {
     if (toggleBtn) toggleBtn.classList.toggle('active', shouldShow);
 }
 
+// 全局 Toast 通知函数
+function showToast(message, isError = false) {
+    const toast = document.getElementById('global-toast');
+    if (!toast) return;
+    const icon = toast.querySelector('svg');
+    const text = toast.querySelector('span');
+    
+    text.innerText = message;
+    if (isError) {
+        toast.style.borderColor = "#ef4444";
+        icon.innerHTML = '<path d="M18 6L6 18M6 6l12 12" style="stroke: #ef4444"/>';
+    } else {
+        toast.style.borderColor = "var(--primary-blue)";
+        icon.innerHTML = '<path d="M20 6L9 17l-5-5" style="stroke: var(--primary-blue)"/>';
+    }
+    
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
 // 复制功能
-function copyToClipboard(text, btn) {
+function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        const original = btn.textContent;
-        btn.textContent = document.documentElement.lang === 'en-US' ? 'Copied!' : '已复制！';
-        setTimeout(() => btn.textContent = original, 2000);
+        const isEn = document.documentElement.lang === 'en-US';
+        const msg = isEn ? 'Copied to clipboard' : '已复制群号到剪贴板';
+        showToast(msg);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showToast('Copy failed', true);
     });
 }
 

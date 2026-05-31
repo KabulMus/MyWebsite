@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线钢琴 | Ethan Shaw</title>
+    <link rel="icon" href="favicon.webp" type="image/webp">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/piano.css">
+    <script src="./js/core.js" defer></script>
+    <!-- 已下载到本地的库文件 -->
+    <script src="./js/soundfont-player.js"></script>
+    <!-- 1. 引入下载好的音源数据文件 -->
+    <script src="./js/acoustic_grand_piano-mp3.js"></script>
+</head>
+<body>
+    <header class="hero-section">
+        <a href="./" class="back-home-btn" aria-label="返回首页">
+            <svg viewBox="0 0 24 24"><path d="M14 18l-6-6 6-6"></path></svg>
+        </a>
+        <section class="hero-content">
+            <div>
+                <h1>在线钢琴</h1>
+                <p class="tagline">简单的 Web 钢琴键盘</p>
+            </div>
+        </section>
+    </header>
+
+    <main class="content-section">
+        <section class="container">
+            <div class="piano-container">
+                <div class="piano-settings">
+                    <div class="setting-group">
+                        <label>显示音名</label>
+                        <input type="checkbox" class="piano-checkbox" checked onchange="toggleLabels(this)" style="margin-left: 10px;">
+                    </div>
+                    <div class="setting-group" id="notation-group">
+                        <label>黑键标注</label>
+                        <div class="notation-toggle" style="margin-left: 10px;">
+                            <button class="notation-btn" onclick="setPianoNotation('sharp', this)">#</button>
+                            <button class="notation-btn active" onclick="setPianoNotation('natural', this)">♮</button>
+                            <button class="notation-btn" onclick="setPianoNotation('flat', this)">b</button>
+                        </div>
+                    </div>
+                    <div class="setting-group" id="transpose-group">
+                        <label>键盘移调</label>
+                        <div class="notation-toggle" style="margin-left: 10px; display: flex; align-items: center;">
+                            <button class="notation-btn" style="width: 32px; height: 32px;" onclick="changeTranspose(-1)">−</button>
+                            <span id="transpose-display" style="min-width: 40px; font-weight: bold; color: var(--primary-blue); font-size: 1.1rem; text-align: center;">0</span>
+                            <button class="notation-btn" style="width: 32px; height: 32px;" onclick="changeTranspose(1)">+</button>
+                            <button class="range-btn" style="min-width: 50px; height: 32px; margin-left: 10px; padding: 0 10px;" onclick="changeTranspose(0, true)">重置</button>
+                        </div>
+                    </div>
+                    <div class="setting-group" id="range-group">
+                        <label>音域选择</label>
+                        <div class="notation-toggle" style="margin-left: 10px;">
+                            <button class="range-btn active" onclick="updateKeyboardRange('mini', this)">C4 ~ C5</button>
+                            <button class="range-btn" onclick="updateKeyboardRange('full', this)">88 键全键盘</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="piano-keyboard">
+                    <div class="piano-keys" id="piano-keys-container"></div>
+                </div>
+
+                <div id="piano-help-container" style="margin-top: 20px;">
+                    <button class="range-btn" style="background: none; border-color: var(--primary-blue); color: var(--primary-blue); font-weight: 600;" onclick="toggleModal('piano-help-overlay', true)">键盘映射图</button>
+                </div>
+            </div>
+
+            <footer>
+                <p>©2026 Ethan Shaw</p>
+                <p>Built with love for Charlie and you all</p>
+            </footer>
+        </section>
+    </main>
+
+    <a href="piano_en" class="lang-toggle-btn" aria-label="Switch to English">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+    </a>
+
+    <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切换亮暗模式">
+        <svg viewBox="0 0 48 48"><path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <!-- 钢琴键盘帮助弹窗 -->
+    <section id="piano-help-overlay" class="reward-overlay" onclick="toggleModal('piano-help-overlay', false)">
+        <article class="reward-modal" style="max-width: 800px;" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="toggleModal('piano-help-overlay', false)" aria-label="关闭弹窗">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
+            </button>
+            <div class="reward-body" style="text-align: left; padding-top: 40px;">
+                <h4 style="margin-bottom: 15px; color: var(--text-main); font-weight: 600; text-align: center;">键盘映射图</h4>
+                <div style="margin-bottom: 15px;">
+                    <!-- 映射图切换按钮 -->
+                    <div class="notation-toggle" style="margin-bottom: 15px; justify-content: center;">
+                        <button id="btn-help-mini" class="range-btn active" style="font-size: 0.75rem; min-width: 100px;" onclick="switchHelpView('mini')">C4 ~ C5</button>
+                        <button id="btn-help-full" class="range-btn" style="font-size: 0.75rem; min-width: 100px;" onclick="switchHelpView('full')">88 键全键盘</button>
+                    </div>
+
+                    <!-- 简易模式图解 -->
+                    <div id="help-view-mini">
+                        <div class="kbd-container" style="transform: scale(0.95);">
+                            <!-- 第一排：数字行 -->
+                            <div class="kbd-row">
+                                <div class="kbd-key">`</div>
+                                <div class="kbd-key">1</div><div class="kbd-key">2</div><div class="kbd-key">3</div><div class="kbd-key">4</div><div class="kbd-key">5</div>
+                                <div class="kbd-key">6</div><div class="kbd-key">7</div><div class="kbd-key">8</div><div class="kbd-key">9</div><div class="kbd-key">0</div>
+                                <div class="kbd-key">-</div><div class="kbd-key">=</div>
+                                <div class="kbd-key k-backspace">Back</div>
+                            </div>
+                            <!-- 第二排：QWERTY -->
+                            <div class="kbd-row">
+                                <div class="kbd-key k-tab">Tab</div>
+                                <div class="kbd-key">Q</div><div class="kbd-key active-map">W<span>C#4</span></div><div class="kbd-key active-map">E<span>Eb4</span></div>
+                                <div class="kbd-key">R</div><div class="kbd-key active-map">T<span>F#4</span></div><div class="kbd-key active-map">Y<span>Ab4</span></div>
+                                <div class="kbd-key active-map">U<span>Bb4</span></div><div class="kbd-key">I</div><div class="kbd-key">O</div>
+                                <div class="kbd-key">P</div><div class="kbd-key">[</div><div class="kbd-key">]</div><div class="kbd-key k-backslash">\</div>
+                            </div>
+                            <!-- 第三排：ASDF -->
+                            <div class="kbd-row">
+                                <div class="kbd-key k-caps">Caps</div>
+                                <div class="kbd-key active-map">A<span>C4</span></div>
+                                <div class="kbd-key active-map">S<span>D4</span></div>
+                                <div class="kbd-key active-map">D<span>E4</span></div>
+                                <div class="kbd-key active-map">F<span>F4</span></div>
+                                <div class="kbd-key active-map">G<span>G4</span></div>
+                                <div class="kbd-key active-map">H<span>A4</span></div>
+                                <div class="kbd-key active-map">J<span>B4</span></div>
+                                <div class="kbd-key active-map">K<span>C5</span></div>
+                                <div class="kbd-key">L</div>
+                                <div class="kbd-key">;</div>
+                                <div class="kbd-key">'</div>
+                                <div class="kbd-key k-enter">Enter</div>
+                            </div>
+                            <!-- 第四排：ZXCV -->
+                            <div class="kbd-row">
+                                <div class="kbd-key k-shift-l active-map">Shift<span>#</span></div>
+                                <div class="kbd-key">Z</div><div class="kbd-key">X</div><div class="kbd-key">C</div><div class="kbd-key">V</div>
+                                <div class="kbd-key">B</div><div class="kbd-key">N</div><div class="kbd-key">M</div><div class="kbd-key">,</div>
+                                <div class="kbd-key">.</div><div class="kbd-key">/</div>
+                                <div class="kbd-key k-shift-r active-map">Shift<span>#</span></div>
+                            </div>
+                            <!-- 第五排：功能行 -->
+                            <div class="kbd-row">
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-space active-map"><span>A4</span></div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-win">Menu</div>
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 全音域模式图解 -->
+                    <div id="help-view-full" style="display: none;">
+                        <div class="kbd-container" style="transform: scale(0.95);">
+                            <div class="kbd-row">
+                                <div class="kbd-key">`</div>
+                                <div class="kbd-key active-map">1<span>C6</span></div>
+                                <div class="kbd-key active-map">2<span>D6</span></div>
+                                <div class="kbd-key active-map">3<span>E6</span></div>
+                                <div class="kbd-key active-map">4<span>F6</span></div>
+                                <div class="kbd-key active-map">5<span>G6</span></div>
+                                <div class="kbd-key active-map">6<span>A6</span></div>
+                                <div class="kbd-key active-map">7<span>B6</span></div>
+                                <div class="kbd-key active-map">8<span>C7</span></div>
+                                <div class="kbd-key active-map">9<span>D7</span></div>
+                                <div class="kbd-key active-map">0<span>E7</span></div>
+                                <div class="kbd-key active-map">-<span>F7</span></div>
+                                <div class="kbd-key active-map">=<span>G7</span></div>
+                                <div class="kbd-key k-backspace">Back</div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-tab">Tab</div>
+                                <div class="kbd-key active-map">Q<span>C5</span></div>
+                                <div class="kbd-key active-map">W<span>D5</span></div>
+                                <div class="kbd-key active-map">E<span>E5</span></div>
+                                <div class="kbd-key active-map">R<span>F5</span></div>
+                                <div class="kbd-key active-map">T<span>G5</span></div>
+                                <div class="kbd-key active-map">Y<span>A5</span></div>
+                                <div class="kbd-key active-map">U<span>B5</span></div>
+                                <div class="kbd-key active-map">I<span>C6</span></div>
+                                <div class="kbd-key active-map">O<span>D6</span></div>
+                                <div class="kbd-key active-map">P<span>E6</span></div>
+                                <div class="kbd-key active-map">[<span>F6</span></div>
+                                <div class="kbd-key active-map">]<span>G6</span></div>
+                                <div class="kbd-key k-backslash active-map">\<span>A6</span></div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-caps">Caps</div>
+                                <div class="kbd-key active-map">A<span>C4</span></div>
+                                <div class="kbd-key active-map">S<span>D4</span></div>
+                                <div class="kbd-key active-map">D<span>E4</span></div>
+                                <div class="kbd-key active-map">F<span>F4</span></div>
+                                <div class="kbd-key active-map">G<span>G4</span></div>
+                                <div class="kbd-key active-map">H<span>A4</span></div>
+                                <div class="kbd-key active-map">J<span>B4</span></div>
+                                <div class="kbd-key active-map">K<span>C5</span></div>
+                                <div class="kbd-key active-map">L<span>D5</span></div>
+                                <div class="kbd-key active-map">;<span>E5</span></div>
+                                <div class="kbd-key active-map">'<span>F5</span></div>
+                                <div class="kbd-key k-enter">Enter</div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-shift-l active-map">Shift<span>#</span></div>
+                                <div class="kbd-key active-map">Z<span>C3</span></div>
+                                <div class="kbd-key active-map">X<span>D3</span></div>
+                                <div class="kbd-key active-map">C<span>E3</span></div>
+                                <div class="kbd-key active-map">V<span>F3</span></div>
+                                <div class="kbd-key active-map">B<span>G3</span></div>
+                                <div class="kbd-key active-map">N<span>A3</span></div>
+                                <div class="kbd-key active-map">M<span>B3</span></div>
+                                <div class="kbd-key active-map">,<span>C4</span></div>
+                                <div class="kbd-key active-map">.<span>D4</span></div>
+                                <div class="kbd-key active-map">/<span>E4</span></div>
+                                <div class="kbd-key k-shift-r active-map">Shift<span>#</span></div>
+                            </div>
+                            <div class="kbd-row">
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-space active-map"><span>A4</span></div>
+                                <div class="kbd-key k-alt">Alt</div>
+                                <div class="kbd-key k-win">Win</div>
+                                <div class="kbd-key k-win">Menu</div>                                
+                                <div class="kbd-key k-ctrl">Ctrl</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <!-- 全局 Toast 通知容器 -->
+    <div id="global-toast" class="toast-notice">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></svg>
+        <span></span>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+          // --- 重新构建：专业级音频处理链 ---
+        
+        // 1. 去浑浊 (De-mud Filter): 针对 400Hz 附近的“箱体共鸣”进行微降，让声音不闷
+        const clarityFilter = audioCtx.createBiquadFilter();
+        clarityFilter.type = 'peaking';
+        clarityFilter.frequency.value = 400;
+        clarityFilter.Q.value = 1.0;
+        clarityFilter.gain.value = -4; 
+
+        // 2. 空气感 (Air Shelf): 提升 8000Hz 以上的高频，增加真实感
+        const airShelf = audioCtx.createBiquadFilter();
+        airShelf.type = 'highshelf';
+        airShelf.frequency.value = 8000;
+        airShelf.gain.value = 4;
+
+        // 3. 响度补偿 (Gain): 解决声音太小的问题
+        const masterGain = audioCtx.createGain();
+        masterGain.gain.value = 4.0; // 这里的 4.0 是基础倍数
+
+        // 4. 动态压缩 (Limiter/Compressor): 保证大音量时不破音，增加音色饱满度
+        const compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.value = -10; 
+        compressor.knee.value = 20;      
+        compressor.ratio.value = 8;     
+        compressor.attack.value = 0.003; 
+        compressor.release.value = 0.25; 
+
+        // 连接链路: [音源] -> 净化 -> 增亮 -> 放大 -> 压缩 -> [扬声器]
+        clarityFilter.connect(airShelf);
+        airShelf.connect(masterGain);
+        masterGain.connect(compressor);
+        compressor.connect(audioCtx.destination);
+
+        // --- 键盘生成与设置逻辑 ---
+        let settings = {
+            showLabels: true,
+            notation: 'natural', 
+            range: 'mini'      
+        };
+
+        const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const KEY_MAP_FULL = {
+            // 底排键盘：低音八度 (C3 - B3) + 顺延
+            'KeyZ': 'C3', 'KeyX': 'D3', 'KeyC': 'E3', 'KeyV': 'F3', 'KeyB': 'G3', 'KeyN': 'A3', 'KeyM': 'B3', 'Comma': 'C4', 'Period': 'D4', 'Slash': 'E4',
+            // 中排键盘：标准八度 (C4 - C5) + 顺延
+            'KeyA': 'C4', 'KeyS': 'D4', 'KeyD': 'E4', 'KeyF': 'F4', 'KeyG': 'G4', 'KeyH': 'A4', 'KeyJ': 'B4', 'KeyK': 'C5', 'KeyL': 'D5', 'Semicolon': 'E5', 'Quote': 'F5',
+            // 上排键盘：高音八度 (C5 - C6) + 顺延
+            'KeyQ': 'C5', 'KeyW': 'D5', 'KeyE': 'E5', 'KeyR': 'F5', 'KeyT': 'G5', 'KeyY': 'A5', 'KeyU': 'B5', 'KeyI': 'C6', 'KeyO': 'D6', 'KeyP': 'E6', 'BracketLeft': 'F6', 'BracketRight': 'G6', 'Backslash': 'A6',
+            // 数字键排：极高音八度 (C6 - C7) + 顺延
+            'Digit1': 'C6', 'Digit2': 'D6', 'Digit3': 'E6', 'Digit4': 'F6', 'Digit5': 'G6', 'Digit6': 'A6', 'Digit7': 'B6', 'Digit8': 'C7', 'Digit9': 'D7', 'Digit0': 'E7', 'Minus': 'F7', 'Equal': 'G7',
+            // 特殊键
+            'Space': 'A4'
+        };
+
+        const KEY_MAP_MINI = {
+            // 经典映射 (C4-C5 模式): 中排为白键，上排(QWER)对应位置为黑键
+            'KeyA': 'C4', 'KeyS': 'D4', 'KeyD': 'E4', 'KeyF': 'F4', 'KeyG': 'G4', 'KeyH': 'A4', 'KeyJ': 'B4', 'KeyK': 'C5', 'KeyL': 'D5', 'Semicolon': 'E5', 'Quote': 'F5',
+            'KeyW': 'C#4', 'KeyE': 'D#4', 'KeyT': 'F#4', 'KeyY': 'G#4', 'KeyU': 'A#4', 'KeyO': 'C#5', 'KeyP': 'D#5',
+            // 特殊键
+            'Space': 'A4'
+        };
+
+        let currentKeyMap = KEY_MAP_MINI;
+
+        // 移调偏移量 (仅对键盘映射生效)
+        let transposeAmount = 0;
+
+        // 通用音符位移函数 (半音为单位)
+        function shiftNote(note, delta) {
+            if (!note || delta === 0) return note;
+            const name = note.slice(0, -1);
+            const octave = parseInt(note.slice(-1));
+            const index = NOTE_NAMES.indexOf(name);
+            if (index === -1) return note;
+
+            const totalIndex = octave * 12 + index + delta;
+            const newOctave = Math.floor(totalIndex / 12);
+            const newIndex = ((totalIndex % 12) + 12) % 12;
+            
+            const result = NOTE_NAMES[newIndex] + newOctave;
+            return (newOctave >= 0 && newOctave <= 8) ? result : note;
+        }
+
+        function getDisplayNote(note, notation) {
+            if (!note.includes('#')) return note;
+            const octave = note.slice(-1);
+            const sharp = note.slice(0, -1);
+            const flats = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
+            if (notation === 'sharp') return sharp + octave;
+            if (notation === 'flat') return flats[sharp] + octave;
+            if (notation === 'natural') {
+                const naturals = { 'C#': 'C#', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
+                return naturals[sharp] + octave;
+            }
+            return sharp + '/' + flats[sharp] + octave;
+        }
+
+        function renderKeyboard() {
+            const container = document.getElementById('piano-keys-container');
+            container.innerHTML = '';
+            container.className = 'piano-keys' + (settings.showLabels ? '' : ' hide-labels');
+
+            let notes = [];
+            if (settings.range === 'mini') {
+                notes = ['C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4', 'C5'];
+            } else {
+                // 88 键范围: A0 到 C8
+                notes.push('A0', 'A#0', 'B0');
+                for (let i = 1; i <= 7; i++) {
+                    NOTE_NAMES.forEach(name => notes.push(name + i));
+                }
+                notes.push('C8');
+            }
+
+            const whiteNotes = notes.filter(n => !n.includes('#'));
+            const blackNotes = notes.filter(n => n.includes('#'));
+
+            // 移动端适配：如果屏幕太小，给琴键一个最小宽度防止挤压
+            const isMobile = window.innerWidth <= 768;
+            const minWhiteWidth = isMobile ? 35 : 40;
+            const totalWhiteWidth = whiteNotes.length * minWhiteWidth;
+            
+            // 强制同步容器宽度，防止 flex 布局与百分比定位冲突
+            container.style.width = settings.range === 'full' ? `${totalWhiteWidth}px` : '100%';
+
+            // 渲染白键
+            whiteNotes.forEach(note => {
+                const keyEl = document.createElement('div');
+                keyEl.className = 'key white';
+                keyEl.dataset.note = note;
+                const pcKey = Object.keys(currentKeyMap).find(k => currentKeyMap[k] === note);
+                if (pcKey) keyEl.dataset.key = pcKey;
+                
+                keyEl.innerHTML = `<span>${note}</span>`;
+                container.appendChild(keyEl);
+                bindKeyEvents(keyEl);
+            });
+
+            // 比例常量：黑键宽度应约为白键宽度的 72% (基于你之前的 9% / 12.5% 计算)
+            const whiteKeyWidthPercent = 100 / whiteNotes.length;
+
+            // 渲染黑键并计算定位
+            blackNotes.forEach(note => {
+                const keyEl = document.createElement('div');
+                keyEl.className = 'key black';
+                keyEl.dataset.note = note;
+                const pcKey = Object.keys(currentKeyMap).find(k => currentKeyMap[k] === note);
+                if (pcKey) keyEl.dataset.key = pcKey;
+
+                const baseNote = note[0];
+                const octave = note.slice(-1);
+                const prevWhiteNote = baseNote + octave;
+                const prevIndex = whiteNotes.indexOf(prevWhiteNote);
+                
+                if (prevIndex !== -1) {
+                    // 精确计算左偏移、宽度和左边距百分比，确保比例与你之前手调的一致
+                    keyEl.style.left = `${(prevIndex + 1) * whiteKeyWidthPercent}%`;
+                    keyEl.style.width = `${whiteKeyWidthPercent * 0.72}%`;
+                    keyEl.style.marginLeft = `${whiteKeyWidthPercent * -0.36}%`;
+                }
+
+                keyEl.innerHTML = `<span>${getDisplayNote(note, settings.notation)}</span>`;
+                container.appendChild(keyEl);
+                bindKeyEvents(keyEl);
+            });
+        }
+
+        window.toggleLabels = function(checkbox) {
+            settings.showLabels = checkbox.checked;
+            const container = document.getElementById('piano-keys-container');
+            container.classList.toggle('hide-labels', !settings.showLabels);
+            
+            // 控制黑键标注设置组的显隐
+            const notationGroup = document.getElementById('notation-group');
+            if (notationGroup) {
+                notationGroup.classList.toggle('hidden', !settings.showLabels);
+            }
+        };
+
+        window.changeTranspose = function(delta, reset = false) {
+            if (reset) {
+                transposeAmount = 0;
+            } else {
+                transposeAmount += delta;
+                // 限制在 -12 到 +12 之间
+                transposeAmount = Math.max(-12, Math.min(12, transposeAmount));
+            }
+            const displayStr = (transposeAmount > 0 ? '+' : '') + transposeAmount;
+            document.getElementById('transpose-display').innerText = displayStr.replace('-', '−');
+        };
+
+        window.setPianoNotation = function(type, btn) {
+            settings.notation = type;
+            document.querySelectorAll('.notation-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderKeyboard();
+        };
+
+        window.updateKeyboardRange = function(range, btn) {
+            settings.range = range;
+            document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const pianoContainer = document.querySelector('.piano-container');
+            const pageContainer = pianoContainer.closest('.container');
+
+            if (settings.range === 'full') {
+                pianoContainer.classList.add('full-range');
+                if (pageContainer) pageContainer.classList.add('piano-full-width');
+                currentKeyMap = KEY_MAP_FULL;
+            } else {
+                pianoContainer.classList.remove('full-range');
+                if (pageContainer) pageContainer.classList.remove('piano-full-width');
+                currentKeyMap = KEY_MAP_MINI;
+            }
+
+            renderKeyboard();
+            
+            const parent = document.querySelector('.piano-keyboard');
+            parent.scrollLeft = settings.range === 'full' ? parent.scrollWidth * 0.43 : 0; 
+        };
+
+        // 键盘映射图内的视图切换
+        window.switchHelpView = function(view) {
+            const miniView = document.getElementById('help-view-mini');
+            const fullView = document.getElementById('help-view-full');
+            const btnMini = document.getElementById('btn-help-mini');
+            const btnFull = document.getElementById('btn-help-full');
+
+            if (view === 'mini') {
+                miniView.style.display = 'block';
+                fullView.style.display = 'none';
+                btnMini.classList.add('active');
+                btnFull.classList.remove('active');
+            } else {
+                miniView.style.display = 'none';
+                fullView.style.display = 'block';
+                btnMini.classList.remove('active');
+                btnFull.classList.add('active');
+            }
+        };
+
+        // --- Toast 通知逻辑 ---
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('global-toast');
+            if (!toast) return;
+            const icon = toast.querySelector('svg');
+            const text = toast.querySelector('span');
+            
+            text.innerText = message;
+            if (isError) {
+                toast.style.borderColor = "#ef4444";
+                icon.innerHTML = '<path d="M18 6L6 18M6 6l12 12" style="color: #ef4444"/>';
+            } else {
+                toast.style.borderColor = "var(--primary-blue)";
+                icon.innerHTML = '<path d="M20 6L9 17l-5-5" style="color: var(--primary-blue)"/>';
+            }
+            
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        const playingNotes = new Map();
+        let pianoInstrument = null;
+
+        // --- 本地音源桥接逻辑 ---
+        
+        // 2. 增强型兼容处理：确保全局变量正确挂载
+        window.Soundfont = window.Soundfont || {};
+        if (window.MIDI && window.MIDI.Soundfont) {
+            Object.assign(window.Soundfont, window.MIDI.Soundfont);
+        }
+
+        // 3. 初始化音源：强制使用本地加载的数据
+        const instrumentName = 'acoustic_grand_piano'; // 确保这个名字与 JS 文件里定义的一致
+        
+        console.log("检查音源数据…", window.Soundfont[instrumentName] ? "已找到" : "未找到");
+
+        Soundfont.instrument(audioCtx, instrumentName, { 
+            destination: clarityFilter, // 从链路起点进入
+        }).then(function (piano) {
+            pianoInstrument = piano;
+            renderKeyboard(); // 初始化绘制
+            showToast("钢琴音源已就绪");
+        }).catch(err => {
+            console.error("钢琴加载失败:", err);
+            showToast("音源加载失败", true);
+            renderKeyboard(); // 即使音源失败也渲染键盘，允许静音练习
+        });
+
+         function noteOn(note, el) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            // 检查音源是否加载完成，以及是否已经在播放
+            if (!pianoInstrument) return;
+            if (!el || !el.classList.contains('active')) return; 
+            if (playingNotes.has(note)) return;
+
+            // 播放采样音频
+            const player = pianoInstrument.play(note);
+            playingNotes.set(note, player);
+        }
+
+        function noteOff(note) {
+            const player = playingNotes.get(note);
+            if (!player) return;
+            
+            playingNotes.delete(note);
+            
+            // 停止播放，0.1s 的淡出模拟止音器效果
+            player.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function bindKeyEvents(key) {
+            // 使用 pointerdown 代替 mousedown
+            key.addEventListener('pointerdown', (e) => {
+                if (e.button !== 0) return;
+                e.preventDefault();
+                // 释放隐式指针捕获。默认情况下，按下指针会锁定在该元素上，
+                // 释放它可以让指针在移动到其他琴键时正常触发其 pointerenter 事件。
+                key.releasePointerCapture(e.pointerId);
+                key.classList.add('active');
+                noteOn(key.dataset.note, key);
+            });
+
+            // 使用 pointerenter 结合 e.buttons 直接判断按键状态，无需手动维护全局变量
+            key.addEventListener('pointerenter', (e) => {
+                if (e.buttons === 1) { // 1 表示左键按住状态
+                    key.classList.add('active');
+                    noteOn(key.dataset.note, key);
+                }
+            });
+
+            key.addEventListener('pointerleave', () => {
+                noteOff(key.dataset.note);
+                key.classList.remove('active');
+            });
+
+            // 彻底禁用原生拖拽，防止干扰事件流
+            key.addEventListener('dragstart', e => e.preventDefault());
+        }
+
+        // 用于记录物理按键当前对应的音符，处理 Shift 键状态切换
+        const activePCKeys = new Map();
+
+        // 禁止整个页面的右键菜单，防止右键导致按键状态卡死
+        window.addEventListener('contextmenu', e => e.preventDefault());
+
+        // 全局清理，防止在琴键外松开时状态残留
+        window.addEventListener('pointerup', () => {
+            activePCKeys.forEach((note, code) => {
+                noteOff(note);
+                const el = document.querySelector(`.key[data-note="${note}"]`);
+                if (el) el.classList.remove('active');
+            });
+            activePCKeys.clear();
+        });
+
+        window.addEventListener('keydown', e => {
+            if (e.repeat) return;
+            const code = e.code;
+
+            // 按下 Enter 键切换键盘映射图的显示状态 (Toggle)
+            if (code === 'Enter') {
+                const overlay = document.getElementById('piano-help-overlay');
+                const isOpen = overlay && overlay.classList.contains('active');
+                toggleModal('piano-help-overlay', !isOpen);
+                return;
+            }
+
+            if (currentKeyMap[code]) {
+                if (code === 'Space') e.preventDefault(); // 阻止空格键滚动页面
+                let note = currentKeyMap[code];
+                
+                // 1. 应用映射移调 (仅限键盘输入)
+                note = shiftNote(note, transposeAmount);
+                
+                // 只有当按下的不是空格键时，才处理 Shift 升高半音的逻辑
+                if (e.shiftKey && code !== 'Space') note = shiftNote(note, 1);
+
+                const el = document.querySelector(`.key[data-note="${note}"]`);
+                if (el && !activePCKeys.has(code)) {
+                    el.classList.add('active');
+                    noteOn(note, el);
+                    activePCKeys.set(code, note);
+                }
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            const code = e.code;
+            if (activePCKeys.has(code)) {
+                const note = activePCKeys.get(code);
+                noteOff(note);
+                const el = document.querySelector(`.key[data-note="${note}"]`);
+                if (el) el.classList.remove('active');
+                activePCKeys.delete(code);
+            }
+        });
+    </script>
+</body>
+</html>
