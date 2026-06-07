@@ -421,6 +421,7 @@
 .loading-progress-container {
     width: 100%;
     background: var(--bg-light);
+    pointer-events: none; /* 防止进度条自身拦截点击，由父级 overlay 统一处理 */
     height: 12px;
     border-radius: 10px;
     margin: 20px 0 10px;

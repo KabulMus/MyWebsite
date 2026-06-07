@@ -558,12 +558,12 @@
         Soundfont.instrument(audioCtx, instrumentName, { 
             destination: clarityFilter, // 从链路起点进入
         }).then(function (piano) {
+            pianoInstrument = piano; 
             clearInterval(progressTimer);
             updateLoadingUI(100);
             
-            // 稍微延迟关闭，让用户看到 100% 的状态
+            // 只有成功获取到 piano 对象后，才允许关闭弹窗并渲染键盘
             setTimeout(() => {
-                pianoInstrument = piano; 
                 renderKeyboard(); 
                 loadingOverlay.style.opacity = '0';
                 setTimeout(() => { loadingOverlay.style.visibility = 'hidden'; }, 400);
@@ -571,17 +571,17 @@
             }, 300);
         }).catch(err => {
             clearInterval(progressTimer);
-            loadingOverlay.style.visibility = 'hidden';
             console.error("钢琴加载失败:", err);
-            showToast("钢琴音源加载失败", true);
-            renderKeyboard(); // 即使音源失败也渲染键盘，允许静音练习
+            loadingText.innerText = "加载失败，请刷新页面重试";
+            loadingText.style.color = "#ef4444";
+            showToast("钢琴音源加载失败，请检查网络", true);
         });
 
          function noteOn(note, el) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
-            // 检查音源是否加载完成，以及是否已经在播放
-            if (!pianoInstrument) return;
+            // 严格检查：音源未准备好或遮罩层未消失时，禁止播放
+            if (!pianoInstrument || loadingOverlay.style.visibility !== 'hidden') return;
             if (!el || !el.classList.contains('active')) return; 
             if (playingNotes.has(note)) return;
 
@@ -648,6 +648,9 @@
         window.addEventListener('keydown', e => {
             if (e.repeat) return;
             const code = e.code;
+
+            // 如果音源未加载完成，拦截所有键盘交互
+            if (!pianoInstrument || loadingOverlay.style.visibility !== 'hidden') return;
 
             // 按下 Enter 键切换键盘映射图的显示状态 (Toggle)
             if (code === 'Enter') {
