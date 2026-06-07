@@ -416,6 +416,25 @@
     margin-top: 0;
     font-weight: 700;
 }
+
+/* --- 加载进度条专属样式 --- */
+.loading-progress-container {
+    width: 100%;
+    background: var(--bg-light);
+    height: 12px;
+    border-radius: 10px;
+    margin: 20px 0 10px;
+    overflow: hidden;
+    border: 1px solid var(--item-border);
+    position: relative;
+}
+
+#loading-progress-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--primary-blue);
+    transition: width 0.2s ease;
+}
 .kbd-key.active-map { border-color: var(--primary-blue); background: rgba(30, 102, 198, 0.08); }
 .kbd-key.active-map span { color: var(--primary-blue); }
 .kbd-key:not(.active-map) { opacity: 0.5; background: var(--bg-light); color: var(--text-sub); }

@@ -227,6 +227,19 @@
         </article>
     </section>
 
+    <!-- 音源加载弹窗 -->
+    <section id="loading-overlay" class="reward-overlay" style="visibility: visible; opacity: 1; z-index: 3000;">
+        <article class="reward-modal" style="transform: translateY(0) scale(1);">
+            <div class="reward-body">
+                <h4 style="margin-bottom: 10px; color: var(--text-main); font-weight: 600;">Loading Piano Sounds</h4>
+                <div class="loading-progress-container">
+                    <div id="loading-progress-bar"></div>
+                </div>
+                <p id="loading-status-text" style="font-size: 0.85rem; color: var(--text-sub);">Initializing... 0%</p>
+            </div>
+        </article>
+    </section>
+
     <div id="global-toast" class="toast-notice">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></svg>
         <span></span>
@@ -419,10 +432,42 @@
         window.Soundfont = window.Soundfont || {};
         if (window.MIDI && window.MIDI.Soundfont) { Object.assign(window.Soundfont, window.MIDI.Soundfont); }
 
+        // --- 加载进度逻辑 ---
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingBar = document.getElementById('loading-progress-bar');
+        const loadingText = document.getElementById('loading-status-text');
+        let loadProgress = 0;
+
+        // 模拟进度：前 90% 自动增长
+        const progressTimer = setInterval(() => {
+            if (loadProgress < 90) {
+                loadProgress += Math.random() * 15;
+                if (loadProgress > 90) loadProgress = 90;
+                updateLoadingUI(loadProgress);
+            }
+        }, 100);
+
+        function updateLoadingUI(val) {
+            loadingBar.style.width = val + '%';
+            loadingText.innerText = `Loading Assets... ${Math.floor(val)}%`;
+        }
+
         Soundfont.instrument(audioCtx, 'acoustic_grand_piano', { destination: clarityFilter }).then(function (piano) {
-            pianoInstrument = piano; renderKeyboard(); showToast("Piano engine ready");
+            clearInterval(progressTimer);
+            updateLoadingUI(100);
+            
+            // 稍微延迟关闭，让用户看到 100% 的状态
+            setTimeout(() => {
+                pianoInstrument = piano; 
+                renderKeyboard(); 
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => { loadingOverlay.style.visibility = 'hidden'; }, 400);
+                showToast("Piano sounds ready");
+            }, 300);
         }).catch(err => {
-            showToast("Failed to load sound source", true); renderKeyboard();
+            showToast("Failed to load piano sounds", true); 
+            renderKeyboard();
+            loadingOverlay.style.visibility = 'hidden';
         });
 
         function noteOn(note, el) {
