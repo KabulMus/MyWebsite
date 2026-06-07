@@ -250,7 +250,7 @@
     font-size: 0.8rem;
     color: #888;
     min-width: 0;
-    font-family: 'Musical', 'Inter Var', sans-serif;
+    font-family: 'Musical', 'Inter Var', 'Source Han Sans', sans-serif;
 }
 
 .piano-keys.hide-labels .key span {
@@ -282,7 +282,7 @@
     padding-bottom: 8px;
     font-size: 0.6rem;
     color: #666;
-    font-family: 'Musical', 'Inter Var', sans-serif;
+    font-family: 'Musical', 'Inter Var', 'Source Han Sans', sans-serif;
 }
 
 .key.active {
@@ -295,7 +295,7 @@
 
 .key.black.active {
     transform: translateY(5px);
-    box-shadow: 0 1px 0 #000 !important; /* 还原黑键按下后的不透明深色 */
+    box-shadow: 0 1px 0 var(--primary-blue) !important;
 }
 
 /* --- 深色模式适配 --- */
@@ -410,7 +410,7 @@
     white-space: nowrap;
 }
 .kbd-key span {
-    font-family: 'Musical', 'Inter Var', 'Sarasa Gothic', sans-serif;
+    font-family: 'Musical', 'Inter Var', 'Source Han Sans', sans-serif;
     font-size: 1rem; /* 显著放大核心音高标注 */
     color: var(--primary-blue);
     margin-top: 0;

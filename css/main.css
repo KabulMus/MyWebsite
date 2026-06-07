@@ -28,18 +28,25 @@
     font-style: normal;
     font-display: swap;
 }
-@font-face { font-family: 'Inter Var'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable.woff2') format('woff2-variations'); }
-@font-face { font-family: 'Inter Var'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable-Italic.woff2') format('woff2-variations'); }
+/* 统一 Inter 可变字体声明 */
+@font-face { font-family: 'Inter Var'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable.woff2') format('woff2'); }
+@font-face { font-family: 'Inter Var'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable-Italic.woff2') format('woff2'); }
 
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-SemiBold.woff2') format('woff2'); font-weight: 500 600; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-LightItalic.woff2') format('woff2'); font-weight: 300; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-SemiBoldItalic.woff2') format('woff2'); font-weight: 500 600; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Sarasa Gothic'; src: url('fonts/SarasaGothicSC-BoldItalic.woff2') format('woff2'); font-weight: 700; font-style: italic; font-display: swap; }
-/* . 其他字重根据需要添加 . */
+/* Source Han Sans - 思源黑体 Variable Font */
+@font-face {
+    font-family: 'Source Han Sans';
+    src: url('fonts/SourceHanSansSC-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Source Han Sans';
+    src: url('fonts/SourceHanSansSC-Italic.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
 
 /* --- 2. 颜色变量 --- */
 :root {
@@ -98,7 +105,7 @@
 button, input, select, textarea { font-family: inherit; }
 
 body {
-    font-family: 'Inter Var', 'Sarasa Gothic', -apple-system, sans-serif;
+    font-family: 'Inter Var', 'Source Han Sans', -apple-system, sans-serif;
     background-color: var(--bg-light);
     color: var(--text-main);
     line-height: 1.6;
