@@ -35,14 +35,14 @@
 /* Source Han Sans - 思源黑体 Variable Font */
 @font-face {
     font-family: 'Source Han Sans';
-    src: url('fonts/SourceHanSansSC-VF.woff2') format('woff2');
+    src: url('fonts/NotoSansSC-VF.woff2') format('woff2');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'Source Han Sans';
-    src: url('fonts/SourceHanSansSC-Italic.woff2') format('woff2');
+    src: url('fonts/NotoSansSC-VF.woff2') format('woff2');
     font-weight: 100 900;
     font-style: italic;
     font-display: swap;
