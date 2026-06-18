@@ -1,52 +1,15 @@
 /* --- 1. 字体声明 --- */
 /* Musical - 乐谱符号字体 */
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Semibold.woff2') format('woff2');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Musical';
-    src: url('fonts/Musical-Light.woff2') format('woff2');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
+@font-face { font-family: 'Musical'; src: url('fonts/Musical-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Musical'; src: url('fonts/Musical-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Musical'; src: url('fonts/Musical-Semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Musical'; src: url('fonts/Musical-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
 /* 统一 Inter 可变字体声明 */
 @font-face { font-family: 'Inter Var'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable.woff2') format('woff2'); }
 @font-face { font-family: 'Inter Var'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable-Italic.woff2') format('woff2'); }
-
-/* Source Han Sans - 思源黑体 Variable Font */
-@font-face {
-    font-family: 'Source Han Sans';
-    src: url('fonts/NotoSansSC-VF.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Source Han Sans';
-    src: url('fonts/NotoSansSC-VF.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: italic;
-    font-display: swap;
-}
+/* Noto Sans SC - 思源黑体 Variable Font */
+@font-face { font-family: 'Noto Sans SC'; src: url('fonts/NotoSansSC-VF.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Noto Sans SC'; src: url('fonts/NotoSansSC-VF.woff2') format('woff2'); font-weight: 100 900; font-style: italic; font-display: swap; }
 
 /* --- 2. 颜色变量 --- */
 :root {
@@ -105,13 +68,37 @@
 button, input, select, textarea { font-family: inherit; }
 
 body {
-    font-family: 'Inter Var', 'Source Han Sans', -apple-system, sans-serif;
+    font-family: 'Inter Var', 'Noto Sans SC', -apple-system, sans-serif;
     background-color: var(--bg-light);
     color: var(--text-main);
     line-height: 1.6;
     line-break: strict;
     font-feature-settings: "liga" 1, "calt" 1, "halt" 1, "chws" 1;
     transition: background-color 0.3s ease, color 0.3s ease;
+    user-select: none; /* 默认所有文本不可选中 */
+}
+
+/* --- 4. 斜体逻辑定制 --- */
+/* 针对中文环境：斜体变细正体（字重降至300） */
+html[lang^="zh"] i,
+html[lang^="zh"] em,
+html[lang^="zh"] .italic {
+    font-style: normal;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased; /* 增强细字体的清晰度 */
+}
+
+/* 临时覆盖中文斜体逻辑，强制使用 Inter Var 的斜体 */
+html[lang^="zh"] .inter-italic-override {
+    font-family: 'Inter Var', sans-serif; /* 确保使用 Inter Var */
+    font-style: italic;
+}
+
+/* 针对英文环境：保留 Inter 的标准斜体 */
+html[lang="en-US"] i,
+html[lang="en-US"] em,
+html[lang="en-US"] .italic {
+    font-style: italic;
 }
 
 /* --- 4. 共有布局: 英雄区块 --- */
@@ -319,3 +306,15 @@ footer p, footer a {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
+
+/* --- 加载圆圈样式 --- */
+.loading-spinner {
+    width: 36px;
+    height: 36px;
+    border: 4px solid rgba(127, 127, 127, 0.2);
+    border-top-color: var(--primary-blue);
+    border-radius: 50%;
+    animation: spinner-spin 1s linear infinite;
+    margin: 20px auto 0;
+}
+@keyframes spinner-spin { to { transform: rotate(360deg); } }

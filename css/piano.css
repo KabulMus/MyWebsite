@@ -7,18 +7,18 @@
     box-sizing: border-box;
 }
 
-/* 彻底破除页面通用 .container 的宽度限制 */
-.container.piano-full-width {
-    max-width: 100% !important;
-    width: 100% !important;
+.piano-full-width {
+    max-width: 2500px !important; 
+    width: 100% !important; 
     padding-left: 5px !important;
     padding-right: 5px !important;
 }
 
 /* 全键盘模式下取消 600px 限制，改为全宽 */
 .piano-container.full-range .piano-settings,
-.piano-container.full-range .piano-keyboard {
-    max-width: none !important;
+.piano-container.full-range .piano-keyboard,
+.piano-container.full-range .keyboard-frame {
+    max-width: 2500px; 
     width: 100% !important;
 }
 
@@ -204,19 +204,49 @@
     color: var(--on-primary);
 }
 
-.piano-keyboard {
-    display: flex;
+/* 键盘外框容器，用于定位右下角按钮 */
+.keyboard-frame {
     position: relative;
-    background: var(--card-bg);
-    padding: 25px 20px 20px; /* 顶部增加 padding 以容纳黑键的 -5px 向上偏移 */
-    border-radius: 12px;
-    user-select: none;
-    box-shadow: var(--card-shadow), inset 0 2px 10px rgba(0,0,0,0.05);
     width: 100%;
     max-width: 600px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow), inset 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.piano-keyboard {
+    display: flex;
+    padding: 25px 20px 20px; /* 顶部增加 padding 以容纳黑键的 -5px 向上偏移 */
+    user-select: none;
+    width: 100%;
     box-sizing: border-box;
     overflow-x: auto; /* 支持 88 键横向滚动 */
 }
+
+/* 右下角音域切换按钮 */
+.range-toggle-btn {
+    position: absolute;
+    right: -16px;
+    bottom: -16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid var(--item-border);
+    color: var(--text-sub);
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
+    line-height: 0;
+    padding-bottom: 3px; /* 视觉微调：修正加减号在圆圈内的垂直居中 */
+}
+.range-toggle-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.15); border-color: var(--item-border); }
 
 .piano-keys {
     display: flex;
@@ -225,6 +255,18 @@
     min-width: 100%;
     height: 210px;
     padding-bottom: 10px;
+    animation: fadeIn 0.4s ease; /* 启用渐显动画 */
+}
+
+/* 帮助弹窗里的两种视图也应用渐显动画 */
+#help-view-mini, #help-view-full {
+    animation: fadeIn 0.4s ease;
+}
+
+/* 定义全局渐显动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .key {
@@ -250,7 +292,7 @@
     font-size: 0.8rem;
     color: #888;
     min-width: 0;
-    font-family: 'Musical', 'Inter Var', 'Source Han Sans', sans-serif;
+    font-family: 'Musical', 'Inter Var', 'Noto Sans SC', sans-serif;
 }
 
 .piano-keys.hide-labels .key span {
@@ -282,7 +324,7 @@
     padding-bottom: 8px;
     font-size: 0.6rem;
     color: #666;
-    font-family: 'Musical', 'Inter Var', 'Source Han Sans', sans-serif;
+    font-family: 'Musical', 'Inter Var', 'Noto Sans SC', sans-serif;
 }
 
 .key.active {
@@ -361,8 +403,8 @@
     .piano-keyboard {
         padding: 10px;
     }
-    /* 移动端隐藏键盘相关设置，因为没有物理键盘 */
-    #range-group, #transpose-group, #piano-help-container {
+    /* 移动端隐藏范围设置及帮助，保留移调功能 */
+    #range-group, #piano-help-container, .range-toggle-btn {
         display: none !important;
     }
 }
@@ -410,7 +452,7 @@
     white-space: nowrap;
 }
 .kbd-key span {
-    font-family: 'Musical', 'Inter Var', 'Source Han Sans', sans-serif;
+    font-family: 'Musical', 'Inter Var', 'Noto Sans SC', sans-serif;
     font-size: 1rem; /* 显著放大核心音高标注 */
     color: var(--primary-blue);
     margin-top: 0;

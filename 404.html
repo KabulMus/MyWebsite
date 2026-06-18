@@ -10,19 +10,32 @@
 	<script src="./js/core.js" defer></script>
 	<style>
 		/* 404 页面专用样式 */
-		.content-section { padding: 120px 20px 60px; text-align: center; min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+		.content-section { padding: 120px 20px 60px; text-align: left; min-height: 80vh; display: flex; align-items: center; justify-content: center; }
 		.error-title {
 			font-size: clamp(5rem, 15vw, 8rem); font-weight: 900; line-height: 1.1; margin-bottom: 20px;
-			background: linear-gradient(135deg, var(--primary-blue) 20%, #0b122a 100%);
+			background: linear-gradient(135deg, var(--primary-blue) 0%, #0b122a 60%); 
 			-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 		}
-		[data-theme='dark'] .error-title { background: linear-gradient(135deg, #ffffff 20%, var(--primary-blue) 100%); -webkit-background-clip: text; }
+		[data-theme='dark'] .error-title { background: linear-gradient(90deg, #ffffff 0%, var(--primary-blue) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 		@media (prefers-color-scheme: dark) {
-			:root:not([data-theme='light']) .error-title { background: linear-gradient(135deg, #ffffff 20%, var(--primary-blue) 100%); -webkit-background-clip: text; }
+			:root:not([data-theme='light']) .error-title {
+				background: linear-gradient(135deg, #ffffff 0%, var(--primary-blue) 60%);
+				-webkit-background-clip: text;
+				background-clip: text; /* 标准属性，提升兼容性 */
+				-webkit-text-fill-color: transparent;
+			}
 		}
 		.error-tagline { font-size: 1.2rem; font-weight: 500; margin-bottom: 15px; }
 		.section-content { margin-bottom: 70px; }
 		.about-text p { max-width: 600px; margin: 0 auto; color: var(--text-sub); }
+
+		/* 移动端自动去掉换行：将段落设为行内显示 */
+		@media (max-width: 768px) {
+			.section-content p { display: inline; margin: 0; }
+			/* 缩小不同区块间的间距，若想完全合并可以将 div 也设为 inline */
+			.section-content div { margin-bottom: 10px !important; }
+			.modal-btn { display: block; margin-top: 25px; width: fit-content; }
+		}
 	</style>
 </head>
 <body>
@@ -30,13 +43,19 @@
 		<section class="container">
 			<section class="section-content">
 				<h1 class="error-title">404</h1>
-				<div class="error-tagline" style="margin-bottom: 20px;">
+				<div class="error-tagline" style="margin-bottom: 12px;">
 					<p>抱歉，您访问的页面不存在或已被移除。</p>
-					<p style="font-size: 1rem; margin-top: 5px;">Sorry, the page you are looking for doesn’t exist or has been moved.</p>
 				</div>
-				<div style="margin-bottom: 35px; color: var(--text-sub);">
+				<div style="margin-bottom: 20px; color: var(--text-sub);">
 					<p>乐章里好像没有这个音。请检查链接是否正确，或者点击下方按钮返回首页。</p>
-					<p style="font-size: 0.9rem; margin-top: 8px;">It seems this note isn’t in the score. Please check the URL or click below to return home.</p>
+					<p>如需反馈网页内容问题，请前往 <a href="https://github.com/KabulMus/MyWebsite/issues" target="_blank" style="color: var(--primary-blue); text-decoration: none;">GitHub</a> 提交 issue，或通过<a href="mailto:ethanshaw@ethan929.com" target="_blank" style="color: var(--primary-blue); text-decoration: none;">电子邮箱</a>联系我。</p>
+				</div>
+				<div class="error-tagline" style="margin-bottom: 10px;">
+					<p style="font-size: 1rem; margin-top: 6px;">Sorry, the page you are looking for doesn’t exist or has been moved.</p>
+				</div>	
+				<div style="margin-bottom: 35px; color: var(--text-sub);">
+					<p style="font-size: 0.9rem;">It seems this note isn’t in the score. Please check the URL or click below to return home.</p>
+					<p style="font-size: 0.9rem;">If you need to report any issues with the website content, please submit an issue on <a href="https://github.com/KabulMus/MyWebsite/issues" target="_blank" style="color: var(--primary-blue); text-decoration: none;">GitHub</a> or contact me via <a href="mailto:ethanshaw@ethan929.com" target="_blank" style="color: var(--primary-blue); text-decoration: none;">email</a>.</p>
 				</div>
 				<a href="./" class="modal-btn">返回首页 &nbsp;·&nbsp; Back Home</a>
 			</section>

@@ -35,6 +35,7 @@
     bottom: -8px;
     width: 30px;
     height: 3px;
+    border-radius: 3px;
     background-color: var(--primary-blue);
 }
 

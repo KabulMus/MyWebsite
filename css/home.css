@@ -81,25 +81,27 @@ html {
 	text-decoration: none;
 	color: var(--text-main);
 	font-size: 0.9rem;
-	font-weight: 500;
-	transition: color 0.2s;
+	font-weight: 500; /* 默认字重 */
+	transition: color 0.2s, font-weight 0.2s ease-out; /* 添加字重过渡 */
 	position: relative;
-	padding: 4px 0;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
-.nav-links a::after {
-	content: '';
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 0;
-	height: 2px;
-	background-color: var(--primary-blue);
-	transition: width 0.3s ease;
+/* 使用伪元素预留粗体占位，防止等宽字体抖动 */
+.nav-links a::before {
+	content: attr(data-text);
+	height: 0;
+	visibility: hidden;
+	overflow: hidden;
+	user-select: none;
+	pointer-events: none;
+	font-weight: 700; /* 预留 700 字重的空间 */
 }
 
-.nav-links a:hover { color: var(--primary-blue); }
-.nav-links a:hover::after { width: 100%; }
+.nav-links a:hover { color: var(--primary-blue); font-weight: 700; } /* 悬停时字重变为700 */
 
 /* --- 导航栏切换按钮 --- */
 .nav-theme-toggle {
@@ -259,6 +261,7 @@ section.container {
 	bottom: -8px;
 	width: 30px;
 	height: 3px;
+	border-radius: 3px;
 	background-color: var(--primary-blue);
 }
 
