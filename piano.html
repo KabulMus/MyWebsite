@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/piano.css">
     <script src="./js/core.js" defer></script>
-    <!-- 已下载到本地的库文件 -->
-    <script src="./js/soundfont-player.js"></script>
-    <!-- 1. 引入下载好的音源数据文件 -->
-    <script src="./js/acoustic_grand_piano-mp3.js"></script>
 </head>
 <body>
     <header class="hero-section">
@@ -256,6 +252,10 @@
         <span></span>
     </div>
 
+    <!-- 已下载到本地的库文件 -->
+    <script src="./js/soundfont-player.js"></script>
+    <!-- 1. 引入下载好的音源数据文件 -->
+    <script src="./js/acoustic_grand_piano-mp3.js"></script>
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -539,28 +539,19 @@
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingBar = document.getElementById('loading-progress-bar');
         const loadingText = document.getElementById('loading-status-text');
-        let loadProgress = 0;
 
-        // 模拟进度：前 90% 自动增长
-        const progressTimer = setInterval(() => {
-            if (loadProgress < 90) {
-                loadProgress += Math.random() * 15;
-                if (loadProgress > 90) loadProgress = 90;
-                updateLoadingUI(loadProgress);
-            }
-        }, 100);
-
-        function updateLoadingUI(val) {
-            loadingBar.style.width = val + '%';
-            loadingText.innerText = `正在加载资源... ${Math.floor(val)}%`;
-        }
+        // 初始化加载状态
+        loadingText.innerText = "正在加载钢琴音源...";
+        loadingBar.style.width = '0%'; // 初始显示0%
 
         Soundfont.instrument(audioCtx, instrumentName, { 
             destination: clarityFilter, // 从链路起点进入
         }).then(function (piano) {
             pianoInstrument = piano; 
-            clearInterval(progressTimer);
-            updateLoadingUI(100);
+            
+            // 音源加载完毕，更新进度条至100%
+            loadingText.innerText = "加载完成 100%";
+            loadingBar.style.width = '100%';
             
             // 只有成功获取到 piano 对象后，才允许关闭弹窗并渲染键盘
             setTimeout(() => {
@@ -570,7 +561,6 @@
                 showToast("钢琴音源已就绪");
             }, 300);
         }).catch(err => {
-            clearInterval(progressTimer);
             console.error("钢琴加载失败:", err);
             loadingText.innerText = "加载失败，请刷新页面重试";
             loadingText.style.color = "#ef4444";
