@@ -1,16 +1,13 @@
 /* --- 1. 字体声明 --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+SC:wght@100..900&display=swap');
+
 /* Musical - 乐谱符号字体 */
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
 /* 统一 Inter 可变字体声明 */
-@font-face { font-family: 'Inter Var'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable.woff2') format('woff2'); }
-@font-face { font-family: 'Inter Var'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('fonts/InterVariable-Italic.woff2') format('woff2'); }
 /* Noto Sans SC - 思源黑体 Variable Font */
-@font-face { font-family: 'Noto Sans SC'; src: url('fonts/NotoSansSC-VF.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Noto Sans SC'; src: url('fonts/NotoSansSC-VF.woff2') format('woff2'); font-weight: 100 900; font-style: italic; font-display: swap; }
-
 /* --- 2. 颜色变量 --- */
 :root {
     --primary-blue: #1e66c6;
@@ -68,7 +65,8 @@
 button, input, select, textarea { font-family: inherit; }
 
 body {
-    font-family: 'Inter Var', 'Noto Sans SC', -apple-system, sans-serif;
+    font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+    font-optical-sizing: auto;
     background-color: var(--bg-light);
     color: var(--text-main);
     line-height: 1.6;
@@ -88,9 +86,9 @@ html[lang^="zh"] .italic {
     -webkit-font-smoothing: antialiased; /* 增强细字体的清晰度 */
 }
 
-/* 临时覆盖中文斜体逻辑，强制使用 Inter Var 的斜体 */
+/* 临时覆盖中文斜体逻辑，强制使用 Inter 的斜体 */
 html[lang^="zh"] .inter-italic-override {
-    font-family: 'Inter Var', sans-serif; /* 确保使用 Inter Var */
+    font-family: 'Inter', sans-serif; /* 确保使用 Inter */
     font-style: italic;
 }
 

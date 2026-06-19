@@ -292,7 +292,7 @@
     font-size: 0.8rem;
     color: #888;
     min-width: 0;
-    font-family: 'Musical', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Musical', 'Inter', 'Noto Sans SC', sans-serif;
 }
 
 .piano-keys.hide-labels .key span {
@@ -324,7 +324,7 @@
     padding-bottom: 8px;
     font-size: 0.6rem;
     color: #666;
-    font-family: 'Musical', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Musical', 'Inter', 'Noto Sans SC', sans-serif;
 }
 
 .key.active {
@@ -452,7 +452,7 @@
     white-space: nowrap;
 }
 .kbd-key span {
-    font-family: 'Musical', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Musical', 'Inter', 'Noto Sans SC', sans-serif;
     font-size: 1rem; /* 显著放大核心音高标注 */
     color: var(--primary-blue);
     margin-top: 0;

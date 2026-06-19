@@ -8,6 +8,7 @@ window.addEventListener('scroll', () => {
         } else {
             navbar.classList.remove('visible');
         }
+        navbar.classList.toggle('visible', window.scrollY >= hero.offsetHeight - 20);
 	}
 });
 
