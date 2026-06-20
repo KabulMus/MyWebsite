@@ -76,6 +76,21 @@ body {
     user-select: none; /* 默认所有文本不可选中 */
 }
 
+/* --- 内容区域布局 --- */
+.content-section {
+	background-color: var(--bg-light);
+	padding: 60px 20px;
+	text-align: center;
+	position: relative;
+	z-index: 2;
+}
+
+section.container {
+	width: 100%;
+	max-width: 1000px;
+	margin: 0 auto;
+}
+
 /* --- 4. 斜体逻辑定制 --- */
 /* 针对中文环境：斜体变细正体（字重降至300） */
 html[lang^="zh"] i,
@@ -162,7 +177,7 @@ html[lang="en-US"] .italic {
 .modal-btn:hover { opacity: 0.85; }
 
 /* --- 6. 按钮与切换器 --- */
-.theme-toggle-btn, .lang-toggle-btn, .back-home-btn {
+.theme-toggle-btn, .lang-toggle-btn, .back-home-btn, .menu-toggle-btn {
     position: fixed; right: 25px; width: 44px; height: 44px; z-index: 101;
     border-radius: 50%; background: var(--card-bg); color: var(--text-main);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -182,13 +197,14 @@ html[lang="en-US"] .italic {
 .theme-toggle-btn { bottom: 25px; }
 .lang-toggle-btn { bottom: 80px; }
 .back-home-btn { top: 25px; left: 20px; right: auto; } /* 返回首页按钮位置 */
+.menu-toggle-btn { top: 25px; left: 70px; right: auto; } /* 移动端菜单按钮位置 */
 
 .milestone-card { border: 1px solid var(--item-border); }
 
-.theme-toggle-btn svg, .lang-toggle-btn svg, .back-home-btn svg { 
+.theme-toggle-btn svg, .lang-toggle-btn svg, .back-home-btn svg, .menu-toggle-btn svg { 
     width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
 }
-.theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover { 
+.theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover, .menu-toggle-btn:hover { 
     transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); 
 }
 
@@ -203,7 +219,7 @@ html[lang="en-US"] .italic {
 }
 @media (max-width: 768px) {
     .desktop-only { display: none !important; }
-    .hero-section h1 { font-size: 2rem; }
+    .page-hero h1 { font-size: 2rem; }
     .mobile-only { display: flex !important; }
     .nav-theme-toggle, .nav-lang-toggle { display: none !important; }
     .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
@@ -264,3 +280,49 @@ footer p, footer a {
     margin: 20px auto 0;
 }
 @keyframes spinner-spin { to { transform: rotate(360deg); } }
+
+/* --- 子页面标题栏 (Page Hero) --- */
+.page-hero {
+    position: relative;
+    width: 100%;
+    min-height: 250px; /* 比主页 hero 小 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px; /* 为固定导航留空间 */
+    color: #ffffff;
+    text-align: center;
+    background: linear-gradient(180deg, #90befc 0%, #0e347a 70%, #0b122a 100%);
+}
+
+.page-hero section.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 5000px;
+    padding: 0 20px;
+}
+
+.page-hero h1 {
+    font-size: 2.8rem;
+    color: #ffffff;
+    margin-bottom: 5px;
+    text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
+}
+
+.page-hero .tagline {
+    font-size: 1rem;
+    color: #ffffff;
+    max-width: 600px;
+    margin-bottom: 10px;
+}
+
+/* 子页面标题栏移动端适配 */
+@media (max-width: 768px) {
+    .page-hero h1 { font-size: 2rem; }
+}

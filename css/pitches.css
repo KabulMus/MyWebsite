@@ -170,7 +170,7 @@
 @media (max-width: 768px) {
     .desktop-only { display: none; }
     .menu-toggle.mobile-only { display: flex; }
-    .hero-section h1 { font-size: 2rem; }
+    .page-hero h1 { font-size: 2rem; }
     .filter-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
     .filter-btn { width: auto; }
     .scales-grid { grid-template-columns: 1fr; } /* 放在最后确保能覆盖双列设置 */

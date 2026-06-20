@@ -7,7 +7,7 @@ const ICONS = {
 // 滚动监听
 window.addEventListener('scroll', () => {
     const navbar = document.getElementById('top-nav');
-    const hero = document.querySelector('.hero-section');
+    const hero = document.querySelector('.hero-section, .page-hero');
     if (navbar && hero) {
         navbar.classList.toggle('visible', window.scrollY >= hero.offsetHeight - 20);
     }

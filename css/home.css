@@ -184,7 +184,7 @@ html {
 	padding-top: 80px;
 	color: var(--text-on-dark);
 	text-align: left;
-	background: linear-gradient(180deg, #90befc 0%, #0e347a 66%, #0b122a 100%);
+	background: linear-gradient(180deg, #90befc 0%, #0e347a 70%, #0b122a 100%);
 }
 
 section.hero-content {
@@ -218,6 +218,7 @@ section.hero-content {
 
 .hero-section h1 {
 	font-size: 2.8rem;
+	color: #ffffff;
 	margin-bottom: 5px;
 	text-align: left;
 	text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
@@ -225,7 +226,7 @@ section.hero-content {
 
 .hero-section .tagline {
 	font-size: 1rem;
-	color: rgba(255, 255, 255, 0.9);
+	color: #ffffff;
 	max-width: 600px;
 	margin-bottom: 10px;
 	text-align: left;
@@ -261,22 +262,6 @@ section.hero-content {
 		text-align: center;
 		padding: 0;
 	}
-}
-
-
-/* --- 内容区域布局 --- */
-.content-section {
-	background-color: var(--bg-light);
-	padding: 60px 20px;
-	text-align: center;
-	position: relative;
-	z-index: 2;
-}
-
-section.container {
-	width: 100%;
-	max-width: 1000px;
-	margin: 0 auto;
 }
 
 .section-title {
