@@ -183,7 +183,7 @@ html {
 	align-items: center;
 	padding-top: 80px;
 	color: var(--text-on-dark);
-	text-align: center;
+	text-align: left;
 	background: linear-gradient(180deg, #90befc 0%, #0e347a 66%, #0b122a 100%);
 }
 
@@ -191,9 +191,12 @@ section.hero-content {
 	position: relative;
 	z-index: 2;
 	display: flex;
-	flex-direction: column;
-	align-items: center;
+	flex-direction: row;
+	align-items: flex;
+	justify-content: space-between;
 	width: 100%;
+	max-width: 600px;
+	padding: 0 20px;
 }
 
 .avatar {
@@ -207,9 +210,16 @@ section.hero-content {
 	box-shadow: 0 12px 40px -8px rgba(8, 15, 38, 0.4);
 }
 
+.hero-text-group {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
 .hero-section h1 {
 	font-size: 2.8rem;
 	margin-bottom: 5px;
+	text-align: left;
 	text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
 }
 
@@ -218,17 +228,41 @@ section.hero-content {
 	color: rgba(255, 255, 255, 0.9);
 	max-width: 600px;
 	margin-bottom: 10px;
-	padding: 0 20px;
+	text-align: left;
+	padding: 0;
 }
 
 .person-img {
-	max-height: 300px;
+	max-height: 350px;
 	position: relative;
-	z-index: 3;
 	margin-top: 20px;
 	margin-bottom: -1px;
+	flex-shrink: 0;
 	display: block;
 }
+
+/* 桌面端：左对齐布局 */
+@media (max-width: 768px) {
+	section.hero-content {
+		flex-direction: column;
+		align-items: center;
+	}
+	
+	.hero-text-group {
+		flex-direction: column;
+		align-items: center;
+	}
+	
+	.hero-section h1 {
+		text-align: center;
+	}
+	
+	.hero-section .tagline {
+		text-align: center;
+		padding: 0;
+	}
+}
+
 
 /* --- 内容区域布局 --- */
 .content-section {
