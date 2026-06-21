@@ -4,24 +4,73 @@ const ICONS = {
     moon: '<path d="M28.0527 4.41085C22.5828 5.83695 18.5455 10.8106 18.5455 16.7273C18.5455 23.7564 24.2436 29.4545 31.2727 29.4545C37.1894 29.4545 42.1631 25.4172 43.5891 19.9473C43.8585 21.256 44 22.6115 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C25.3885 4 26.744 4.14149 28.0527 4.41085Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>'
 };
 
-// 页面滚动逻辑
-window.addEventListener('scroll', () => {
-	const navbar = document.getElementById('top-nav');
-	const hero = document.querySelector('.hero-section');
-	if (navbar && hero) {
-        if (window.scrollY >= hero.offsetHeight - 20) {
-            navbar.classList.add('visible');
-        } else {
-            navbar.classList.remove('visible');
-        }
-        navbar.classList.toggle('visible', window.scrollY >= hero.offsetHeight - 20);
-	}
-});
-
 // 抖动效果
 function shakeCard(el) {
     el.classList.add('shake');
     setTimeout(() => el.classList.remove('shake'), 400);
+}
+
+// 里程碑翻页
+function scrollMilestones(direction) {
+    const container = document.getElementById('milestoneScrollContainer');
+    if (!container) return;
+    const cards = Array.from(container.querySelectorAll('.milestone-card')).filter(c => c.style.display !== 'none');
+    if (cards.length === 0) return;
+
+    const containerWidth = container.offsetWidth;
+    const centerLine = container.scrollLeft + containerWidth / 2;
+
+    let minDiff = Infinity;
+    let currentIndex = 0;
+    cards.forEach((card, index) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const diff = Math.abs(centerLine - cardCenter);
+        if (diff < minDiff) { minDiff = diff; currentIndex = index; }
+    });
+
+    let targetIndex = Math.max(0, Math.min(currentIndex + direction, cards.length - 1));
+    const targetCard = cards[targetIndex];
+    const targetScrollLeft = targetCard.offsetLeft - (containerWidth / 2) + (targetCard.offsetWidth / 2);
+    container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+}
+
+// 里程碑筛选
+function filterMilestones(year, btn) {
+    const container = document.getElementById('milestoneScrollContainer');
+    const cards = container.querySelectorAll('.milestone-card');
+    
+    // 切换当前按钮的激活状态
+    btn.classList.toggle('active');
+
+    // 获取所有当前选中的年份
+    const activeButtons = document.querySelectorAll('.year-filter-btn.active');
+    const activeYears = Array.from(activeButtons).map(b => b.textContent.trim());
+
+    cards.forEach(card => {
+        const cardYear = card.getAttribute('data-year');
+        // 如果没有选中任何年份，则显示全部；否则仅显示匹配选中年份的卡片
+        card.style.display = (activeYears.length === 0 || activeYears.includes(cardYear)) ? 'block' : 'none';
+    });
+    container.scrollLeft = 0;
+    updateMilestoneButtons();
+}
+
+function updateMilestoneButtons() {
+    const container = document.getElementById('milestoneScrollContainer');
+    const prevBtn = document.querySelector('.milestone-nav-btn.prev');
+    const nextBtn = document.querySelector('.milestone-nav-btn.next');
+    if (!container || !prevBtn || !nextBtn) return;
+
+    const scrollLeft = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.offsetWidth;
+
+    prevBtn.classList.toggle('hidden', scrollLeft <= 5);
+    nextBtn.classList.toggle('hidden', scrollLeft >= maxScroll - 5);
+
+    const leftAlpha = Math.min(1, Math.max(0, 1 - (scrollLeft / 60)));
+    const rightAlpha = Math.min(1, Math.max(0, 1 - ((maxScroll - scrollLeft) / 60)));
+    container.style.setProperty('--mask-left', `rgba(0,0,0,${leftAlpha})`);
+    container.style.setProperty('--mask-right', `rgba(0,0,0,${rightAlpha})`);
 }
 
 // 亮暗模式切换
@@ -115,6 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleMenu(false);
         }
     }, true);
+
+    // 初始化里程碑
+    const milestoneContainer = document.getElementById('milestoneScrollContainer');
+    if (milestoneContainer) {
+        milestoneContainer.addEventListener('scroll', updateMilestoneButtons);
+        updateMilestoneButtons();
+    }
 
     // ESC 键关闭弹窗
     document.addEventListener('keydown', (e) => {

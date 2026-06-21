@@ -1,0 +1,59 @@
+/* 页面特有变量 */
+:root {
+	--bilibili-blue: #0cb6f2;
+	--bilibili-pink: #ff6699;
+	--xhs-red: #ff2442;
+	--youtube-red: #ff0033;
+	--discord-blurple: #5865f2;
+	--douyin-black: #161823;
+	--qq-brand: #0052d9;
+	--wechat-green: #07C160;
+	--duolingo-green: #58cc02;
+}
+
+.works-grid, .tools-grid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 25px;
+	margin-top: 30px;
+}
+
+.card-subtitle { font-size: 0.9rem; font-weight: 500; }
+.card:hover { color: white; box-shadow: var(--card-hover-shadow); }
+.card.bilibili:hover { background-color: var(--bilibili-blue); }
+.card.bilibili-pink:hover { background-color: var(--bilibili-pink); }
+.card.xhs:hover { background-color: var(--xhs-red); }
+.card.youtube:hover { background-color: var(--youtube-red); }
+.card.tool-card:hover { background-color: var(--primary-blue); color: var(--on-primary); }
+.card.discord:hover { background-color: var(--discord-blurple); }
+.card.qq:hover { background-color: var(--qq-brand); }
+.card.wechat:hover { background-color: var(--wechat-green); }
+.card.duolingo:hover { background-color: var(--duolingo-green); }
+.card.douyin:hover { background-color: var(--douyin-black); color: #fff; }
+/* 抖音故障效果切换逻辑 */
+.card.douyin .tiktok-base-idle { opacity: 1; transition: opacity 0.2s ease; }
+.card.douyin:hover .tiktok-base-idle { opacity: 0; }
+.card.douyin .tiktok-cyan, .card.douyin .tiktok-red, .card.douyin .tiktok-white { 
+	opacity: 0; transition: opacity 0.2s ease; 
+}
+.card.douyin:hover .tiktok-cyan { fill: #00faf0; opacity: 1; }
+.card.douyin:hover .tiktok-red { fill: #fe2c55; opacity: 1; }
+.card.douyin:hover .tiktok-white { fill: #fff; opacity: 1; }
+
+/* 晃动动画 */
+@keyframes shake {
+	0%, 100% { translate: 0; }
+	25% { translate: -8px; }
+	50% { translate: 8px; }
+	75% { translate: -8px; }
+}
+.shake { animation: shake 0.4s ease-in-out; }
+
+/* --- 自动深色模式 (跟随浏览器设置) --- */
+@media (prefers-color-scheme: dark) { 
+	html:not([data-theme='light']) .card.douyin:hover { background-color: #f9f9fa; color: #161823; }
+	html:not([data-theme='light']) .card.douyin:hover .tiktok-white { fill: #161823; }
+}
+[data-theme='dark'] .card.douyin:hover { background-color: #f9f9fa; color: #161823; }
+[data-theme='dark'] .card.douyin:hover .tiktok-white { fill: #161823; }

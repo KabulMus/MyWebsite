@@ -1,17 +1,3 @@
-// 页面滚动逻辑
-window.addEventListener('scroll', () => {
-	const navbar = document.getElementById('top-nav');
-	const hero = document.querySelector('.hero-section');
-	if (navbar && hero) {
-        if (window.scrollY >= hero.offsetHeight - 20) {
-            navbar.classList.add('visible');
-        } else {
-            navbar.classList.remove('visible');
-        }
-        navbar.classList.toggle('visible', window.scrollY >= hero.offsetHeight - 20);
-	}
-});
-
 // 暂未开通卡片点击晃动效果
 function shakeCard(el) {
 	el.classList.add('shake');
@@ -113,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 初始化里程碑滚动按钮状态
 	const milestoneScrollContainer = document.getElementById('milestoneScrollContainer');
 	if (milestoneScrollContainer) {
-milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
-updateMilestoneButtons();
+		milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
+		updateMilestoneButtons();
 	}
 });

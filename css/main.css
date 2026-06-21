@@ -1,5 +1,5 @@
 /* --- 1. 字体声明 --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+SC:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow&family=Barlow+Condensed:wght@400;600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+SC:wght@100..900&display=swap');
 
 /* Musical - 乐谱符号字体 */
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -91,6 +91,40 @@ section.container {
 	margin: 0 auto;
 }
 
+.section-title {
+	font-size: 1.3rem;
+	font-weight: 600;
+	margin-bottom: 40px;
+	position: relative;
+	display: inline-block;
+}
+
+.section-title::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: -8px;
+	width: 30px;
+	height: 3px;
+	border-radius: 3px;
+	background-color: var(--primary-blue);
+}
+
+.section-hint {
+	font-size: 0.85rem;
+	color: var(--text-sub);
+	margin-top: -25px;
+	margin-bottom: 30px;
+	display: flex;
+	justify-content: center;
+}
+
+.section-content { margin-bottom: 70px; }
+.main-text p { max-width: 600px; margin: 0 auto; color: var(--text-sub); }
+.main-text a { color: inherit; text-decoration: none; transition: color 0.2s; } /* 继承文字颜色，加个平滑过渡 */
+.main-text a:hover { color: var(--primary-blue); }
+
 /* --- 4. 斜体逻辑定制 --- */
 /* 针对中文环境：斜体变细正体（字重降至300） */
 html[lang^="zh"] i,
@@ -116,17 +150,224 @@ html[lang="en-US"] .italic {
 
 /* --- 4. 共有组件: 导航栏 --- */
 .navbar {
-    position: fixed; top: 0; width: 100%; height: 60px;
-    background: var(--navbar-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    z-index: 100; display: flex; transform: translateY(-100%);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    background: var(--navbar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+    display: flex;
+    transform: translateY(0);
     transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
-    box-shadow: none;
-    border-bottom: none;
-}
-.navbar.visible { 
-    transform: translateY(0); 
-    box-shadow: 0 4px 12px -2px rgba(14, 52, 112, 0.08);
+    box-shadow: var(--card-shadow);
     border-bottom: 1px solid var(--item-border);
+}
+
+.nav-container {
+	width: 100%;
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 0 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.nav-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+	color: var(--text-main);
+	font-weight: 700;
+	font-size: 1.1rem;
+    stroke: var(--text-main);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+	transition: color 0.2s ease, font-weight 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.nav-brand:hover { color: var(--primary-blue); font-weight: 900; stroke: var(--primary-blue); stroke-width: 6; }
+
+.nav-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid rgba(0,0,0,0.05);
+}
+
+.nav-links {
+	display: flex;
+	gap: 20px;
+}
+
+.menu-toggle {
+	display: none;
+	background: none;
+	border: none;
+	color: var(--text-main);
+	cursor: pointer;
+	padding: 5px;
+	align-items: center;
+	justify-content: center;
+	transition: color 0.2s ease;
+}
+
+.menu-toggle.active { color: var(--primary-blue); }
+
+.menu-toggle svg { width: 24px; height: 24px; stroke: currentColor; }
+
+.nav-links a {
+	text-decoration: none;
+	color: var(--text-main);
+	font-size: 0.9rem;
+	font-weight: 400; /* 默认字重 */
+	transition: color 0.2s ease, font-weight 0.2s ease; /* 添加字重过渡 */
+	position: relative;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+/* 使用伪元素预留粗体占位，防止等宽字体抖动 */
+.nav-links a::before {
+	content: attr(data-text);
+	height: 0;
+	visibility: hidden;
+	overflow: hidden;
+	user-select: none;
+	pointer-events: none;
+	font-weight: 700; /* 预留 700 字重的空间 */
+}
+
+.nav-links a:hover { color: var(--primary-blue); font-weight: 700; } /* 悬停时字重变为700 */
+
+/* --- 导航栏切换按钮 --- */
+.nav-theme-toggle {
+	background: none;
+	border: none;
+	color: var(--text-main);
+	cursor: pointer;
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: color 0.2s ease;
+}
+.nav-theme-toggle:hover { color: var(--primary-blue); }
+.nav-theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- 导航栏语言切换按钮 --- */
+.nav-lang-toggle {
+	background: none;
+	border: none;
+	color: var(--text-main);
+	cursor: pointer;
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: color 0.2s ease;
+}
+.nav-lang-toggle:hover { color: var(--primary-blue); }
+/* 禁用图标下的动画下划线伪元素 */
+.nav-lang-toggle::after {
+	content: none !important;
+}
+.nav-lang-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- 移动端下拉菜单 --- */
+.nav-dropdown {
+	position: absolute;
+	top: 70px;
+	right: 20px;
+	background: var(--card-bg);
+	border-radius: 12px;
+	box-shadow: 0 12px 30px -5px rgba(14, 52, 112, 0.2);
+	display: flex;
+	flex-direction: column;
+	min-width: 150px;
+	padding: 8px;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(-20px);
+	transition: all 0.5s ease;
+	z-index: 101;
+}
+
+.nav-dropdown.active {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+
+.nav-dropdown a {
+	text-decoration: none;
+	color: var(--text-main);
+	padding: 12px 16px;
+	font-weight: 400; /* 默认字重 */
+	font-size: 0.95rem;
+	border-radius: 8px;
+	transition: color 0.2s ease, font-weight 0.2s ease;
+	position: relative;
+	/* 关键修改 1：像桌面端一样，改为 flex 纵向容器，确保伪元素能完美在容器内完成空间占位而互不干扰 */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start; /* 移动端菜单通常左对齐，若想居中可改为 center */
+}
+
+.nav-dropdown a::before {
+	content: attr(data-text);
+	height: 0;
+	visibility: hidden;
+	overflow: hidden;
+	user-select: none;
+	pointer-events: none;
+	/* 关键修改 2：修复原代码中的 100，预留 700 字重的空间，从而防止变粗时位置抖动 */
+	font-weight: 700; 
+}
+
+.nav-dropdown a:hover { 
+	color: var(--primary-blue); 
+	font-weight: 700; /* 悬停时平滑变为粗体 */
+}
+
+/* --- 导航分割线 --- */
+.nav-divider {
+    display: inline-block;
+    width: 2px;
+    height: 20px;
+    background: var(--text-sub);
+    opacity: 0.3;
+    align-self: center;
+    border-radius: 3px;
+}
+
+/* 移动端下拉菜单内的横向分割线 */
+.dropdown-divider {
+    height: 1px;
+    background: var(--text-sub);
+    opacity: 0.2;
+    margin: 8px 16px;
+}
+
+/* --- 页面激活态样式 (用于子页面) --- */
+.nav-links a.active,
+.nav-dropdown a.active {
+    color: var(--primary-blue);
+    font-weight: 700;
+}
+
+/* 确保激活态的 ::before 空间保持稳定 */
+.nav-links a.active::before,
+.nav-dropdown a.active::before {
+    font-weight: 700;
 }
 
 /* --- 5. 共有组件: 弹窗 --- */
@@ -177,14 +418,14 @@ html[lang="en-US"] .italic {
 .modal-btn:hover { opacity: 0.85; }
 
 /* --- 6. 按钮与切换器 --- */
-.theme-toggle-btn, .lang-toggle-btn, .back-home-btn, .menu-toggle-btn {
+.theme-toggle-btn, .lang-toggle-btn, .back-home-btn {
     position: fixed; right: 25px; width: 44px; height: 44px; z-index: 101;
     border-radius: 50%; background: var(--card-bg); color: var(--text-main);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--item-border);
     box-shadow: var(--card-shadow);
     display: flex; justify-content: center; align-items: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+    transition: all 0.3s ease; cursor: pointer;
     text-decoration: none;
 }
 
@@ -197,14 +438,13 @@ html[lang="en-US"] .italic {
 .theme-toggle-btn { bottom: 25px; }
 .lang-toggle-btn { bottom: 80px; }
 .back-home-btn { top: 25px; left: 20px; right: auto; } /* 返回首页按钮位置 */
-.menu-toggle-btn { top: 25px; left: 70px; right: auto; } /* 移动端菜单按钮位置 */
 
 .milestone-card { border: 1px solid var(--item-border); }
 
-.theme-toggle-btn svg, .lang-toggle-btn svg, .back-home-btn svg, .menu-toggle-btn svg { 
+.theme-toggle-btn svg, .lang-toggle-btn svg, .back-home-btn svg { 
     width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
 }
-.theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover, .menu-toggle-btn:hover { 
+.theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover { 
     transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); 
 }
 
@@ -219,12 +459,9 @@ html[lang="en-US"] .italic {
 }
 @media (max-width: 768px) {
     .desktop-only { display: none !important; }
-    .page-hero h1 { font-size: 2rem; }
     .mobile-only { display: flex !important; }
     .nav-theme-toggle, .nav-lang-toggle { display: none !important; }
-    .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-    .footer-column { align-items: center; }
-    .footer-column p, .footer-column span, .footer-column a { white-space: normal; }
+	.card { width: 100%; }
 }
 
 /* --- 7. 页脚 --- */
@@ -259,7 +496,7 @@ footer p, footer a {
     font-size: 0.9rem;
     font-weight: 500;
     opacity: 0;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.5s ease;
     pointer-events: none;
     white-space: nowrap;
 }
@@ -281,11 +518,62 @@ footer p, footer a {
 }
 @keyframes spinner-spin { to { transform: rotate(360deg); } }
 
-/* --- 子页面标题栏 (Page Hero) --- */
+/* --- Card --- */
+
+.card {
+	background-color: var(--card-bg);
+	border-radius: 150px;
+	padding: 20px;
+	box-shadow: var(--card-shadow);
+	text-decoration: none;
+	color: var(--text-main);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	translate: 0;
+	border: 1px solid var(--item-border);
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+	cursor: pointer;
+	height: 60px;
+	flex-direction: row;
+}
+
+.card-svg {
+	height: 20px;
+	width: auto;
+	fill: currentColor;
+	overflow: visible;
+	margin-right: 6px;
+}
+
+.card-subtitle { font-size: 1rem; font-weight: 500; }
+.card:hover { background-color: var(--primary-blue); color: var(--on-primary); box-shadow: var(--card-hover-shadow); }
+.card.bilibili:hover { background-color: var(--bilibili-blue); }
+.card.bilibili-pink:hover { background-color: var(--bilibili-pink); }
+.card.xhs:hover { background-color: var(--xhs-red); }
+.card.youtube:hover { background-color: var(--youtube-red); }
+.card.tool-card:hover { background-color: var(--primary-blue); color: var(--on-primary); }
+.card.discord:hover { background-color: var(--discord-blurple); }
+.card.qq:hover { background-color: var(--qq-brand); }
+.card.wechat:hover { background-color: var(--wechat-green); }
+.card.duolingo:hover { background-color: var(--duolingo-green); }
+.card.douyin:hover { background-color: var(--douyin-black); color: #fff; }
+/* 抖音故障效果切换逻辑 */
+.card.douyin .tiktok-base-idle { opacity: 1; transition: opacity 0.2s ease; }
+.card.douyin:hover .tiktok-base-idle { opacity: 0; }
+.card.douyin .tiktok-cyan, .card.douyin .tiktok-red, .card.douyin .tiktok-white { 
+	opacity: 0; transition: opacity 0.2s ease; 
+}
+.card.douyin:hover .tiktok-cyan { fill: #00faf0; opacity: 1; }
+.card.douyin:hover .tiktok-red { fill: #fe2c55; opacity: 1; }
+.card.douyin:hover .tiktok-white { fill: #fff; opacity: 1; }
+
+/* --- 标题栏 (Page Hero) --- */
 .page-hero {
     position: relative;
     width: 100%;
-    min-height: 250px; /* 比主页 hero 小 */
+    min-height: 240px; /* 比主页 hero 小 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -293,7 +581,7 @@ footer p, footer a {
     padding-top: 40px; /* 为固定导航留空间 */
     color: #ffffff;
     text-align: center;
-    background: linear-gradient(180deg, #90befc 0%, #0e347a 70%, #0b122a 100%);
+    background: linear-gradient(180deg, #90befc 24%, #0e347a 77.2%, #0b122a 100%);
 }
 
 .page-hero section.hero-content {
