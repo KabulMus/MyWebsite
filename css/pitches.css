@@ -38,38 +38,9 @@
     box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3);
 }
 
-.filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px auto 0;
-    width: 100%;
-    max-width: 1000px;
-}
 .filter-btn {
-    width: 60px; height: auto;
-    background: var(--card-bg);
-    border: 1px solid var(--item-border);
-    border-radius: 8px;
-    padding: 8px 0;
-    font-weight: 400;
     font-size: 1rem;
-    color: var(--text-sub);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
     font-family: 'Musical', sans-serif;
-    font-feature-settings: normal;
-}
-.filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); }
-.filter-btn.active { 
-    background: var(--primary-blue) !important; 
-    color: var(--on-primary) !important; 
-    border-color: var(--primary-blue) !important; 
-    font-weight: 600 !important;
-    box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); 
 }
 
 [data-theme='dark'] .scale-header { border-bottom-color: rgba(255,255,255,0.05); }

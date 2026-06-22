@@ -10,11 +10,6 @@
     border-bottom: 1px solid var(--item-border);
 }
 
-html {
-	scroll-behavior: smooth;
-	scroll-padding-top: 60px; /* 匹配导航栏高度，防止跳转后由于偏移过大露出英雄区背景 */
-}
-
 /* --- 英雄区块 (Hero Section) --- */
 .hero-section {
 	position: relative;
@@ -257,14 +252,6 @@ section.hero-content {
 }
 .year-filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); }
 .year-filter-btn.active { background: var(--primary-blue) !important; color: var(--on-primary) !important; border-color: var(--primary-blue) !important; box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); }
-
-.explore-grid, .tools-grid {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 20px;
-	margin-top: 10px;
-}
 
 .milestone-card p {
 	color: var(--text-sub); /* 使用主题变量 */

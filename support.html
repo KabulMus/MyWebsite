@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="referrer" content="no-referrer">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>频道列表 | Ethan Shaw</title>
+	<link rel="icon" href="favicon.webp" type="image/webp">
+	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./css/pages.css">
+	<link rel="stylesheet" href="./css/support.css">
+	<script src="./js/core.js" defer></script>
+	<script src="./js/home.js" defer></script>
+</head>
+
+<body>
+	<nav class="navbar" id="top-nav">
+		<div class="nav-container">
+			<a href="./" class="nav-brand">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+					<path d="M31 36L19 24L31 12" />
+				</svg>
+			</a>
+			<div class="nav-links desktop-only">
+				<a href="#email" data-text="个人邮箱">个人邮箱</a>
+				<a href="#qq" data-text="QQ*群">QQ 群</a>
+				<a href="#discord" data-text="Discord">Discord</a>
+				<a href="#reward" data-text="赞赏码">赞赏码</a>
+				<a href="#duolingo" data-text="多邻国">多邻国</a>
+				<span class="nav-divider"></span>
+				<a href="channels" data-text="频道列表">频道列表</a>
+				<a href="#" data-text="工具箱">工具箱</a>
+				<a href="support" data-text="联系支持" class="active">联系支持</a>
+			</div>
+			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+					<path d="M7.94971 11.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+						stroke-linejoin="round" />
+					<path d="M7.94971 23.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+						stroke-linejoin="round" />
+					<path d="M7.94971 35.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+						stroke-linejoin="round" />
+				</svg>
+			</button>
+		</div>
+		<div class="nav-dropdown" id="nav-dropdown">
+			<a href="#email" onclick="toggleMenu(false)" data-text="个人邮箱">个人邮箱</a>
+			<a href="#qq" onclick="toggleMenu(false)" data-text="QQ*群">QQ 群</a>
+			<a href="#discord" onclick="toggleMenu(false)" data-text="Discord">Discord</a>
+			<a href="#reward" onclick="toggleMenu(false)" data-text="赞赏码">赞赏码</a>
+			<a href="#duolingo" onclick="toggleMenu(false)" data-text="多邻国">多邻国</a>
+			<div class="dropdown-divider"></div>
+			<a href="channels" onclick="toggleMenu(false)" data-text="频道列表">频道列表</a>
+			<a href="#" onclick="toggleMenu(false)" data-text="工具箱">工具箱</a>
+			<a href="support" onclick="toggleMenu(false)" data-text="联系支持" class="active">联系支持</a>
+		</div>
+	</nav>
+
+	<header class="page-hero">
+		<section class="hero-content">
+			<div>
+				<h1>联系支持</h1>
+				<p class="tagline">交个朋友，或者……买杯咖啡？</p>
+			</div>
+		</section>
+	</header>
+
+	<main class="content-section">
+		<section class="container">
+			<section class="main-container">
+				<section id="email" class="section-content grid">
+					<a href="mailto:ethanshaw@ethan929.com" class="card" onclick="toggleModal('email-overlay', true)">
+						<svg class="card-svg" viewBox="0 0 24 24">
+							<path
+								d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z">
+							</path>
+						</svg>
+						<span class="card-subtitle">个人邮箱</span>
+					</a>
+					<div>
+						<h2>ethanshaw@ethan929.com</h2>
+						<p>期待与您的友好交流。</p>
+						<p><i>如未收到回信，请检查垃圾邮件箱。</i></p>
+					</div>
+				</section>
+				<section id="qq" class="section-content grid">
+					<a href="javascript:void(0);" class="card qq" onclick="copyToClipboard('671065700', this)">
+						<!-- QQ Logo SVG -->
+						<svg class="card-svg" viewBox="0 0 770.51 921.3" fill="currentColor">
+							<path
+								d="M743.87,577.27c-8.06-26.18-19.34-57.2-30.62-87.01h0l-41.09-103.53h0c0-1.21.4-21.35.4-32.23C672.56,177.65,589.58,0,384.94,0S97.71,178.06,97.71,354.9c0,10.47.4,31.02.4,32.23h0l-41.09,103.53h0c-11.28,29.41-22.56,60.43-30.62,87.01-35.85,112.39-28.6,174.43-16.52,178.86,16.92,6.45,80.17-94.67,80.17-94.67,0,56.4,29,130.12,91.44,182.89-23.36,7.25-51.97,18.13-70.5,32.23-16.52,12.09-14.5,24.57-11.28,29.81,12.89,22.16,223.98,14.1,285.21,7.25h.81c61.63,6.85,272.32,14.91,285.21-7.25,2.82-5.24,4.83-17.72-11.28-29.81-18.53-13.7-47.13-24.98-70.5-32.23,62.44-53.17,91.44-126.49,91.44-183.29,0,0,63.25,101.11,80.17,94.67,11.68-4.43,19.34-66.87-16.52-178.86h-.4Z">
+							</path>
+						</svg>
+						<span class="card-subtitle">QQ 群</span>
+					</a>
+					<div>
+						<h2>671065700</h2>
+						<p class="bottom10">欢迎加入我们的群聊！</p>
+						<div class="justext main-text">
+							<div class="bottom10">
+								<p><strong>注意</strong>　群文件含有周深专辑《反深代词》全曲音测，而该专辑现仍在售卖。为保护版权，本群只接收可证明自己能够合法收听该专辑的人员。其包括：</p>
+								<p><num>1. </num>在国内音乐平台已购买至少 1 张数字专辑的；</p>
+								<p><num>2. </num>订阅 Apple Music、Spotify Premium 或其他国际付费音乐服务的。不接受免费及试用用户。</p>
+							</div>
+							<p class="bottom10">前往收听或购买（RMB 30.00/张）：<a href="https://y.qq.com/n/ryqq_v2/albumDetail/003szpvI3LMhQ7" target="_blank">QQ 音乐</a>
+								 / <a href="http://music.163.com/album/190605791/?userid=6339430442" target="_blank">网易云音乐</a>
+								 / <a href="https://www.kugou.com/album/info/1k1d40ed/" target="_blank">酷狗音乐</a>
+								 / <a href="https://www.kuwo.cn/album_detail/52082482" target="_blank">酷我音乐</a>
+								 / <a href="https://music.apple.com/cn/album/%E5%8F%8D%E6%B7%B1%E4%BB%A3%E8%AF%8D/1770685141" target="_blank">Apple Music</a>
+								 / <a href="https://open.spotify.com/album/6IcyslRZfwWzpdhnFML6cd" target="_blank">Spotify</a>。</p>
+							<p>如您欲加群且可合法收听，请您通过 <a href="https://message.bilibili.com/?spm_id_from=333.1387.0.0#/whisper/mid1863501530" target="_blank">B 站私信</a>或<a href="mailto:ethanshaw@ethan929.com" target="_blank">电子邮箱</a>联系我，审核通过后会向您发送一串密码。之后，在 QQ 搜索群号并按照流程加群即可。</p>
+						</div>
+					</div>
+				</section>
+				<section id="discord" class="section-content grid">
+					<a href="https://discord.gg/ffpcn44j38" class="card discord" onclick="toggleModal('discord-overlay', true)">
+						<!-- Discord Logo SVG -->
+						<svg class="card-svg" viewBox="0 0 1184.07 916.57" fill="currentColor">
+							<path
+								d="M758.72,0c-10.52,19.02-22.82,44.61-31.29,64.97-91.08-13.7-181.32-13.7-270.73,0-8.47-20.35-21.05-45.94-31.66-64.97-85.77,14.84-167.82,41-244.46,76.95C25.98,310.56-15.93,538.37,5.03,762.95c102.53,76.57,201.9,123.09,299.6,153.52,24.12-33.2,45.63-68.49,64.17-105.68-35.3-13.41-69.1-29.96-101.04-49.18,8.47-6.28,16.76-12.84,24.77-19.6,194.83,91.12,406.51,91.12,599.01,0,8.1,6.75,16.39,13.32,24.77,19.6-32.04,19.31-65.93,35.86-101.23,49.27,18.53,37.1,39.95,72.48,64.17,105.68,97.79-30.44,197.25-76.95,299.78-153.62,24.59-260.34-42-486.06-176.01-686.19C926.35,40.9,844.4,14.84,758.72,0ZM395.33,624.84c-58.48,0-106.45-54.6-106.45-121.09s46.94-121.18,106.45-121.18,107.47,54.6,106.45,121.18c.09,66.49-46.94,121.09-106.45,121.09ZM788.71,624.84c-58.48,0-106.45-54.6-106.45-121.09s46.94-121.18,106.45-121.18,107.47,54.6,106.45,121.18c0,66.49-46.94,121.09-106.45,121.09Z">
+							</path>
+						</svg>
+						<span class="card-subtitle">Discord 服务器</span>
+					</a>
+					<div>
+						<h2>Charlie’s Melody Bag</h2>
+						<p class="bottom10">欢迎加入我们的服务器！</p>
+						<div class="justext main-text">
+							<p><strong>注意</strong>　加入服务器需提交申请，问题为：「Who is your favorite Chinese pop singer?」（您最喜欢的中国流行歌手是谁？）输入「周深」（或「Zhou Shen」「Charlie Zhou」等）后等待审核通过即可。</p>
+						</div>
+					</div>
+				</section>
+				<section id="reward" class="section-content grid">
+					<a href="javascript:void(0);" class="card wechat" onclick="toggleModal('modal-overlay', true)">
+						<!-- WeChat Reward Logo SVG -->
+						<svg class="card-svg" viewBox="0 0 1137.48 930.66" fill="currentColor">
+							<path
+								d="M794.84,295.11c7.8,0,15.43.59,23.11.99C790.66,128.95,619.21,0,411.14,0,184.08,0,0,153.39,0,342.61c0,103.23,55.4,196.15,142.06,258.95,6.97,4.96,11.51,13.13,11.51,22.33,0,3.03-.64,5.83-1.44,8.74-6.92,25.81-18,67.17-18.53,69.11-.86,3.24-2.21,6.63-2.21,10.01,0,7.57,6.13,13.7,13.7,13.7,2.99,0,5.41-1.1,7.93-2.55l90-51.96c6.75-3.9,13.92-6.31,21.82-6.31,4.21,0,8.27.63,12.09,1.81,41.99,12.07,87.29,18.8,134.2,18.8,6.91,0,13.68-.48,20.47-.86-6.53-23.41-10.35-47.69-10.35-72.77,0-174.5,167.58-316.48,373.59-316.48ZM548.19,178.16c30.28,0,54.82,24.54,54.82,54.82s-24.55,54.81-54.82,54.81-54.82-24.54-54.82-54.81,24.54-54.82,54.82-54.82ZM274.1,287.79c-30.28,0-54.82-24.54-54.82-54.81s24.55-54.82,54.82-54.82,54.82,24.54,54.82,54.82-24.55,54.81-54.82,54.81Z">
+							</path>
+							<path
+								d="M794.87,326.12c-189.22,0-342.62,127.83-342.62,285.5s153.4,285.51,342.62,285.51c39.09,0,76.84-5.59,111.83-15.65,3.18-.98,6.57-1.5,10.07-1.5,6.59,0,12.56,2,18.2,5.26l75.01,43.3c2.09,1.22,4.11,2.14,6.59,2.14,6.31,0,11.42-5.11,11.42-11.42,0-2.83-1.12-5.64-1.84-8.36-.43-1.6-9.67-36.06-15.43-57.58-.67-2.42-1.21-4.75-1.21-7.28,0-7.67,3.79-14.47,9.59-18.61,72.23-52.34,118.38-129.78,118.38-215.8,0-157.67-153.39-285.5-342.61-285.5ZM680.65,565.94c-25.22,0-45.67-20.44-45.67-45.67s20.45-45.68,45.67-45.68,45.69,20.44,45.69,45.68-20.46,45.67-45.69,45.67ZM909.07,565.94c-25.23,0-45.67-20.44-45.67-45.67s20.44-45.68,45.67-45.68,45.68,20.44,45.68,45.68-20.44,45.67-45.68,45.67Z">
+							</path>
+						</svg>
+						<span class="card-subtitle">微信赞赏码</span>
+					</a>
+					<p>感谢您的鼓励与支持！</p>
+				</section>
+				<section id="duolingo" class="section-content grid">
+					<a href="https://www.duolingo.com/profile/EthanShaw929" class="card duolingo" target="_blank">
+						<!-- Duolingo Logo SVG -->
+						<svg class="card-svg" viewBox="0 0 1184.30 1082.64" fill="currentColor">
+							<path
+								d="M1093.05,721.73h0c-13.59-7.73-29.7-9.72-44.77-5.52-15.06,4.2-27.85,14.24-35.53,27.9l-45.7,81.04c-14.97,28.29-4.78,63.36,22.98,79.14,27.76,15.77,63.02,6.53,79.55-20.86l45.66-81.05c16.08-28.44,6.14-64.54-22.2-80.64Z">
+							</path>
+							<path
+								d="M508.28,970.44l-.05.02-83.77-40.14c-29.31-13.42-63.95-.75-77.79,28.45-13.84,29.2-1.76,64.11,27.14,78.4l83.82,40.11c29.31,13.42,63.95.75,77.8-28.45,13.84-29.2,1.75-64.12-27.15-78.4Z">
+							</path>
+							<path
+								d="M1090.97,129.45c-12.41-5.15-26.53-4.02-37.99,3.03l-154.41,94.93-45.1-143.69c-12.01-38.36-42.44-68.08-80.99-79.12-38.55-11.04-80.07-1.91-110.51,24.3-74.36,64.11-127.9,101.32-160.62,111.62-32.72,10.3-98.94,10.69-198.66,1.16-39.88-3.78-79.01,12.73-104.21,43.98-25.2,31.25-33.12,73.07-21.08,111.37l45.57,144.99-183.55,11.38c-13.4.83-25.61,8.03-32.83,19.39-7.22,11.36-8.59,25.49-3.68,38.02,49.34,125.57,174.31,207.2,311.92,201.53,80.71,149.82,256.22,220.94,418.19,169.45,161.97-51.49,264.74-211.07,244.86-380.22,114.19-75.01,168.87-212.76,137.83-343.06-3.13-13.1-12.33-23.89-24.74-29.04Z">
+							</path>
+						</svg>
+						<span class="card-subtitle">多邻国</span>
+					</a>
+					<div>
+						<h2>EthanShaw929</h2>
+						<p>来多邻国一起学习吧！</p>
+					</div>
+				</section>
+			</section>
+			
+			<footer>
+				<p>©2026 Ethan Shaw</p>
+				<p>Built with love for Charlie and you all</p>
+			</footer>
+		</section>
+	</main>
+
+	<!-- 字体版权弹窗 -->
+	<section id="font-copyright-overlay" class="modal-overlay" onclick="toggleModal('font-copyright-overlay', false)">
+		<article class="modal-modal" style="max-width: 400px;" onclick="event.stopPropagation()">
+			<button class="close-btn" onclick="toggleModal('font-copyright-overlay', false)" aria-label="Close">
+				<svg viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M18 6L6 18M6 6L18 18"></path>
+				</svg>
+			</button>
+			<div class="modal-body">
+				<h4 style="margin-bottom: 12px; color: var(--text-main); font-weight: 600;">字体版权信息</h4>
+				<div style="text-align: left; margin-bottom: 8px;">
+					<a href="https://github.com/rsms/inter" target="_blank"
+						style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Inter</a>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>Copyright 2016 The Inter Project Authors.</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span
+							style="flex-shrink: 0; width: 1.6em; font-family: 'Barlow Condensed', monospace; font-feature-settings: normal; transform: translateY(-0.08em); letter-spacing: -0.03em;">TM</span>
+						<span>Inter UI and Inter is a trademark of rsms.</span>
+					</p>
+				</div>
+				<div style="text-align: left; margin-top: 8px;  margin-bottom: 8px;">
+					<p style="color: var(--primary-blue); text-decoration: none; font-weight: 400; font-size: 0.95rem;">
+						<a href="https://github.com/adobe-fonts/source-han-sans" target="_blank"
+							style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">思源黑体</a>
+					</p>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>2014-2021 Adobe (<a href="http://www.adobe.com/" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">http://www.adobe.com/</a>),
+							with Reserved Font Name 'Source'.</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span
+							style="flex-shrink: 0; width: 1.6em; font-family: 'Barlow Condensed', monospace; font-feature-settings: normal; transform: translateY(-0.08em); letter-spacing: -0.03em;">TM</span>
+						<span>Source is a trademark of Adobe in the United States and/or other countries.</span>
+					</p>
+				</div>
+				<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
+					<p style="color: var(--primary-blue); text-decoration: none; font-weight: 400; font-size: 0.95rem;">
+						<a href="https://github.com/jpt/barlow/" target="_blank"
+							style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Barlow</a>（<span
+							class="inter-italic-override">Musical</span> 的原型）</p>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>Copyright 2017 The Barlow Project Authors (<a href="https://github.com/jpt/barlow"
+								target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">https://github.com/jpt/barlow</a>)</span>
+					</p>
+				</div>
+				<div
+					style="text-align: justify; text-justify: inter-ideograph; line-break: strict; font-size: 0.85rem; color: var(--text-sub);">
+				</div>
+
+				<div style="text-align: left; margin-top: 8px; font-size: 0.85rem; color: var(--text-sub);">
+					<p><i>中文字体文件已使用 <a href="https://www.python.org/" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">Python</a> 库 <a
+								href="https://github.com/fonttools/fonttools" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">FontTools</a> 进行子集化压缩。</i>
+					</p>
+					<p><i>这些字体软件根据 SIL 开源字体许可证（SIL Open Font License）1.1 版进行许可。该许可证及其常见问题解答可在以下网址查阅：<a
+								href="http://scripts.sil.org/OFL" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">http://scripts.sil.org/OFL</a>。</i>
+					</p>
+				</div>
+			</div>
+		</article>
+	</section>
+
+	<!-- 微信 -->
+	<section id="modal-overlay" class="modal-overlay" onclick="toggleModal('modal-overlay', false)">
+		<article class="modal-modal" onclick="event.stopPropagation()">
+			<button class="close-btn" onclick="toggleModal('modal-overlay', false)" aria-label="关闭弹窗">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
+			</button>
+			<div class="modal-body">
+				<h4 style="margin-bottom: 20px; color: var(--text-main); font-weight: 600;">微信赞赏码</h4>
+				<picture>
+					<source srcset="images/reward_code_dark.webp" media="(prefers-color-scheme: dark)">
+					<img src="images/reward_code.webp" alt="微信赞赏码" class="modal-qr">
+				</picture>
+				<p style="margin-top: 15px; font-size: 0.85rem; color: var(--text-sub);">感谢您的鼓励与支持！</p>
+			</div>
+		</article>
+	</section>
+
+	<!-- 语言切换按钮 -->
+	<a href="en_US" class="lang-toggle-btn" aria-label="Switch to English">
+		<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+			<path
+				d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z"
+				stroke="currentColor" stroke-width="4" />
+			<path
+				d="M6 30.9856C8.63192 32.041 10.5266 32.041 11.6839 30.9856C13.4199 29.4025 11.9219 24.5978 14.3532 23.2727C16.7844 21.9476 20.4886 27.8214 23.9508 25.8887C27.4129 23.9559 23.6246 18.8023 26.0272 16.713C28.4298 14.6237 31.554 16.98 32.1001 13.4865C32.6462 9.99304 29.5521 11.5082 28.9584 8.20693C28.5625 6.00611 28.5625 4.84884 28.9584 4.73511"
+				stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+			<path
+				d="M29.0209 43.3505C27.1468 41.4325 26.4721 39.6497 26.9969 38.0019C27.7841 35.5303 29.0826 35.6764 29.6488 34.1482C30.2149 32.6199 28.6156 30.4433 32.1643 28.5826C34.5301 27.3421 37.783 28.7794 41.9228 32.8944"
+				stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+		</svg>
+	</a>
+
+	<!-- 亮暗模式切换按钮 -->
+	<button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切换亮暗模式">
+		<svg viewBox="0 0 48 48">
+			<!-- 太阳/月亮组合图标 -->
+			<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path
+				d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z"
+				fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+			<path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+		</svg>
+	</button>
+
+	<style id="__SP_COPY_STYLE__">*, html body * :not(input):not(textarea){user-select: auto !important;-webkit-user-select: auto !important;} :not(input):not(textarea)::selection {  color: inherit !important;  background-color: #BEDAFF !important;  background-color: highlight !important;} :not(input):not(textarea)::-moz-selection {  color: inherit !important;  background-color: #BEDAFF !important;  background-color: highlight !important;} </style>
+</body>
+
+
+</html>

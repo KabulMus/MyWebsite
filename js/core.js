@@ -4,26 +4,6 @@ const ICONS = {
     moon: '<path d="M28.0527 4.41085C22.5828 5.83695 18.5455 10.8106 18.5455 16.7273C18.5455 23.7564 24.2436 29.4545 31.2727 29.4545C37.1894 29.4545 42.1631 25.4172 43.5891 19.9473C43.8585 21.256 44 22.6115 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C25.3885 4 26.744 4.14149 28.0527 4.41085Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>'
 };
 
-// 页面滚动逻辑
-window.addEventListener('scroll', () => {
-	const navbar = document.getElementById('top-nav');
-	const hero = document.querySelector('.hero-section');
-	if (navbar && hero) {
-        if (window.scrollY >= hero.offsetHeight - 20) {
-            navbar.classList.add('visible');
-        } else {
-            navbar.classList.remove('visible');
-        }
-        navbar.classList.toggle('visible', window.scrollY >= hero.offsetHeight - 20);
-	}
-});
-
-// 抖动效果
-function shakeCard(el) {
-    el.classList.add('shake');
-    setTimeout(() => el.classList.remove('shake'), 400);
-}
-
 // 亮暗模式切换
 function toggleTheme() {
     const html = document.documentElement;
@@ -39,8 +19,8 @@ function toggleTheme() {
     svgs.forEach(s => s.innerHTML = isDarkNow ? ICONS.sun : ICONS.moon);
     
     // 更新赞赏码（如果存在）
-    const qrImg = document.querySelector('.reward-qr');
-    const qrSource = document.querySelector('#reward-overlay picture source');
+    const qrImg = document.querySelector('.modal-qr');
+    const qrSource = document.querySelector('#modal-overlay picture source');
     if (qrImg) qrImg.src = isDarkNow ? "images/reward_code.webp" : "images/reward_code_dark.webp";
     if (qrSource) qrSource.srcset = isDarkNow ? "images/reward_code.webp" : "images/reward_code_dark.webp";
 }
@@ -57,7 +37,7 @@ function toggleModal(id, show) {
         overlay.classList.remove('active');
         setTimeout(() => {
             // 只有当没有激活的弹窗时才恢复滚动
-            if (!document.querySelector('.reward-overlay.active')) {
+            if (!document.querySelector('.modal-overlay.active')) {
                 document.body.style.overflow = '';
             }
         }, 300);
@@ -118,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ESC 键关闭弹窗
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') document.querySelectorAll('.reward-overlay').forEach(el => toggleModal(el.id, false));
+        if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(el => toggleModal(el.id, false));
     });
 
     // 初始化图标状态

@@ -1,11 +1,3 @@
-// 暂未开通卡片点击晃动效果
-function shakeCard(el) {
-	el.classList.add('shake');
-	setTimeout(() => {
-        el.classList.remove('shake');
-	}, 400);
-}
-
 // 里程碑横向滚动控制 - 实现卡片居中翻页
 function scrollMilestones(direction) {
 	const container = document.getElementById('milestoneScrollContainer');
@@ -46,7 +38,7 @@ function filterMilestones(year, btn) {
 	btn.classList.toggle('active');
 
 	// 获取所有当前选中的年份
-	const activeButtons = document.querySelectorAll('.year-filter-btn.active');
+	const activeButtons = document.querySelectorAll('.filter-btn.active');
 	const activeYears = Array.from(activeButtons).map(b => b.textContent.trim());
 
 	cards.forEach(card => {
@@ -101,5 +93,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (milestoneScrollContainer) {
 		milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
 		updateMilestoneButtons();
+	}
+});
+
+// 页面滚动逻辑
+window.addEventListener('scroll', () => {
+	const navbar = document.getElementById('top-nav');
+	const hero = document.querySelector('.hero-section');
+	if (navbar && hero) {
+        if (window.scrollY >= hero.offsetHeight - 20) {
+            navbar.classList.add('visible');
+        } else {
+            navbar.classList.remove('visible');
+        }
+        navbar.classList.toggle('visible', window.scrollY >= hero.offsetHeight - 20);
 	}
 });
