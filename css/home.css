@@ -87,12 +87,18 @@ section.hero-content {
 		align-items: center;
 	}
 	
+	.avatar {
+		width: 120px;
+		height: 120px;
+	}
+
 	.hero-text-group {
 		flex-direction: column;
 		align-items: center;
 	}
 	
 	.hero-section h1 {
+		font-size: 2.2rem;
 		text-align: center;
 	}
 	
@@ -103,8 +109,16 @@ section.hero-content {
 }
 
 .about-text p { max-width: 600px; margin: 0 auto; color: var(--text-sub); }
-.about-text a { color: inherit; text-decoration: none; transition: color 0.2s; } /* 继承文字颜色，加个平滑过渡 */
-.about-text a:hover { color: var(--primary-blue); }
+
+.about-text a {
+	color: var(--primary-blue);
+	text-decoration: none;
+	border-bottom: 1.5px solid transparent; /* 默认下划线为透明 */
+	transition: border-color 0.2s ease; /* 渐变过渡效果 */
+
+ } /* 继承文字颜色，加个平滑过渡 */
+
+.about-text a:hover { border-bottom-color: var(--primary-blue); }
 
 /* --- 网格系统 --- */
 /* 里程碑部分 */

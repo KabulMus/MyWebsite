@@ -15,10 +15,6 @@ html[lang="en-US"] .justext {
     text-align: left;
 }
 
-html num {
-    font-variant-numeric: tabular-nums;
-}
-
 .main-text a { color: var(--primary-blue); text-decoration: none; }
 
 .bottom10 {

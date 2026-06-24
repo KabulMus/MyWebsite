@@ -43,9 +43,6 @@
     font-family: 'Musical', sans-serif;
 }
 
-[data-theme='dark'] .scale-header { border-bottom-color: rgba(255,255,255,0.05); }
-[data-theme='dark'] .scale-type { color: var(--text-sub); }
-
 .scales-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -84,7 +81,19 @@
 .note-badge { display: flex; align-items: center; background: rgba(30, 102, 198, 0.08); color: var(--primary-blue); padding: 8px 15px; border-radius: 6px; font-weight: 600; font-size: 1.4rem; }
 .note-badge i { font-style: normal; font-size: 0.75rem; opacity: 0.4; width: 1.6rem; text-align: left; font-weight: 400; }
 .note-badge span { flex: 1; text-align: center; margin-right: 1.6rem; font-family: 'Musical', sans-serif; font-feature-settings: normal; }
+
 [data-theme='dark'] .note-badge { background: rgba(147, 197, 253, 0.15); }
+[data-theme='dark'] .scale-header { border-bottom-color: rgba(255,255,255,0.05); }
+[data-theme='dark'] .scale-type { color: var(--text-sub); }
+
+
+@media (prefers-color-scheme: dark) { 
+	html:not([data-theme='light']) {
+        .note-badge { background: rgba(147, 197, 253, 0.15); }
+        .scale-header { border-bottom-color: rgba(255,255,255,0.05); }
+        .scale-type { color: var(--text-sub); }
+    }
+}    
 
 /* --- 响应式适配 (移动端强制单列) --- */
 @media (max-width: 768px) {

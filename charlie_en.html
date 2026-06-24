@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta name="referrer" content="no-referrer">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>About Charlie | Ethan Shaw</title>
+	<link rel="icon" href="favicon.webp" type="image/webp">
+	<link rel="preload" href="images/ZhouShenALPHA.webp" as="image" type="image/webp" fetchpriority="high">
+	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./css/charlie.css">
+	<script src="./js/core.js" defer></script>
+	<script src="./js/home.js" defer></script>
+	<link rel="prefetch" href="js/acoustic_grand_piano-mp3.js" as="script">
+</head>
+<body>
+	<nav class="navbar" id="top-nav">
+		<div class="nav-container">
+			<a href="./" class="nav-brand">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M31 36L19 24L31 12"/></svg>
+			</a>
+			<div class="nav-links desktop-only">
+				<a href="#intro" data-text="介绍">介绍</a>
+				<a href="#charlie" data-text="卡布叻_周深">卡布叻_周深</a>
+				<a href="#studio" data-text="周深工作室">周深工作室</a>
+				<span class="nav-divider"></span>
+				<a href="channels" data-text="频道列表">频道列表</a>
+				<a href="toolkit" data-text="工具箱">工具箱</a>
+				<a href="support" data-text="联系支持">联系支持</a>
+                <a href="charlie" data-text="关于周深" class="active">关于周深</a>
+			</div>
+			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M7.94971 11.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 23.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 35.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			</button>
+		</div>
+		<div class="nav-dropdown" id="nav-dropdown">
+			<a href="#about" onclick="toggleMenu(false)" data-text="关于我">关于我</a>
+			<a href="#milestones" onclick="toggleMenu(false)" data-text="里程碑">里程碑</a>
+			<div class="dropdown-divider"></div>
+			<a href="#explore" onclick="toggleMenu(false)" data-text="探索">探索</a>
+		</div>
+	</nav>
+
+	<header class="hero-section">
+		<svg style="display: none; ">
+			<filter id="clean-outline">
+				<feMorphology operator="dilate" radius="1" in="SourceAlpha" result="dilated_alpha" />
+				<feComposite operator="out" in="dilated_alpha" in2="SourceGraphic" result="outline_mask" />
+				<feColorMatrix type="matrix" values="0 0 0 0 1
+													0 0 0 0 1
+													0 0 0 0 1
+													0 0 0 1 0" in="outline_mask" />
+       		</filter>
+		</svg>
+		<section class="hero-content">
+			<img src="images/charlie.png" class="person-img" fetchpriority="high">
+			<div class="text-group">
+				<div class="rect"></div>
+
+				<h1 class="bottom-layer">Charlie Zhou</h1>
+				<div class="masked-text-container">
+					<h2>Charlie Zhou</h2>
+				</div>
+				<p class="tagline">
+					<span>Chinese Mainland Male Singer</span>
+					<span>Music Producer</span>
+					<span>Young Vocalist</span>
+				</p>
+			</div>
+			
+		</section>
+	</header>
+
+	<main class="content-section">
+		<section class="container">
+			<section id="intro" class="section-content intro-text">
+				<h2 class="section-title">介绍</h2>
+				<p>周深，1992 年 9 月 29 日出生于湖南邵阳，成长于贵州贵阳，毕业于乌克兰利沃夫国立音乐学院声乐歌剧专业。他在 2014 年参加《中国好声音第三季》正式出道，代表歌曲包括《大鱼》《灯火里的中国》《小美满》《人是_》《借过一下》等，以其清亮嗓音、多变声线及融合美声与流行的唱法而闻名。</p>
+			</section>
+			
+			<section class="section-content">
+				<p class="section-hint">左右滑动浏览</p>
+				<div class="filter-container">
+					<button class="filter-btn" onclick="filterMilestones('1992', this)">1992</button>
+					<button class="filter-btn" onclick="filterMilestones('2010', this)">2010</button>
+					<button class="filter-btn" onclick="filterMilestones('2011', this)">2011</button>
+					<button class="filter-btn" onclick="filterMilestones('2014', this)">2014</button>
+					<button class="filter-btn" onclick="filterMilestones('2015', this)">2015</button>
+					<button class="filter-btn" onclick="filterMilestones('2016', this)">2016</button>
+					<button class="filter-btn" onclick="filterMilestones('2017', this)">2017</button>
+					<button class="filter-btn" onclick="filterMilestones('2018', this)">2018</button>
+					<button class="filter-btn" onclick="filterMilestones('2019', this)">2019</button>
+					<button class="filter-btn" onclick="filterMilestones('2020', this)">2020</button>
+					<button class="filter-btn" onclick="filterMilestones('2021', this)">2021</button>
+					<button class="filter-btn" onclick="filterMilestones('2022', this)">2022</button>
+					<button class="filter-btn" onclick="filterMilestones('2023', this)">2023</button>
+					<button class="filter-btn" onclick="filterMilestones('2024', this)">2024</button>
+					<button class="filter-btn" onclick="filterMilestones('2025', this)">2025</button>
+					<button class="filter-btn" onclick="filterMilestones('2026', this)">2026</button>
+				</div>
+				<div class="milestone-container">
+					<button class="milestone-nav-btn prev" onclick="scrollMilestones(-1)" aria-label="上一个">
+						<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M31 36L19 24L31 12"/></svg>
+					</button>
+					<div class="milestone-wrapper" id="milestoneScrollContainer">
+						<div class="milestone-card" data-year="1992">
+							<div class="date">1992.09.29</div>
+							<h3>诞生</h3>
+							<p>出生在湖南邵阳一个偏远的小山村。</p>
+						</div>
+						<div class="milestone-card" data-year="2010">
+							<div class="date">2010</div>
+							<h3>「卡布叻」现身</h3>
+							<p>开始在网络语音平台 YY 化名「卡布叻」以不露脸的形式唱歌。</p>
+						</div>
+						<div class="milestone-card" data-year="2011">
+							<div class="date">~2011</div>
+							<h3>求学之路</h3>
+							<p>高考后，远赴乌克兰求学，在利沃夫国立音乐学院学习声乐，被乌克兰歌唱家维托辛斯基收入门下。</p>
+						</div>
+						<div class="milestone-card" data-year="2014">
+							<div class="date">2014.02.22</div>
+							<h3>语言天赋</h3>
+							<p>以「卡布叻」之名在哔哩哔哩发布视频《Let it go 【九语男版】》，一举登上全站排行榜第 11 位。</p>
+						</div>
+						<div class="milestone-card" data-year="2014">
+							<div class="date">2014.07.25</div>
+							<h3>正式出道</h3>
+							<p>参加《中国好声音 第三季》，以一首《欢颜》赢得三位导师转身，正式出道。</p>
+						</div>
+						<div class="milestone-card" data-year="2015">
+							<div class="date">2015.08.08</div>
+							<h3>发行首支个人单曲</h3>
+							<p>在音乐人高晓松的支持下，发行首支个人单曲《玫瑰与小鹿》，并凭借该单曲斩获最佳新人奖。</p>
+						</div>
+						<div class="milestone-card" data-year="2016">
+							<div class="date">2016.05.20</div>
+							<h3>邂逅代表作</h3>
+							<p>为动画电影《大鱼海棠》演唱印象曲《大鱼》，一经发行便斩获多个奖项，成为贯穿周深演艺生涯的代表作品。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2017">
+							<div class="date">2017.11.06</div>
+							<h3>发行首张个人专辑</h3>
+							<p>发行首张个人专辑《深的深》，专辑收录了包括《玫瑰与小鹿》《大鱼》《浅浅》等在内的 10 首歌曲。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2017">
+							<h3>《深的深》</h3>
+							<div style="display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 8px;">
+								<p style="grid-column: 1;">
+									<num>1. </num>玫瑰与小鹿
+									<br><num>2. </num>浅浅
+									<br><num>3. </num>哥哥
+									<br><num>4. </num>迎刃
+									<br><num>5. </num>蓝色降落伞
+								</p>
+								<p style="grid-column: 2;">
+									<num>6. </num>风景
+									<br><num>7. </num>妳
+									<br><num>8. </num>白墙
+									<br><num>9. </num>大鱼
+									<br><num>10. </num>一缕执念
+								</p>
+							</div>
+						</div>
+
+						<div class="milestone-card" data-year="2018">
+							<div class="date">2018.05.19</div>
+							<h3>「深空间」</h3>
+							<p>「深空间」个人巡回演唱会在上海开启，这是周深的首次个人巡回演唱会，共囊括上海、武汉、成都、北京、深圳、杭州 6 站。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2018">
+							<div class="date">2018.09.29</div>
+							<h3>初次作曲</h3>
+							<p>发行首支自己作曲的歌曲《可它爱着这个世界》。周深因此曲获得微博 2019 十大影响力原创音乐人奖项</p>
+						</div>
+
+						<div class="milestone-card" data-year="2019">
+							<div class="date">2019.11.09</div>
+							<h3>「C-929 星球」</h3>
+							<p>第二次个人巡回演唱会「C-929 星球」在北京启动，巡演途径北京、南京、深圳、上海、广州等 7 站。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2019">
+							<div class="date">2019.10 ~ 2020.01</div>
+							<h3>《我们的歌》一举夺魁</h3>
+							<p>参加《我们的歌 第一季》，与李克勤组成「勤深深」组合，合作演绎了《天下有情人》《另一种乡愁》等多首歌曲，最终夺得冠军。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2020">
+							<div class="date">2020.03.07</div>
+							<h3>《达拉崩吧》音色百变</h3>
+							<p>周深在《歌手·当打之年》以五种音色演绎《达拉崩吧》掀起热潮，并获得该期冠军。此次演唱获得了原作者 ilem 本人的授权。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2020">
+							<div class="date">2020.07.25</div>
+							<h3>周深工作室成立</h3>
+							<p>出道六周年之际，周深发长文袒露心声表达感谢，宣布成立个人工作室，并发行工作室制作的首支单曲《化身孤岛的鲸》。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2021">
+							<div class="date">2021.02.11</div>
+							<h3>首登央视春晚</h3>
+							<p>与歌唱家张也演唱《灯火里的中国》，引发热烈反响。<i>歌曲随后入选中宣部第九批「中国梦」主题新创作歌曲名录，并获评广东省第十二届精神文明建设「五个一工程」优秀作品。</i></p>
+						</div>
+
+						<div class="milestone-card" data-year="2021">
+							<div class="date">2021.11.06</div>
+							<h3>莫听穿林打叶声</h3>
+							<p>发行纪录片《紫禁城》主题曲《光亮》，以高品质戏腔惊艳听众。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2022">
+							<div class="date">2022.03.01</div>
+							<h3>《我的答案》入选「五个一」</h3>
+							<p>与最高人民检察院合作推出人民检察概念曲《我的答案》。<i>同年 12 月，歌曲获中宣部第 16 届精神文明建设「五个一工程」优秀作品奖。</i></p>
+						</div>
+
+						<div class="milestone-card" data-year="2022">
+							<div class="date">2022.04.27</div>
+							<h3>有你，有我</h3>
+							<p>在中国共产主义青年团成立 100 周年之际，献唱宣传片主题曲《有我》。</p>
+						</div>
+					
+						<div class="milestone-card" data-year="2022">
+							<div class="date">2022.09.10</div>
+							<h3>花开忘忧，愿你无忧</h3>
+							<p>《花开忘忧》于中秋节、教师节发布，有感怀师恩之意。此曲获奖无数，历经多年至今仍在由你榜蝉联。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2023">
+							<div class="date">2023.01.21</div>
+							<h3>二登央视春晚</h3>
+							<p>再度登上央视春晚，独唱《花开忘忧》，收视率再居高位。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2023">
+							<div class="date">2023.06.27</div>
+							<h3>走进国家大剧院</h3>
+							<p>出席在国家大剧院举办的新时代经典作品音乐会，独唱《灯火里的中国》。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2023">
+							<div class="date">2023.08.19</div>
+							<h3>出道九周年专场演唱会</h3>
+							<p>周深「深深感谢你」2023 演唱会感谢专场在北京凯迪拉克中心举办,演唱会门票秒罄，引发全网关注。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2023">
+							<div class="date">2023.11.12</div>
+							<h3>我以渺小爱你</h3>
+							<p>发行环保公益单曲《我以渺小爱你》。该曲在一年半后的 2025「深深的」演唱会成为结束曲。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2024">
+							<div class="date">2024.02.09</div>
+							<h3>三登央视春晚</h3>
+							<p>独唱《健康到到令》。该年春晚结束曲《难忘今宵》亦有周深领唱。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2024">
+							<div class="date">2024.03.31</div>
+							<h3>《蜃楼》</h3>
+							<p>第二张个人专辑《反深代词》先行曲《蜃楼》全网上线。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2024">
+							<div class="date">2024.04.18</div>
+							<h3>走向联合国</h3>
+							<p>应邀前往纽约联合国总部出席第十五届联合国中文日活动，献唱为该节日创作的交响诗《和平颂》、代表作《大鱼》等，并参与圆桌讨论。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2024">
+							<div class="date">2024.05.18</div>
+							<h3>9.29Hz 十周年巡回演唱会</h3>
+							<p>9.29Hz 巡回演唱会正式启动，这是他首次举办体育场规模的个人巡回演唱会。官宣上海、深圳、成都、贵阳等 13 站 · 20 场，这是周深首次举办体育场规模的巡回演唱会。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2024">
+							<div class="date">2024.09.29</div>
+							<h3>第二张个人专辑《反深代词》</h3>
+							<p>《反深代词》全专上线。专辑销量超 200 万张，销售额突破 8000 万，登顶全平台专辑销量榜榜首，斩获年度专辑、年度最受欢迎专辑等多项荣誉。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2024">
+							<p>在 IFPI 国际唱片协会发布的统计中，《反深代词》位列 2024 年度全球畅销专辑实销榜第 11
+								位，成为榜单上唯一一位没有发行实体专辑的歌手，也是 2024 年度唯一上榜的华语歌手。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2024" >
+							<div style="display: grid; grid-template-columns: repeat(2, 1fr);">
+								<div style="grid-column: 1;">
+									<h3 style="margin-bottom: 16px;">《反深代词》</h3>
+									<p>
+										<num>1. </num>深 Intro
+										<br><num>2. </num>蜃楼
+										<br><num>3. </num>重启
+										<br><num>4. </num>记忆商店
+										<br><num>5. </num>警报
+										<br><num>6. </num>少管我
+									</p>
+								</div>
+								<p style="grid-column: 2;">
+									<num>7. </num>嗨
+									<br><num>8. </num>缝合
+									<br><num>9. </num>Wala li longla
+									<br><num>10. </num>空壳
+									<br><num>11. </num>没关系
+									<br><num>12. </num>请我不改
+									<br><num>13. </num>虚构
+									<br><num>14. </num>周 Outro
+								</p>
+							</div>
+						</div>
+
+						<div class="milestone-card" data-year="2025">
+							<div class="date">2025.01.29</div>
+							<h3>四登央视春晚</h3>
+							<p>与秘鲁男高音歌唱家弗洛雷兹（Juan Diego Flórez）演唱《山鹰和兰花花》，广受海内外网友好评。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2025">
+							<div class="date">2025.02.14</div>
+							<h3>开启首轮世界巡回演唱会</h3>
+							<p>周深 9.29Hz 巡回演唱会进军海外，官宣伦敦、拉斯维加斯、西雅图、纽约、多伦多、墨尔本、悉尼和吉隆坡，范围涵盖 4 大洲 5 国 8 城。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2025">
+							<div class="date">2025.05.17</div>
+							<h3>「深深的」巡回演唱会</h3>
+							<p>全新主题巡演 2025「深深的」巡回演唱会正式启动，途径上海、南京、太原、青岛等地，共计 22 站 44 场。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2025">
+							<div class="date">2025.05.18</div>
+							<h3>个人 EP 《小深情》</h3>
+							<p>发行个人 EP 专辑《小深情》，先行曲《嗨！人间》上线。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2025">
+							<h3>《小深情》</h3>
+							<div style="display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 8px;">
+								<p style="grid-column: 1;">
+									<num>1. </num>嗨！人间
+									<br><num>2. </num>我想你了
+									<br><num>3. </num>来啊
+								</p>
+								<p style="grid-column: 2;">
+									<num>4. </num>遗失的日子
+									<br><num>5. </num>漫漫
+									<br><num>6. </num>空荡荡
+								</p>
+							</div>
+						</div>
+
+						<div class="milestone-card" data-year="2025">
+							<div class="date">2025.12.31</div>
+							<h3>举办首场跨年演唱会</h3>
+							<p>「深深的」巡回演唱会香港站在香港启德主场馆举行，是香港首个个人跨年现场演唱会，周深也成为首个登上启德体育园的内地歌手。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2026">
+							<div class="date">2026.02.16</div>
+							<h3>五登央视春晚</h3>
+							<p>独唱歌曲《吉量》，与来自 56 个民族的小朋友们同台演出。节目问鼎 2026 年央视春晚收视冠军。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2026">
+							<div class="date">2026.04.18</div>
+							<h3>人生日记继续书写</h3>
+							<p>2026 年度「深深的」巡回演唱会正式启动，官宣广州、武汉、苏州、重庆、郑州、呼和浩特、沈阳、贵阳等多个城市。</p>
+						</div>
+
+						<div class="milestone-card" data-year="2026">
+							<div class="date">2026.05.29</div>
+							<h3>《反深代词》实体专辑发售</h3>
+							<p>《反深代词》实体专辑正式开启预售，开售 12 分钟销售额突破 5000 万，全平台销量突破 25 万张，2026 年实体专辑日、周、月、年榜全面登顶。</p>
+						</div>
+
+						<div class="milestone-card" data-year="all">
+							<div class="date">Future</div>
+							<h3>未完待续……</h3>
+							<p>更多的经历，更多的冒险。时间的长河还在流淌，人生日记仍在继续书写……</p>
+						</div>
+					</div>
+					<button class="milestone-nav-btn next" onclick="scrollMilestones(1)" aria-label="下一个">
+						<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M19 12L31 24L19 36"/></svg>
+					</button>
+				</div>
+			</section>
+
+			<section class="section-content">
+				<section class="grid">
+					<a href="https://baike.baidu.com/item/%E5%91%A8%E6%B7%B1/15089196" class="card baidu" target="_blank">
+						<span class="card-subtitle"><icons>BAIDUBAIKE</icons></span>
+					</a>
+					<a href="https://zh.wikipedia.org/zh-cn/%E5%91%A8%E6%B7%B1" class="card wiki" target="_blank">
+						<span class="card-subtitle"><icons>WIKIPEDIA</icons></span>
+					</a>
+				</section>
+			</section>
+
+			<section id="charlie" class="section-content">
+				<h2 class="section-title">卡布叻_周深</h2>
+				<section class="grid">
+					<a href="https://weibo.com/u/1736988591" class="card weibo" target="_blank">
+						<span class="card-subtitle"><icons>Weibo</icons></span>
+					</a>
+					<a href="https://space.bilibili.com/3404595" class="card bilibili" target="_blank">
+						<span class="card-subtitle"><icons>BILIBILI</icons></span>
+					</a>
+					<a href="https://v.douyin.com/MvrWuag/" class="card douyin" target="_blank">
+						<span class="card-subtitle"><icons>DOUYIN</icons></span>
+					</a>
+				</section>
+			</section>
+
+			<section id="studio" class="section-content">
+				<h2 class="section-title">周深工作室</h2>
+				<section class="grid">
+					<a href="https://weibo.com/u/7478855230" class="card weibo" target="_blank">
+						<span class="card-subtitle"><icons>Weibo</icons></span>
+					</a>
+					<a href="https://space.bilibili.com/3546694058773380" class="card bilibili" target="_blank">
+						<span class="card-subtitle"><icons>BILIBILI</icons></span>
+					</a>
+					<a href="https://www.youtube.com/@ZhouShenOfficial" class="card youtube" target="_blank">
+						<span class="card-subtitle"><icons>YOUTUBE</icons></span>
+					</a>
+					<a href="https://v.douyin.com/i5LfLDjw/" class="card douyin" target="_blank">
+						<span class="card-subtitle"><icons>DOUYIN</icons></span>
+					</a>
+					<a href="https://www.xiaohongshu.com/user/profile/66361b46000000000700682d" class="card xhs" target="_blank">
+						<span class="card-subtitle"><icons>XHS</icons></span>
+					</a>
+				</section>
+			</section>
+
+			<footer>
+				<p>©2026 Ethan Shaw</p>
+				<p>Built with love for Charlie and you all</p>
+			</footer>
+		</section>
+	</main>
+
+	<!-- 语言切换按钮 -->
+	<a href="en_US" class="lang-toggle-btn" aria-label="Switch to English">
+		<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z" stroke="currentColor" stroke-width="4"/><path d="M6 30.9856C8.63192 32.041 10.5266 32.041 11.6839 30.9856C13.4199 29.4025 11.9219 24.5978 14.3532 23.2727C16.7844 21.9476 20.4886 27.8214 23.9508 25.8887C27.4129 23.9559 23.6246 18.8023 26.0272 16.713C28.4298 14.6237 31.554 16.98 32.1001 13.4865C32.6462 9.99304 29.5521 11.5082 28.9584 8.20693C28.5625 6.00611 28.5625 4.84884 28.9584 4.73511" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M29.0209 43.3505C27.1468 41.4325 26.4721 39.6497 26.9969 38.0019C27.7841 35.5303 29.0826 35.6764 29.6488 34.1482C30.2149 32.6199 28.6156 30.4433 32.1643 28.5826C34.5301 27.3421 37.783 28.7794 41.9228 32.8944" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+	</a>
+
+	<!-- 亮暗模式切换按钮 -->
+	<button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切换亮暗模式">
+		<svg viewBox="0 0 48 48">
+			<!-- 太阳/月亮组合图标 -->
+			<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>
+	</button>
+
+</body>
+</html>

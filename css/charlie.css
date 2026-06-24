@@ -1,0 +1,325 @@
+.navbar {
+	transform: translateY(-100%);
+	box-shadow: none;
+	border-bottom: none;
+}
+
+.navbar.visible { 
+    transform: translateY(0); 
+	box-shadow: var(--card-shadow);
+    border-bottom: 1px solid var(--item-border);
+}
+
+/* --- 英雄区块 (Hero Section) --- */
+.hero-section {
+	position: relative;
+	width: 100%;
+	height: 450px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: white;
+	text-align: center;
+	background: linear-gradient(180deg, #c3ddff 0%, #2986ff 100%);
+}
+
+.rect {
+	position: relative;
+	width: 100%;
+	height: 450px;
+	z-index: 2;
+	background: linear-gradient(180deg, #074eaa00 70%, #074eaabb 100%);
+}
+
+section.hero-content {
+	position: absolute;
+	z-index: 0;
+	display: flex;
+	flex-direction: row;
+	align-items: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.hero-section h1, .hero-section h2 {
+	font-family: 'Playfair Display', 'Noto Serif SC', serif;
+	font-size: 10rem;
+	font-weight: 900;
+	text-align: center;
+	letter-spacing: 48px;
+	text-indent: 48px;
+	line-height: 0.8;
+}
+
+html[lang="en-US"] .hero-section h1,
+html[lang="en-US"] .hero-section h2 {
+	letter-spacing: 0;
+	text-indent: 0;
+}
+
+.hero-section h1 {
+	text-shadow: 0 4px 12px rgba(1, 21, 86, 0.4);
+}
+
+.hero-section h2 {
+	position: absolute;
+	filter: url(#clean-outline);
+}
+
+.text-group {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;  /* 确保所有绝对定位元素在正中心相遇 */
+}
+
+/* 2. 底层背景字、人像图片、遮罩容器 三合一共享基础属性 */
+.bottom-layer,
+.person-img, 
+.masked-text-container {
+    position: absolute;
+    top: -40px;               /* 统一整体向上偏移量，你可以根据需要调这个值 */
+    height: 800px;            /* 强制统一渲染高度 */
+    width: 100%;             /* 【大招】给它们一个一模一样的物理宽度边界！ */
+}
+
+/* 3. 底层字独有样式 */
+.bottom-layer {
+	top: -180px;
+    z-index: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;      /* 让字在 600px 盒子里居中 */
+}
+
+/* 4. 图片独有样式 */
+.person-img {
+    z-index: 1;
+    object-fit: contain;      /* 保持比例 */
+    object-position: center; 
+	width: 800px; /* 图片在 600px 盒子里居中 */
+}
+
+/* 5. 顶层遮罩文字容器 */
+.masked-text-container {
+    z-index: 2;               /* 飘在图片和底层字上方 */
+    pointer-events: none;  
+	top: -180px;
+	display: flex;
+    justify-content: center;
+    align-items: center;      
+    
+    /* 遮罩配置：必须和图片的缩放及对齐完全同步 */
+    -webkit-mask-image: url('../images/charlie.png');
+    mask-image: url('../images/charlie.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+.hero-section .tagline {
+	position: absolute;
+	font-size: 1rem;
+	font-family: 'Source Serif 4', 'Noto Serif SC', serif;
+	font-weight: 600;
+	color: #ffffff;
+	top: 400px;
+	text-align: center;
+	padding: 0;
+	text-shadow: 0 0 4px rgba(1, 21, 86, 0.4);
+	z-index: 3;
+}
+
+.hero-section .tagline span {
+	display: inline-block;
+	
+}
+
+.hero-section .tagline span:not(:last-child) {
+	margin-right: 1em;
+}
+
+/* 桌面端：左对齐布局 */
+@media (max-width: 768px) {
+	.hero-section { height: 500px; }
+	.rect {
+		height: 500px;
+		background: linear-gradient(180deg, #074eaa00 50%, #074eaa 100%);
+	}
+	.masked-text-container { display: none; }
+	.hero-section h1, .hero-section h2 {
+		text-align: left;
+		margin-left: 40px;
+		font-size: 3.2rem;
+		text-indent: 0;
+		letter-spacing: 0;
+		
+	}
+	.bottom-layer {
+		justify-content: left;
+		top: -60px;
+		z-index: 3;
+		width: 80%;
+	}
+
+	.hero-section .tagline {
+		top: 380px;
+		margin-left: 40px;
+	}
+	.hero-section .tagline span {
+		text-align: left;
+		display: block;
+		margin-right: 0;
+	}
+	.text-group {
+		justify-content: left;
+	}
+}
+
+.intro-text p { text-align: justify; max-width: 600px; margin: 0 auto; color: var(--text-sub); }
+
+html[lang="en-US"] .intro-text p {
+	text-align: left;
+}
+
+.intro-text a {
+	color: var(--primary-blue);
+	text-decoration: none;
+	border-bottom: 1.5px solid transparent; /* 默认下划线为透明 */
+	transition: border-color 0.2s ease; /* 渐变过渡效果 */
+
+ } /* 继承文字颜色，加个平滑过渡 */
+
+.intro-text a:hover { border-bottom-color: var(--primary-blue); }
+
+/* --- 网格系统 --- */
+/* 里程碑部分 */
+.milestone-wrapper {
+	display: flex;
+	gap: 20px;
+	position: relative; /* 确保坐标计算基准正确 */
+	padding: 20px; /* 恢复对称的正常内边距 */
+	overflow-x: auto; /* 允许横向滚动 */
+	-webkit-overflow-scrolling: touch; /* 移动端平滑滚动 */
+	scrollbar-width: none; /* Firefox 隐藏滚动条 */
+	-ms-overflow-style: none; /* IE 10+ 隐藏滚动条 */
+
+	/* 使用 CSS 变量由 JS 动态控制遮罩透明度 */
+	--mask-left: black;
+	--mask-right: transparent;
+	-webkit-mask-image: linear-gradient(to right, var(--mask-left), black 60px, black calc(100% - 60px), var(--mask-right));
+	mask-image: linear-gradient(to right, var(--mask-left), black 60px, black calc(100% - 60px), var(--mask-right));
+}
+
+.milestone-container {
+	position: relative;
+	width: 100%;
+}
+
+.milestone-nav-btn {
+	position: absolute;
+	top: 50%;
+	translate: 0 -50%;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: var(--card-bg);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid var(--item-border);
+	box-shadow: 0 4px 12px rgba(14, 52, 112, 0.15);
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 10;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	color: var(--text-main);
+}
+.milestone-nav-btn:hover { scale: 1.1; box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); color: var(--primary-blue); }
+.milestone-nav-btn.prev { left: -22px; }
+.milestone-nav-btn.next { right: -22px; }
+.milestone-nav-btn.hidden {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+.milestone-nav-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 1100px) {
+	.milestone-nav-btn.prev { left: 10px; }
+	.milestone-nav-btn.next { right: 10px; }
+}
+
+@media (max-width: 768px) {
+	.milestone-nav-btn { display: none; }
+}
+
+.milestone-wrapper::-webkit-scrollbar {
+	display: none; /* Chrome/Safari 隐藏滚动条 */
+}
+
+.milestone-card {
+	flex: 0 0 300px; /* 固定宽度，不收缩 */
+	background: var(--card-bg); /* 使用主题变量 */
+	border-radius: var(--card-radius);
+	padding: 24px;
+	box-shadow: var(--card-shadow); /* 使用主题变量 */
+	transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+	border-top: 4px solid var(--primary-blue); /* 顶部蓝色边框，保持与其他卡片一致的视觉风格 */
+	text-align: justify; /* 卡片内容两端对齐 */
+}
+/* 修复深色模式下里程碑卡片文字颜色 */
+[data-theme='dark'] .milestone-card h3 { color: var(--text-main); }
+[data-theme='dark'] .milestone-card p { color: var(--text-sub); }
+
+
+.milestone-card .date {
+	display: flex;
+	align-items: center;
+	font-weight: bold;
+	color: var(--primary-blue);
+	margin-bottom: 12px;
+	font-size: 0.9rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.milestone-tag {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 6px;
+	font-family: 'Barlow', 'Inter', sans-serif;
+	font-size: 0.6rem;
+	font-weight: 600;
+	font-variant: small-caps;
+	margin-right: 10px;
+	line-height: 1.2;
+}
+
+.milestone-card h3 {
+	margin: 0 0 10px 0;
+	font-size: 1.25rem;
+	color: var(--text-main); /* 使用主题变量 */
+}
+
+.milestone-card p {
+	color: var(--text-sub); /* 使用主题变量 */
+	font-size: 0.95rem;
+	line-height: 1.6;
+	text-align: justify;
+}
+
+/* 针对英文版里程碑文字改为左对齐，并保持卡片等宽 */
+html[lang="en-US"] .milestone-card,
+html[lang="en-US"] .milestone-card p {
+	text-align: left;
+}
+
+.card-subtitle {
+	font-size: 2rem;
+}
