@@ -64,6 +64,7 @@ html[lang="en-US"] .hero-section h2 {
 
 .hero-section h2 {
 	position: absolute;
+	top: 196px;
 	filter: url(#clean-outline);
 }
 
@@ -81,7 +82,7 @@ html[lang="en-US"] .hero-section h2 {
     position: absolute;
     top: -40px;               /* 统一整体向上偏移量，你可以根据需要调这个值 */
     height: 800px;            /* 强制统一渲染高度 */
-    width: 100%;             /* 【大招】给它们一个一模一样的物理宽度边界！ */
+    width: 8000px;             /* 【大招】给它们一个一模一样的物理宽度边界！ */
 }
 
 /* 3. 底层字独有样式 */
@@ -99,14 +100,12 @@ html[lang="en-US"] .hero-section h2 {
     z-index: 1;
     object-fit: contain;      /* 保持比例 */
     object-position: center; 
-	width: 800px; /* 图片在 600px 盒子里居中 */
 }
 
 /* 5. 顶层遮罩文字容器 */
 .masked-text-container {
     z-index: 2;               /* 飘在图片和底层字上方 */
     pointer-events: none;  
-	top: -180px;
 	display: flex;
     justify-content: center;
     align-items: center;      
