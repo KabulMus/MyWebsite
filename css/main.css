@@ -1,12 +1,13 @@
 /* --- 1. 字体声明 --- */
 @import url('https://fonts.googleapis.com/css2?family=Barlow&family=Barlow+Condensed:wght@400;600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+SC:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
 /* Musical - 乐谱符号字体 */
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
-/* 统一 Inter 可变字体声明 */
+/* Icons 字体声明 */
 @font-face { font-family: 'Icons'; src: url('fonts/Icons-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: auto; font-feature-settings: "liga" 1; }
 /* Noto Sans SC - 思源黑体 Variable Font */
 /* --- 2. 颜色变量 --- */
@@ -64,10 +65,6 @@
     }
 }
 
-section.container a {
-    font-size: inherit;
-}
-
 num {
     font-variant-numeric: tabular-nums;
 }
@@ -75,6 +72,11 @@ num {
 icons {
     font-family: 'Icons';
     font-weight: 400;
+}
+
+google {
+    font-family: 'Google Sans Flex', sans-serif;
+    font-weight: 500;
 }
 
 /* --- 3. 基础复位 --- */
@@ -473,7 +475,7 @@ footer {
     text-align: center;
 }
 
-footer p, a {
+footer p {
     font-size: 0.85rem;
     color: var(--text-sub);
     margin: 4px 0;
@@ -481,8 +483,16 @@ footer p, a {
     transition: color 0.2s ease;
 }
 
-footer a:hover {
+footer a {
+    font-size: 0.85rem;
     color: var(--primary-blue);
+    text-decoration: none;
+	border-bottom: 1.5px solid transparent; /* 默认下划线为透明 */
+	transition: border-color 0.2s ease; /* 渐变过渡效果 */
+}
+
+footer a:hover {
+    border-bottom-color: var(--primary-blue);
 }
 
 /* --- 全局 Toast 通知样式 --- */

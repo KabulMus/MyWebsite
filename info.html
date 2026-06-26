@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta name="referrer" content="no-referrer">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>技术与版权 | Ethan Shaw</title>
+	<link rel="icon" href="favicon.webp" type="image/webp">
+	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./css/pages.css">
+	<link rel="stylesheet" href="./css/support.css">
+	<script src="./js/core.js" defer></script>
+	<script src="./js/home.js" defer></script>
+</head>
+
+<body>
+	<nav class="navbar" id="top-nav">
+		<div class="nav-container">
+			<a href="./" class="nav-brand">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+					<path d="M31 36L19 24L31 12" />
+				</svg>
+			</a>
+			<div class="nav-links desktop-only">
+				<a href="#email" data-text="个人邮箱">个人邮箱</a>
+				<a href="#qq" data-text="QQ*群">QQ 群</a>
+				<a href="#discord" data-text="Discord">Discord</a>
+				<a href="#reward" data-text="赞赏码">赞赏码</a>
+				<a href="#duolingo" data-text="多邻国">多邻国</a>
+				<span class="nav-divider"></span>
+				<a href="https://blog.ethan929.com" data-text="博客">博客</a>
+				<a href="channels" data-text="频道列表">频道列表</a>
+				<a href="toolkit" data-text="工具箱">工具箱</a>
+				<a href="#" data-text="联系支持">联系支持</a>
+				<a href="charlie" data-text="关于周深">关于周深</a>
+			</div>
+			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+					<path d="M7.94971 11.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+						stroke-linejoin="round" />
+					<path d="M7.94971 23.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+						stroke-linejoin="round" />
+					<path d="M7.94971 35.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+						stroke-linejoin="round" />
+				</svg>
+			</button>
+		</div>
+		<div class="nav-dropdown" id="nav-dropdown">
+			<a href="#email" onclick="toggleMenu(false)" data-text="个人邮箱">个人邮箱</a>
+			<a href="#qq" onclick="toggleMenu(false)" data-text="QQ*群">QQ 群</a>
+			<a href="#discord" onclick="toggleMenu(false)" data-text="Discord">Discord</a>
+			<a href="#reward" onclick="toggleMenu(false)" data-text="赞赏码">赞赏码</a>
+			<a href="#duolingo" onclick="toggleMenu(false)" data-text="多邻国">多邻国</a>
+			<div class="dropdown-divider"></div>
+			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="博客">博客</a>
+			<a href="channels" onclick="toggleMenu(false)" data-text="频道列表">频道列表</a>
+			<a href="toolkit" onclick="toggleMenu(false)" data-text="工具箱">工具箱</a>
+			<a href="#" onclick="toggleMenu(false)" data-text="联系支持">联系支持</a>
+			<a href="charlie" onclick="toggleMenu(false)" data-text="关于周深">关于周深</a>
+		</div>
+	</nav>
+
+	<header class="page-hero">
+		<section class="hero-content">
+			<div>
+				<h1>技术与版权</h1>
+				<p class="tagline">本站背后的技术支持与版权归属</p>
+			</div>
+		</section>
+	</header>
+
+	<main class="content-section">
+		<section class="container">
+			<section class="main-container">
+				<section id="email" class="section-content">
+					<h2 class="section-title">技术支持</h2>
+					<ul class="main-text">
+						<li>本站的源代码已托管并开源于 <a href="https://github.com/KabulMus/MyWebsite" target="_blank"><icons>github GitHub</icons></a>。</li>
+						<li>网站由 <a href="https://dash.cloudflare.com/" target="_blank"><icons>cf</icons> <icons class="icons-twice">Cloudflare</icons></a> 提供完整的前后端托管、边缘计算、数据存储及 CDN 加速驱动；同时采用由独立站长提供的 <a href="https://cf.090227.xyz" target="_blank">cf.090227.xyz</a> 服务进行移动端/全网 IP 优选加速。</li>
+						<li>网站博客基于 <a href="https://astro.build/" target="_blank"><icons>astro Astro</icons></a> 框架构建与渲染。</li>
+						<li>哔哩哔哩粉丝数据的自动刷新服务托管于 <a href="https://huggingface.co/spaces/Zjewel/bili-fans-pusher" target="_blank"><icons>huggingface HuggingFace</icons></a>。</li>
+						<li>网页中所使用的部分品牌 Logo 及 Wordmark 整合图标，由作者本人通过 <a href="https://www.high-logic.com/zh/font-editor/fontcreator" target="_blank">
+							<google>FontCreator</google>
+						</a> 独自设计、加工并打包为专用图标字体。</li>
+						<li>网页部分公共基础设施图标采用 <a href="https://iconpark.oceanengine.com/official" target="_blank"><icons>iconpark IconPark</icons></a> 开源图标库。</li>
+						<li>网页所使用的部分开源字体由 <a href="https://fonts.google.com/" target="_blank">
+							<icons>Google</icons> <google>Fonts</google>
+						</a> 提供托管与在线分发。</li>
+						<li>网页的部分文本内容与底层代码由 <a href="https://gemini.google.com/" target="_blank"><icons>gemini Gemini</icons></a> 与 <a href="https://www.deepseek.com/" target="_blank"><icons>deepseek DeepSeek</icons></a> 辅助编写完成。</li>
+						<li>本站所使用的顶级域名注册并托管于 <a href="https://www.spaceship.com/" target="_blank">
+							<icons>spaceship Spaceship</icons>
+						</a>。</li>
+					</ul>
+				</section>
+				<section id="email" class="section-content">
+					<h2 class="section-title">版权归属</h2>
+					<ul class="main-text">
+						<!-- 全站主体版权 -->
+						<li><icons>CO</icons> 2026 Ethan Shaw. All rights reserved.</li>
+						
+						<!-- 特殊素材版权（突出周深工作室） -->
+						<li>人物图片 <icons>CO</icons> 周深工作室. 本站仅作非商业性非营利展示使用。</li>
+						
+						<!-- 内容许可 -->
+						<li>原创内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">CC BY-NC-SA 4.0</a> 协议进行保护。</li>
+						
+						<!-- 代码许可 -->
+						<li>本站核心架构与脚本开源许可证参见 <a >GitHub 仓库 <code>LICENSE</code> 文件</a>。</li>
+						
+						<!-- 免责声明 -->
+						<li>网页所引用的第三方商标版权归原权利人所有，如有争议请联系作者处理。</li>
+
+						<li>字体版权信息：</li>
+						<ul class="main-text" style="padding-left: 1rem; text-align: left;">
+							<a style="font-weight: 700;">Inter</a>
+							<div class="font-copy">
+								<span class="copy-trademark"><icons>CO</icons></span>
+								<span>Copyright 2016 The Inter Project Authors.</span>
+							</div>
+							<div class="font-copy">
+								<span class="copy-trademark"><icons>TM</icons></span>
+								<span>Inter UI and Inter is a trademark of rsms.</span>
+							</div>
+
+							<div class="bottom10"></div>
+
+							<a style="font-weight: 700;">思源黑体</a>
+							<div class="font-copy">
+								<span class="copy-trademark"><icons>CO</icons></span>
+								<span> 2014-2021 Adobe (<a href="http://www.adobe.com/" target="_blank">http://www.adobe.com/</a>),
+									with Reserved Font Name 'Source'.</span>
+							</div>
+							<div class="font-copy">
+								<span class="copy-trademark"><icons>TM</icons></span>
+								<span>Source is a trademark of Adobe in the United States and/or other countries.</span>
+							</div>
+
+							<div class="bottom10"></div>
+
+							<a style="font-weight: 700;">Barlow<span style="font-weight: 400;">（<span class="inter-italic-override">Musical</span>
+								的原型）</span></a>
+							<div class="font-copy">
+								<span class="copy-trademark"><icons>CO</icons></span>
+								<span>Copyright 2017 The Barlow Project Authors (<a href="https://github.com/jpt/barlow"
+								target="_blank" style="color: var(--primary-blue); text-decoration: none;">https://github.com/jpt/barlow</a>).</span>
+							</div>
+							
+							<div class="bottom10"></div>
+
+							<p style="text-align: justify;"><i>这些字体软件根据 SIL 开源字体许可证（SIL Open Font License）1.1 版进行许可。该许可证及其常见问题解答可在以下网址查阅：<a
+								href="http://scripts.sil.org/OFL" target="_blank">http://scripts.sil.org/OFL</a>。</i>
+							</p>
+						</ul>
+					</ul>
+
+				</section>
+			</section>
+			
+			<footer>
+				<p>©2026 Ethan Shaw</p>
+				<p>Built with love for Charlie and you all</p>
+			</footer>
+		</section>
+	</main>
+
+	<!-- 字体版权弹窗 -->
+	<section id="font-copyright-overlay" class="modal-overlay" onclick="toggleModal('font-copyright-overlay', false)">
+		<article class="modal-modal" style="max-width: 400px;" onclick="event.stopPropagation()">
+			<button class="close-btn" onclick="toggleModal('font-copyright-overlay', false)" aria-label="Close">
+				<svg viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M18 6L6 18M6 6L18 18"></path>
+				</svg>
+			</button>
+			<div class="modal-body">
+				<h4 style="margin-bottom: 12px; color: var(--text-main); font-weight: 600;">字体版权信息</h4>
+				<div style="text-align: left; margin-bottom: 8px;">
+					<a href="https://github.com/rsms/inter" target="_blank"
+						style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Inter</a>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>Copyright 2016 The Inter Project Authors.</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span
+							style="flex-shrink: 0; width: 1.6em; font-family: 'Barlow Condensed', monospace; font-feature-settings: normal; transform: translateY(-0.08em); letter-spacing: -0.03em;">TM</span>
+						<span>Inter UI and Inter is a trademark of rsms.</span>
+					</p>
+				</div>
+				<div style="text-align: left; margin-top: 8px;  margin-bottom: 8px;">
+					<p style="color: var(--primary-blue); text-decoration: none; font-weight: 400; font-size: 0.95rem;">
+						<a href="https://github.com/adobe-fonts/source-han-sans" target="_blank"
+							style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">思源黑体</a>
+					</p>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>2014-2021 Adobe (<a href="http://www.adobe.com/" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">http://www.adobe.com/</a>),
+							with Reserved Font Name 'Source'.</span>
+					</p>
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span
+							style="flex-shrink: 0; width: 1.6em; font-family: 'Barlow Condensed', monospace; font-feature-settings: normal; transform: translateY(-0.08em); letter-spacing: -0.03em;">TM</span>
+						<span>Source is a trademark of Adobe in the United States and/or other countries.</span>
+					</p>
+				</div>
+				<div style="text-align: left; margin-top: 8px; margin-bottom: 8px;">
+					<p style="color: var(--primary-blue); text-decoration: none; font-weight: 400; font-size: 0.95rem;">
+						<a href="https://github.com/jpt/barlow/" target="_blank"
+							style="color: var(--primary-blue); text-decoration: none; font-weight: 700; font-size: 0.95rem;">Barlow</a>（<span
+							class="inter-italic-override">Musical</span> 的原型）</p>
+				</div>
+				<div style="text-align: left; font-size: 0.85rem; color: var(--text-sub);">
+					<p style="font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: flex-start;">
+						<span style="flex-shrink: 0; width: 1.6em;">©</span>
+						<span>Copyright 2017 The Barlow Project Authors (<a href="https://github.com/jpt/barlow"
+								target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">https://github.com/jpt/barlow</a>)</span>
+					</p>
+				</div>
+				<div
+					style="text-align: justify; text-justify: inter-ideograph; line-break: strict; font-size: 0.85rem; color: var(--text-sub);">
+				</div>
+
+				<div style="text-align: left; margin-top: 8px; font-size: 0.85rem; color: var(--text-sub);">
+					<p><i>中文字体文件已使用 <a href="https://www.python.org/" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">Python</a> 库 <a
+								href="https://github.com/fonttools/fonttools" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">FontTools</a> 进行子集化压缩。</i>
+					</p>
+					<p><i>这些字体软件根据 SIL 开源字体许可证（SIL Open Font License）1.1 版进行许可。该许可证及其常见问题解答可在以下网址查阅：<a
+								href="http://scripts.sil.org/OFL" target="_blank"
+								style="color: var(--primary-blue); text-decoration: none;">http://scripts.sil.org/OFL</a>。</i>
+					</p>
+				</div>
+			</div>
+		</article>
+	</section>
+
+	<!-- 微信 -->
+	<section id="modal-overlay" class="modal-overlay" onclick="toggleModal('modal-overlay', false)">
+		<article class="modal-modal" onclick="event.stopPropagation()">
+			<button class="close-btn" onclick="toggleModal('modal-overlay', false)" aria-label="关闭弹窗">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
+			</button>
+			<div class="modal-body">
+				<h4 style="margin-bottom: 20px; color: var(--text-main); font-weight: 600;">微信赞赏码</h4>
+				<picture>
+					<source srcset="images/reward_code_dark.webp" media="(prefers-color-scheme: dark)">
+					<img src="images/reward_code.webp" alt="微信赞赏码" class="modal-qr">
+				</picture>
+				<p style="margin-top: 15px; font-size: 0.85rem; color: var(--text-sub);">感谢您的鼓励与支持！</p>
+			</div>
+		</article>
+	</section>
+
+	<!-- 语言切换按钮 -->
+	<a href="support_en" class="lang-toggle-btn" aria-label="Switch to English">
+		<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+			<path
+				d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z"
+				stroke="currentColor" stroke-width="4" />
+			<path
+				d="M6 30.9856C8.63192 32.041 10.5266 32.041 11.6839 30.9856C13.4199 29.4025 11.9219 24.5978 14.3532 23.2727C16.7844 21.9476 20.4886 27.8214 23.9508 25.8887C27.4129 23.9559 23.6246 18.8023 26.0272 16.713C28.4298 14.6237 31.554 16.98 32.1001 13.4865C32.6462 9.99304 29.5521 11.5082 28.9584 8.20693C28.5625 6.00611 28.5625 4.84884 28.9584 4.73511"
+				stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+			<path
+				d="M29.0209 43.3505C27.1468 41.4325 26.4721 39.6497 26.9969 38.0019C27.7841 35.5303 29.0826 35.6764 29.6488 34.1482C30.2149 32.6199 28.6156 30.4433 32.1643 28.5826C34.5301 27.3421 37.783 28.7794 41.9228 32.8944"
+				stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+		</svg>
+	</a>
+
+	<!-- 亮暗模式切换按钮 -->
+	<button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切换亮暗模式">
+		<svg viewBox="0 0 48 48">
+			<!-- 太阳/月亮组合图标 -->
+			<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+			<path
+				d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z"
+				fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+			<path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+				stroke-linejoin="round" />
+		</svg>
+	</button>
+
+	<!-- 全局 Toast 通知容器 -->
+	<div id="global-toast" class="toast-notice">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></svg>
+		<span></span>
+	</div>
+
+</body>
+
+
+</html>

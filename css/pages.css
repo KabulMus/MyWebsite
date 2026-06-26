@@ -7,16 +7,36 @@ section.container {
     flex: 1;
 }
 
-.justext {
+.main-text {
+    color: var(--text-sub);
     text-align: justify;
 }
 
-html[lang="en-US"] .justext {
+html[lang="en-US"] .main-text {
     text-align: left;
 }
 
-.main-text a { color: var(--primary-blue); text-decoration: none; }
+.main-text a {
+    color: var(--primary-blue);
+    text-decoration: none;
+	border-bottom: 1.5px solid transparent; /* 默认下划线为透明 */
+	transition: border-color 0.2s ease; /* 渐变过渡效果 */
+}
+
+.main-text a:hover { border-bottom-color: var(--primary-blue); }
 
 .bottom10 {
     margin-bottom: 10px;
+}
+
+.font-copy {
+    display: flex; align-items: flex-start;
+}
+
+.copy-trademark {
+    flex-shrink: 0; width: 1.6em;
+}
+
+.icons-twice {
+    font-size: 2rem; line-height: 0px;
 }
