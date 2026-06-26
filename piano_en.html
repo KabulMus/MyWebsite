@@ -11,17 +11,40 @@
     <script src="./js/core.js" defer></script>
 </head>
 <body>
+    <nav class="navbar" id="top-nav">
+		<div class="nav-container">
+			<a href="./" class="nav-brand">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M31 36L19 24L31 12"/></svg>
+			</a>
+			<div class="nav-links desktop-only">
+				<a href="scales_en" data-text="Scale Visualizer">Scale Visualizer</a>
+				<a href="detector_en" data-text="Audio Analyzer">Audio Analyzer</a>
+				<a href="#" data-text="Online Piano">Online Piano</a>
+				<span class="nav-divider"></span>
+				<a href="https://blog.ethan929.com" data-text="Blog">Blog</a>
+				<a href="channels_en" data-text="Channels">Channels</a>
+				<a href="toolkit_en" data-text="Toolkit">Toolkit</a>
+				<a href="support_en" data-text="Support">Support</a>
+				<a href="charlie_en" data-text="About Charlie">About Charlie</a>
+			</div>
+			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M7.94971 11.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 23.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 35.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			</button>
+		</div>
+		<div class="nav-dropdown" id="nav-dropdown">
+			<a href="scales_en" onclick="toggleMenu(false)" data-text="Scale Visualizer">Scale Visualizer</a>
+			<a href="detector_en" onclick="toggleMenu(false)" data-text="Audio Analyzer">Audio Analyzer</a>
+			<a href="#" onclick="toggleMenu(false)" data-text="Online Piano">Online Piano</a>
+			<div class="dropdown-divider"></div>
+			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="Blog">Blog</a>
+			<a href="channels_en" onclick="toggleMenu(false)" data-text="Channels">Channels</a>
+			<a href="toolkit_en" onclick="toggleMenu(false)" data-text="Toolkit">Toolkit</a>
+			<a href="support_en" onclick="toggleMenu(false)" data-text="Support">Support</a>
+			<a href="charlie_en" onclick="toggleMenu(false)" data-text="About Charlie">About Charlie</a>
+		</div>
+	</nav>
+
     <header class="page-hero">
-        <a href="en_US" class="back-home-btn" aria-label="Back to Home">
-            <svg viewBox="0 0 24 24"><path d="M14 18l-6-6 6-6"></path></svg>
-        </a>
-        <button class="menu-toggle-btn" onclick="toggleMenu()" aria-label="菜单">
-			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-				<line x1="3" y1="12" x2="21" y2="12"></line>
-				<line x1="3" y1="6" x2="21" y2="6"></line>
-				<line x1="3" y1="18" x2="21" y2="18"></line>
-			</svg>
-		</button>
         <section class="hero-content">
             <div>
                 <h1>Online Piano</h1>
@@ -72,27 +95,20 @@
             </div>
 
             <footer>
+				<a href="info_en">Tech & Copyright</a>
                 <p><icons>CO</icons>2026 Ethan Shaw</p>
                 <p>Built with love for Charlie and you all</p>
             </footer>
         </section>
     </main>
 
-    <a href="piano" class="lang-toggle-btn" aria-label="切换为中文">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-    </a>
-
-    <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
-        <svg viewBox="0 0 48 48"><path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-   </button>
-
     <!-- Piano Keyboard Help Modal -->
-    <section id="piano-help-overlay" class="reward-overlay" onclick="toggleModal('piano-help-overlay', false)">
-        <article class="reward-modal" style="max-width: 800px;" onclick="event.stopPropagation()">
+    <section id="piano-help-overlay" class="modal-overlay" onclick="toggleModal('piano-help-overlay', false)">
+        <article class="modal-modal" style="max-width: 800px;" onclick="event.stopPropagation()">
             <button class="close-btn" onclick="toggleModal('piano-help-overlay', false)" aria-label="Close Modal">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
             </button>
-            <div class="reward-body" style="text-align: left; padding-top: 40px;">
+            <div class="modal-body" style="text-align: left; padding-top: 40px;">
                 <h4 style="margin-bottom: 15px; color: var(--text-main); font-weight: 600; text-align: center;">Keyboard Map</h4>
                 <div style="margin-bottom: 15px;">
                     <!-- 映射图切换按钮 -->
@@ -240,14 +256,27 @@
     </section>
 
     <!-- 音源加载弹窗 -->
-    <section id="loading-overlay" class="reward-overlay" style="visibility: visible; opacity: 1; z-index: 3000;">
-        <article class="reward-modal" style="transform: translateY(0) scale(1);">
-            <div class="reward-body">
+    <section id="loading-overlay" class="modal-overlay" style="visibility: visible; opacity: 1; z-index: 3000;">
+        <article class="modal-modal" style="transform: translateY(0) scale(1);">
+            <div class="modal-body">
                 <h4 style="margin-bottom: 10px; color: var(--text-main); font-weight: 600;">Loading Piano Sounds</h4>
                 <div class="loading-spinner"></div>
             </div>
         </article>
     </section>
+    
+	<!-- 语言切换按钮 -->
+	<a href="piano" class="lang-toggle-btn" aria-label="Switch to English">
+		<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z" stroke="currentColor" stroke-width="4"/><path d="M6 30.9856C8.63192 32.041 10.5266 32.041 11.6839 30.9856C13.4199 29.4025 11.9219 24.5978 14.3532 23.2727C16.7844 21.9476 20.4886 27.8214 23.9508 25.8887C27.4129 23.9559 23.6246 18.8023 26.0272 16.713C28.4298 14.6237 31.554 16.98 32.1001 13.4865C32.6462 9.99304 29.5521 11.5082 28.9584 8.20693C28.5625 6.00611 28.5625 4.84884 28.9584 4.73511" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M29.0209 43.3505C27.1468 41.4325 26.4721 39.6497 26.9969 38.0019C27.7841 35.5303 29.0826 35.6764 29.6488 34.1482C30.2149 32.6199 28.6156 30.4433 32.1643 28.5826C34.5301 27.3421 37.783 28.7794 41.9228 32.8944" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+	</a>
+
+	<!-- 亮暗模式切换按钮 -->
+	<button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切换亮暗模式">
+		<svg viewBox="0 0 48 48">
+			<!-- 太阳/月亮组合图标 -->
+			<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>
+	</button>
 
     <!-- 全局 Toast 通知容器 -->
     <div id="global-toast" class="toast-notice">
