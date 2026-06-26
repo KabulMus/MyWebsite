@@ -162,13 +162,13 @@ body {
 .card.spotify:hover { background-color: var(--spotify-bg); color: #000; }
 
 :root[data-theme='dark'] {
-    .card.wiki:hover { background-color: #fff; color: #000; }
+    .card.black:hover { background-color: #fff; color: #000; }
     .card.douyin:hover { background-color: var(--douyin-text); color: var(--douyin-bg); }
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
-        .card.wiki:hover { background-color: #fff; color: #000; }
+        .card.black:hover { background-color: #fff; color: #000; }
         .card.douyin:hover { background-color: var(--douyin-text); color: var(--douyin-bg); }
     }
 }
