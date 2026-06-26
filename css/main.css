@@ -35,6 +35,9 @@
     --weibo-orange: #ff8200;
     --douyin-bg: #161823;
     --douyin-text: #f9f9fa;
+    --qqmusic-bg: #00eb81;
+    --wyy-bg: #dd001b;
+    --spotify-bg: #1ed760;
 }
 
 /* 深色模式变量 */
@@ -110,6 +113,66 @@ body {
     user-select: none; /* 默认所有文本不可选中 */
 }
 
+
+/* --- Card --- */
+
+.card {
+	background-color: var(--card-bg);
+	border-radius: 150px;
+	padding: 20px;
+	box-shadow: var(--card-shadow);
+	text-decoration: none;
+	color: var(--text-main);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	translate: 0;
+	border: 1px solid var(--item-border);
+	transition: transform 0.3s ease, translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+	cursor: pointer;
+	height: 60px;
+	flex-direction: row;
+}
+
+.card-svg {
+	height: 24px;
+	width: auto;
+	fill: currentColor;
+	overflow: visible;
+	margin-right: 6px;
+    padding-top: 2px
+}
+
+.card-subtitle { font-size: 1.5rem; font-weight: 600; padding-top: 2px; }
+.card:hover { background-color: var(--primary-blue); color: var(--on-primary); box-shadow: var(--card-hover-shadow); }
+
+.card.bilibili:hover { background-color: var(--bilibili-blue); color: #fff; }
+.card.xhs:hover { background-color: var(--xhs-red); color: #fff; }
+.card.youtube:hover { background-color: var(--youtube-red); color: #fff; }
+.card.discord:hover { background-color: var(--discord-blurple); color: #fff; }
+.card.qq:hover { background-color: var(--qq-brand); color: #fff; }
+.card.wechat:hover { background-color: var(--wechat-green); color: #fff; }
+.card.duolingo:hover { background-color: var(--duolingo-green); color: #fff; }
+.card.baidu:hover { background-color: var(--baidu-blue); color: #fff }
+.card.black:hover { background-color: #000; color: #fff; }
+.card.weibo:hover { background-color: var(--weibo-orange); color: #fff; }
+.card.douyin:hover { background-color: var(--douyin-bg); color: var(--douyin-text); }
+.card.qqmusic:hover { background-color: var(--qqmusic-bg); color: #000; }
+.card.wyy:hover { background-color: var(--wyy-bg); color: #fff; }
+.card.spotify:hover { background-color: var(--spotify-bg); color: #000; }
+
+:root[data-theme='dark'] {
+    .card.wiki:hover { background-color: #fff; color: #000; }
+    .card.douyin:hover { background-color: var(--douyin-text); color: var(--douyin-bg); }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        .card.wiki:hover { background-color: #fff; color: #000; }
+        .card.douyin:hover { background-color: var(--douyin-text); color: var(--douyin-bg); }
+    }
+}
+
 /* --- 内容区域布局 --- */
 .content-section {
 	background-color: var(--bg-light);
@@ -176,12 +239,6 @@ html[lang^="zh"] .italic {
     font-style: normal;
     font-weight: 300;
     -webkit-font-smoothing: antialiased; /* 增强细字体的清晰度 */
-}
-
-/* 临时覆盖中文斜体逻辑，强制使用 Inter 的斜体 */
-html[lang^="zh"] .inter-italic-override {
-    font-family: 'Inter', sans-serif; /* 确保使用 Inter */
-    font-style: italic;
 }
 
 /* 针对英文环境：保留 Inter 的标准斜体 */
@@ -297,7 +354,7 @@ html[lang="en-US"] .italic {
 	right: 20px;
 	background: var(--card-bg);
 	border-radius: 12px;
-	box-shadow: 0 12px 30px -5px rgba(14, 52, 112, 0.2);
+	box-shadow: var(--card-shadow);
 	display: flex;
 	flex-direction: column;
 	min-width: 150px;
@@ -458,7 +515,7 @@ html[lang="en-US"] .italic {
     width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
 }
 .theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover { 
-    transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.2); 
+    transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); 
 }
 
 /* --- 8. 响应式显隐控制 --- */
@@ -506,7 +563,7 @@ footer a:hover {
     padding: 10px 22px;
     border-radius: 50px;
     border: 1px solid var(--primary-blue);
-    box-shadow: 0 10px 30px rgba(30, 102, 198, 0.15);
+    box-shadow: var(--card-shadow);
     z-index: 2000;
     display: flex;
     align-items: center;
@@ -535,64 +592,6 @@ footer a:hover {
     margin: 20px auto 0;
 }
 @keyframes spinner-spin { to { transform: rotate(360deg); } }
-
-/* --- Card --- */
-
-.card {
-	background-color: var(--card-bg);
-	border-radius: 150px;
-	padding: 20px;
-	box-shadow: var(--card-shadow);
-	text-decoration: none;
-	color: var(--text-main);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	translate: 0;
-	border: 1px solid var(--item-border);
-	transition: transform 0.3s ease, translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-	cursor: pointer;
-	height: 60px;
-	flex-direction: row;
-}
-
-.card-svg {
-	height: 24px;
-	width: auto;
-	fill: currentColor;
-	overflow: visible;
-	margin-right: 6px;
-    padding-top: 2px
-}
-
-.card-subtitle { font-size: 1.5rem; font-weight: 600; padding-top: 2px; }
-.card:hover { background-color: var(--primary-blue); color: var(--on-primary); box-shadow: var(--card-hover-shadow); }
-
-.card.bilibili:hover { background-color: var(--bilibili-blue); color: #fff; }
-.card.xhs:hover { background-color: var(--xhs-red); color: #fff; }
-.card.youtube:hover { background-color: var(--youtube-red); color: #fff; }
-.card.discord:hover { background-color: var(--discord-blurple); color: #fff; }
-.card.qq:hover { background-color: var(--qq-brand); color: #fff; }
-.card.wechat:hover { background-color: var(--wechat-green); color: #fff; }
-.card.duolingo:hover { background-color: var(--duolingo-green); color: #fff; }
-.card.baidu:hover { background-color: var(--baidu-blue); color: #fff }
-.card.wiki:hover { background-color: #000; color: #fff; }
-.card.weibo:hover { background-color: var(--weibo-orange); color: #fff; }
-.card.douyin:hover { background-color: var(--douyin-bg); color: var(--douyin-text); }
-
-:root[data-theme='dark'] {
-    .card.wiki:hover { background-color: #fff; color: #000; }
-    .card.douyin:hover { background-color: var(--douyin-text); color: var(--douyin-bg); }
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) {
-        .card.wiki:hover { background-color: #fff; color: #000; }
-        .card.douyin:hover { background-color: var(--douyin-text); color: var(--douyin-bg); }
-    }
-}
-
-
 
 /* --- 筛选 Filter ---*/
 .filter-container {
@@ -626,7 +625,7 @@ footer a:hover {
     background: var(--primary-blue) !important; 
     color: var(--on-primary) !important; 
     border-color: var(--primary-blue) !important; 
-    box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3); 
+    box-shadow: var(--card-shadow); 
 }
 
 /* --- 标题栏 (Page Hero) --- */

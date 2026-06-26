@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en-US">
 <head>
 	<meta name="referrer" content="no-referrer">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>频道列表 | Ethan Shaw</title>
+	<title>Channels | Ethan Shaw</title>
 	<link rel="icon" href="favicon.webp" type="image/webp">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/channels.css">
@@ -14,42 +14,42 @@
 <body>
 	<nav class="navbar" id="top-nav">
 		<div class="nav-container">
-			<a href="./" class="nav-brand">
+			<a href="en_US" class="nav-brand">
 				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M31 36L19 24L31 12"/></svg>
 			</a>
 			<div class="nav-links desktop-only">
-				<a href="#bilibili" data-text="哔哩哔哩">哔哩哔哩</a>
-				<a href="#rednote" data-text="小红书">小红书</a>
+				<a href="#bilibili" data-text="Bilibili">Bilibili</a>
+				<a href="#rednote" data-text="Rednote">Rednote</a>
 				<a href="#youtube" data-text="YouTube">YouTube</a>
 				<span class="nav-divider"></span>
-				<a href="https://blog.ethan929.com" data-text="博客">博客</a>
-				<a href="#" data-text="频道列表" class="active">频道列表</a>
-				<a href="toolkit" data-text="工具箱">工具箱</a>
-				<a href="support" data-text="联系支持">联系支持</a>
-				<a href="charlie" data-text="关于周深">关于周深</a>
+				<a href="https://blog.ethan929.com" data-text="Blog">Blog</a>
+				<a href="#" data-text="Channels" class="active">Channels</a>
+				<a href="toolkit_en" data-text="Toolkit">Toolkit</a>
+				<a href="support_en" data-text="Support">Support</a>
+				<a href="charlie_en" data-text="About Charlie">About Charlie</a>
 			</div>
 			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
 				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M7.94971 11.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 23.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 35.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 			</button>
 		</div>
 		<div class="nav-dropdown" id="nav-dropdown">
-			<a href="#bilibili" onclick="toggleMenu(false)" data-text="哔哩哔哩">哔哩哔哩</a>
-			<a href="#rednote" onclick="toggleMenu(false)" data-text="小红书">小红书</a>
+			<a href="#bilibili" onclick="toggleMenu(false)" data-text="Bilibili">Bilibili</a>
+			<a href="#rednote" onclick="toggleMenu(false)" data-text="Rednote">Rednote</a>
 			<a href="#youtube" onclick="toggleMenu(false)" data-text="YouTube">YouTube</a>
 			<div class="dropdown-divider"></div>
-			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="博客">博客</a>
-			<a href="#" onclick="toggleMenu(false)" data-text="频道列表" class="active">频道列表</a>
-			<a href="toolkit" onclick="toggleMenu(false)" data-text="工具箱">工具箱</a>
-			<a href="support" onclick="toggleMenu(false)" data-text="联系支持">联系支持</a>
-			<a href="charlie" onclick="toggleMenu(false)" data-text="关于周深">关于周深</a>
+			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="Blog">Blog</a>
+			<a href="#" onclick="toggleMenu(false)" data-text="Channels" class="active">Channels</a>
+			<a href="toolkit_en" onclick="toggleMenu(false)" data-text="Toolkit">Toolkit</a>
+			<a href="support_en" onclick="toggleMenu(false)" data-text="Support">Support</a>
+			<a href="charlie_en" onclick="toggleMenu(false)" data-text="About Charlie">About Charlie</a>
 		</div>
 	</nav>
 
 	<header class="page-hero">
 		<section class="hero-content">
 			<div>
-				<h1>频道列表</h1>
-				<p class="tagline">在各平台关注我的频道</p>
+				<h1>Channels</h1>
+				<p class="tagline">Follow my channel across all platforms</p>
 			</div>
 		</section>
 	</header>
@@ -61,69 +61,69 @@
 					<a href="https://space.bilibili.com/1863501530" class="card bilibili" target="_blank">
 						<span class="card-subtitle"><icons>BILIBILI</icons> 卡布米袋里的音符</span>
 					</a>
-					<p>哔哩哔哩频道开通于 2022 年 1 月 3 日。</p>
+					<p>Bilibili channel launched on Jan. 3, 2022.</p>
 					<div class="fan-container">
 						<div class="fan-item">
-							<h3>粉丝数</h3>
+							<h3>Followers</h3>
 							<div class="number" id="count-bili-fans">-</div>
 						</div>
 						<div class="fan-item">
-							<h3>视频数</h3>
+							<h3>Videos</h3>
 							<div class="number" id="count-bili-videos">-</div>
 						</div>
 						<div class="fan-item">
-							<h3>获赞数</h3>
+							<h3>Likes</h3>
 							<div class="number" id="count-bili-likes">-</div>
 						</div>
 					</div>
-					<p style="font-size: 0.8rem">每 30 分钟更新。</p>
+					<p style="font-size: 0.8rem">Updated every 30 minutes.</p>
 				</section>
 				<section id="rednote" class="section-content grid">
 					<a href="https://www.xiaohongshu.com/user/profile/633f8cdf000000001802ee53" class="card xhs" target="_blank">
-						<span class="card-subtitle"><icons>xhs</icons> 卡布米袋里的音符</span>
+						<span class="card-subtitle"><icons>rednote</icons> 卡布米袋里的音符</span>
 					</a>
-					<p>小红书频道开通于 2025 年 10 月 1 日。</p>
+					<p>Rednote channel launched on Oct. 1, 2025.</p>
 					<div class="fan-container">
 						<div class="fan-item">
-							<h3>粉丝数</h3>
+							<h3>Followers</h3>
 							<div class="number" id="count-xhs-fans">-</div>
 						</div>
 						<div class="fan-item">
-							<h3>笔记数</h3>
+							<h3>Notes</h3>
 							<div class="number" id="count-xhs-notes">-</div>
 						</div>
 						<div class="fan-item">
-							<h3>赞与收藏</h3>
+							<h3>Likes & Saves</h3>
 							<div class="number" id="count-xhs-likes">-</div>
 						</div>
 					</div>
-					<p style="font-size: 0.8rem">手动更新。</p>
+					<p style="font-size: 0.8rem">Manually synchronized.</p>
 				</section>
 				<section id="youtube" class="section-content grid">
 					<a href="https://www.youtube.com/@KabuMelody" class="card youtube" target="_blank">
 						<span class="card-subtitle"><icons>YOUTUBE</icons> Melody of Charlie’s</span>
 					</a>
-					<p>YouTube 频道开通于 2025 年 7 月 31 日。</p>
+					<p>YouTube channel launched on Jul. 31, 2025.</p>
 					<div class="fan-container">
 						<div class="fan-item">
-							<h3>订阅人数</h3>
+							<h3>Subscribers</h3>
 							<div class="number" id="count-youtube-fans">-</div>
 						</div>
 						<div class="fan-item">
-							<h3>视频数</h3>
+							<h3>Videos</h3>
 							<div class="number" id="count-youtube-videos">-</div>
 						</div>
 						<div class="fan-item">
-							<h3>观看次数</h3>
+							<h3>Views</h3>
 							<div class="number" id="count-youtube-views">-</div>
 						</div>
 					</div>
-					<p style="font-size: 0.8rem">实时更新。</p>
+					<p style="font-size: 0.8rem">Updated in real-time.</p>
 				</section>
 			</section>
 
 			<footer>
-				<a href="info">技术与版权</a>
+				<a href="info_en">Tech & Copyright</a>
 				<p><icons>CO</icons>2026 Ethan Shaw</p>
 				<p>Built with love for Charlie and you all</p>
 			</footer>
@@ -131,7 +131,7 @@
 	</main>
 
 	<!-- 语言切换按钮 -->
-	<a href="channels_en" class="lang-toggle-btn" aria-label="Switch to English">
+	<a href="channels" class="lang-toggle-btn" aria-label="Switch to English">
 		<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z" stroke="currentColor" stroke-width="4"/><path d="M6 30.9856C8.63192 32.041 10.5266 32.041 11.6839 30.9856C13.4199 29.4025 11.9219 24.5978 14.3532 23.2727C16.7844 21.9476 20.4886 27.8214 23.9508 25.8887C27.4129 23.9559 23.6246 18.8023 26.0272 16.713C28.4298 14.6237 31.554 16.98 32.1001 13.4865C32.6462 9.99304 29.5521 11.5082 28.9584 8.20693C28.5625 6.00611 28.5625 4.84884 28.9584 4.73511" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M29.0209 43.3505C27.1468 41.4325 26.4721 39.6497 26.9969 38.0019C27.7841 35.5303 29.0826 35.6764 29.6488 34.1482C30.2149 32.6199 28.6156 30.4433 32.1643 28.5826C34.5301 27.3421 37.783 28.7794 41.9228 32.8944" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
 	</a>
 

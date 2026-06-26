@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en-US">
 
 <head>
 	<meta name="referrer" content="no-referrer">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>技术与版权 | Ethan Shaw</title>
+	<title>Tech & Copyright | Ethan Shaw</title>
 	<link rel="icon" href="favicon.webp" type="image/webp">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/pages.css">
@@ -17,20 +17,20 @@
 <body>
 	<nav class="navbar" id="top-nav">
 		<div class="nav-container">
-			<a href="./" class="nav-brand">
+			<a href="en_US" class="nav-brand">
 				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
 					<path d="M31 36L19 24L31 12" />
 				</svg>
 			</a>
 			<div class="nav-links desktop-only">
-				<a href="#tech" data-text="技术支持">技术支持</a>
-				<a href="#copyright" data-text="版权归属">版权归属</a>
+				<a href="#tech" data-text="Technical Credits">Technical Credits</a>
+				<a href="#copyright" data-text="Copyright Notice">Copyright Notice</a>
 				<span class="nav-divider"></span>
-				<a href="https://blog.ethan929.com" data-text="博客">博客</a>
-				<a href="channels" data-text="频道列表">频道列表</a>
-				<a href="toolkit" data-text="工具箱">工具箱</a>
-				<a href="support" data-text="联系支持">联系支持</a>
-				<a href="charlie" data-text="关于周深">关于周深</a>
+				<a href="https://blog.ethan929.com" data-text="Blog">Blog</a>
+				<a href="#" data-text="Channels">Channels</a>
+				<a href="toolkit_en" data-text="Toolkit">Toolkit</a>
+				<a href="support_en" data-text="Support">Support</a>
+				<a href="charlie_en" data-text="About Charlie">About Charlie</a>
 			</div>
 			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
 				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
@@ -44,22 +44,22 @@
 			</button>
 		</div>
 		<div class="nav-dropdown" id="nav-dropdown">
-			<a href="#tech" onclick="toggleMenu(false)" data-text="技术支持">技术支持</a>
-			<a href="#copyright" onclick="toggleMenu(false)" data-text="版权归属">版权归属</a>
+			<a href="#tech" onclick="toggleMenu(false)" data-text="Technical Credits">Technical Credits</a>
+			<a href="#copyright" onclick="toggleMenu(false)" data-text="Copyright Notice">Copyright Notice</a>
 			<div class="dropdown-divider"></div>
-			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="博客">博客</a>
-			<a href="channels" onclick="toggleMenu(false)" data-text="频道列表">频道列表</a>
-			<a href="toolkit" onclick="toggleMenu(false)" data-text="工具箱">工具箱</a>
-			<a href="support" onclick="toggleMenu(false)" data-text="联系支持">联系支持</a>
-			<a href="charlie" onclick="toggleMenu(false)" data-text="关于周深">关于周深</a>
+			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="Blog">Blog</a>
+			<a href="#" onclick="toggleMenu(false)" data-text="Channels" class="active">Channels</a>
+			<a href="toolkit_en" onclick="toggleMenu(false)" data-text="Toolkit">Toolkit</a>
+			<a href="support_en" onclick="toggleMenu(false)" data-text="Support">Support</a>
+			<a href="charlie_en" onclick="toggleMenu(false)" data-text="About Charlie">About Charlie</a>
 		</div>
 	</nav>
 
 	<header class="page-hero">
 		<section class="hero-content">
 			<div>
-				<h1>技术与版权</h1>
-				<p class="tagline">本站背后的技术支持与版权归属</p>
+				<h1>Tech & Copyright</h1>
+				<p class="tagline">The technical architecture and copyright ownership behind the website</p>
 			</div>
 		</section>
 	</header>
@@ -68,38 +68,40 @@
 		<section class="container">
 			<section class="main-container">
 				<section id="tech" class="section-content">
-					<h2 class="section-title">技术支持</h2>
+					<h2 class="section-title">Technical Credits</h2>
 					<ul class="main-text left-padding">
-						<li>本站的源代码已开源于 <a href="https://github.com/KabulMus/MyWebsite" target="_blank"><icons>github GitHub</icons></a>。</li>
-						<li>网站由 <a href="https://dash.cloudflare.com/" target="_blank"><icons>cf</icons> <icons class="icons-twice">Cloudflare</icons></a>
-							提供完整的前后端托管、边缘计算、数据存储及 CDN 加速驱动；同时采用由独立站长提供的
-							<a href="https://cf.090227.xyz" target="_blank">cf.090227.xyz</a> 服务进行 IP 优选加速。</li>
-						<li>网页中所使用的部分品牌图标，由作者本人通过 <a href="https://www.high-logic.com/zh/font-editor/fontcreator" target="_blank">
-							<google>FontCreator</google>
-						</a> 独自设计、加工并打包为专用图标字体。</li>
-						<li>网页部分公共基础设施图标采用 <a href="https://iconpark.oceanengine.com/official" target="_blank"><icons>iconpark IconPark</icons></a> 开源图标库。</li>
-						<li>网页所使用的部分开源字体由 <a href="https://fonts.google.com/" target="_blank">
-							<icons>Google</icons> <google>Fonts</google>
-						</a> 提供托管与在线分发。</li>
-						<li>哔哩哔哩粉丝数据的自动刷新服务托管于 <a href="https://huggingface.co/spaces/Zjewel/bili-fans-pusher" target="_blank"><icons>huggingface HuggingFace</icons></a>。</li>
-						<li>网站博客板块基于 <a href="https://astro.build/" target="_blank"><icons>astro Astro</icons></a> 框架构建与渲染。</li>
-						<li>网页的部分文本内容与底层代码由 <a href="https://gemini.google.com/" target="_blank"><icons>gemini Gemini</icons></a> 与 <a href="https://www.deepseek.com/" target="_blank"><icons>deepseek DeepSeek</icons></a> 辅助编写完成。</li>
-						<li>本站域名注册于 <a href="https://www.spaceship.com/" target="_blank">
+						<li>The source code of this website is open-sourced on <a href="https://github.com/KabulMus/MyWebsite" target="_blank"><icons>github GitHub</icons></a>.</li>
+						<li>The website is fully powered by <a href="https://dash.cloudflare.com/" target="_blank"><icons>cf</icons> <icons class="icons-twice">Cloudflare</icons></a>
+							for full-stack hosting, edge computing, data storage, and CDN acceleration. IP optimization is accelerated via the
+							<a href="https://cf.090227.xyz" target="_blank">cf.090227.xyz</a> service provided by an independent webmaster.</li>
+						<li>Part of the brand logos  used on this website were individually designed, processed, and packaged into a dedicated icon font by the author using
+							<a href="https://www.high-logic.com/zh/font-editor/fontcreator" target="_blank">
+							<google>FontCreator</google></a>.</li>
+						<li>General interface icons throughout the website utilize the open-source
+							<a href="https://iconpark.oceanengine.com/official" target="_blank"><icons>iconpark IconPark</icons></a> library.</li>
+						<li>Certain open-source fonts used across the site are hosted and distributed online by <a href="https://fonts.google.com/" target="_blank">
+							<icons>Google</icons> <google>Fonts</google></a>.</li>
+						<li>The automated refresh service for Bilibili follower metrics is hosted on <a href="https://huggingface.co/spaces/Zjewel/bili-fans-pusher" target="_blank"><icons>huggingface HuggingFace</icons></a>.</li>
+						<li>The website's blog section is built and rendered using the <a href="https://astro.build/" target="_blank"><icons>astro Astro</icons></a> framework.</li>
+						<li>Portions of the textual content and underlying code were co-authored with the assistance of
+							<a href="https://gemini.google.com/" target="_blank"><icons>gemini Gemini</icons></a> and <a href="https://www.deepseek.com/" target="_blank"><icons>deepseek DeepSeek</icons></a>.</li>
+						<li>The domain for this website is registered at<a href="https://www.spaceship.com/" target="_blank">
 							<icons>spaceship Spaceship</icons>
 						</a>。</li>
 					</ul>
 				</section>
 				<section id="copyright" class="section-content">
-					<h2 class="section-title">版权归属</h2>
+					<h2 class="section-title">Copyright Notice</h2>
 					<ul class="main-text left-padding">
 						<li><icons>CO</icons> 2026 Ethan Shaw. All rights reserved.</li>
-						<li>人物图片 <icons>CO</icons> 周深工作室 · 本站仅作非商业性非营利展示使用。</li>
-						<li>原创内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">CC BY-NC-SA 4.0</a> 协议进行保护。</li>
-						<li>本站核心架构与脚本开源许可证参见
-							<a href="https://github.com/KabulMus/MyWebsite/blob/main/LICENSE" target="_blank"><icons>github GitHub</icons> 仓库 <code>LICENSE</code> 文件</a>。</li>
-						<li>网页所引用的第三方商标版权归原权利人所有，如有争议请联系作者处理。</li>
-						<li>字体版权信息：</li>
-						<ul class="main-text left-padding" style="text-align: left;">
+						<li>Portrait images <icons>CO</icons> Zhou Shen Studio · Used strictly for non-commercial and non-profit display purposes on this site.</li>
+						<li>Original content is licensed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">CC BY-NC-SA 4.0</a> international agreement.</li>
+						<li>For the open-source licenses regarding the website's core architecture and scripts, please refer to the
+							<a href="https://github.com/KabulMus/MyWebsite/blob/main/LICENSE" target="_blank"><code>LICENSE</code> file in the <icons>github GitHub</icons> repository</a>.</li>
+						<li>All third-party trademarks referenced on this website belong to their respective owners.
+							Please contact the author in case of any disputes.</li>
+						<li>Font Copyright Information: </li>
+						<ul class="main-text left-padding">
 							<a href="https://github.com/rsms/inter" target="_blank" style="font-weight: 700;">Inter</a>
 							<div class="font-copy">
 								<span class="copy-trademark"><icons>CO</icons></span>
@@ -112,7 +114,7 @@
 
 							<div class="bottom10"></div>
 
-							<a href="https://github.com/adobe-fonts/source-han-sans" target="_blank" style="font-weight: 700;">思源黑体</a>
+							<a href="https://github.com/adobe-fonts/source-han-sans" target="_blank" style="font-weight: 700;">Source Han Sans / Noto Sans CJK</a>
 							<div class="font-copy">
 								<span class="copy-trademark"><icons>CO</icons></span>
 								<span> 2014-2021 Adobe (<a href="http://www.adobe.com/" target="_blank">http://www.adobe.com/</a>),
@@ -134,7 +136,7 @@
 							
 							<div class="bottom10"></div>
 
-							<p style="text-align: justify;"><i>这些字体软件根据 SIL 开源字体许可证（SIL Open Font License）1.1 版进行许可。该许可证及其常见问题解答可在以下网址查阅：<a
+							<p><i>These font softwares are licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: <a
 								href="http://scripts.sil.org/OFL" target="_blank">http://scripts.sil.org/OFL</a>。</i>
 							</p>
 						</ul>
@@ -151,7 +153,7 @@
 	</main>
 
 	<!-- 语言切换按钮 -->
-	<a href="info_en" class="lang-toggle-btn" aria-label="Switch to English">
+	<a href="info" class="lang-toggle-btn" aria-label="Switch to English">
 		<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
 			<path
 				d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z"

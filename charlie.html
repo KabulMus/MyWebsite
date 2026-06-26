@@ -9,9 +9,9 @@
 	<link rel="preload" href="images/ZhouShenALPHA.webp" as="image" type="image/webp" fetchpriority="high">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/charlie.css">
+	<link rel="stylesheet" href="./css/milestone.css">
 	<script src="./js/core.js" defer></script>
 	<script src="./js/home.js" defer></script>
-	<link rel="prefetch" href="js/acoustic_grand_piano-mp3.js" as="script">
 </head>
 <body>
 	<nav class="navbar" id="top-nav">
@@ -21,8 +21,9 @@
 			</a>
 			<div class="nav-links desktop-only">
 				<a href="#intro" data-text="介绍">介绍</a>
-				<a href="#charlie" data-text="卡布叻_周深">卡布叻_周深</a>
-				<a href="#studio" data-text="周深工作室">周深工作室</a>
+				<a href="#charlie" data-text="追踪周深">追踪周深</a>
+				<a href="#studio" data-text="工作室">工作室</a>
+				<a href="#music" data-text="「深」声不息">「深」声不息</a>
 				<span class="nav-divider"></span>
 				<a href="https://blog.ethan929.com" data-text="博客">博客</a>
 				<a href="channels" data-text="频道列表">频道列表</a>
@@ -36,8 +37,9 @@
 		</div>
 		<div class="nav-dropdown" id="nav-dropdown">
 			<a href="#intro" onclick="toggleMenu(false)" data-text="介绍">介绍</a>
-			<a href="#charlie" onclick="toggleMenu(false)" data-text="卡布叻_周深">追踪周深</a>
-			<a href="#studio" onclick="toggleMenu(false)" data-text="周深工作室">工作室</a>
+			<a href="#charlie" onclick="toggleMenu(false)" data-text="追踪周深">追踪周深</a>
+			<a href="#studio" onclick="toggleMenu(false)" data-text="工作室">工作室</a>
+			<a href="#music" onclick="toggleMenu(false)" data-text="「深」声不息">「深」声不息</a>
 			<div class="dropdown-divider"></div>
 			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="博客">博客</a>
 			<a href="channels" onclick="toggleMenu(false)" data-text="频道列表">频道列表</a>
@@ -403,7 +405,7 @@
 					<a href="https://baike.baidu.com/item/%E5%91%A8%E6%B7%B1/15089196" class="card baidu" target="_blank">
 						<span class="card-subtitle"><icons>BaiduBaike</icons></span>
 					</a>
-					<a href="https://zh.wikipedia.org/zh-cn/%E5%91%A8%E6%B7%B1" class="card wiki" target="_blank">
+					<a href="https://zh.wikipedia.org/zh-cn/%E5%91%A8%E6%B7%B1" class="card black" target="_blank">
 						<span class="card-subtitle"><icons>wiki WeijiBaike</icons></span>
 					</a>
 				</section>
@@ -445,22 +447,22 @@
 				</section>
 			</section>
 
-			<section id="platforms" class="section-content">
-				<h2 class="section-title">音乐平台</h2>
+			<section id="music" class="section-content">
+				<h2 class="section-title">「深」声不息</h2>
 				<section class="grid">
-					<a href="https://weibo.com/u/7478855230" class="card weibo" target="_blank">
+					<a href="https://y.qq.com/n/ryqq_v2/singer/003fA5G40k6hKc" class="card qqmusic" target="_blank">
 						<span class="card-subtitle"><icons>QQYINYUE</icons></span>
 					</a>
-					<a href="https://space.bilibili.com/3546694058773380" class="card bilibili" target="_blank">
+					<a href="https://music.163.com/#/artist?id=1030001" class="card wyy" target="_blank">
 						<span class="card-subtitle"><icons>WANGYIYUN</icons></span>
 					</a>
-					<a href="https://www.youtube.com/@ZhouShenOfficial" class="card youtube" target="_blank">
+					<a href="https://music.apple.com/cn/artist/%E5%91%A8%E6%B7%B1/1154054707" class="card black" target="_blank">
 						<span class="card-subtitle"><icons>AppleMusic</icons></span>
 					</a>
-					<a href="https://v.douyin.com/i5LfLDjw/" class="card douyin" target="_blank">
+					<a href="https://open.spotify.com/artist/0BezPR1Hn38i8qShQKunSD" class="card spotify" target="_blank">
 						<span class="card-subtitle"><icons>SPOTIFY</icons></span>
 					</a>
-					<a href="https://www.xiaohongshu.com/user/profile/66361b46000000000700682d" class="card xhs" target="_blank">
+					<a href="https://music.youtube.com/channel/UC3xSH5DJZ0or5Tie0q0NFig" class="card youtube" target="_blank">
 						<span class="card-subtitle"><icons>YOUTUBEMUSIC</icons></span>
 					</a>
 				</section>
@@ -468,14 +470,14 @@
 
 			<footer>
 				<a href="info">技术与版权</a>
-				<p>©2026 Ethan Shaw</p>
+				<p><icons>CO</icons>2026 Ethan Shaw</p>
 				<p>Built with love for Charlie and you all</p>
 			</footer>
 		</section>
 	</main>
 
 	<!-- 语言切换按钮 -->
-	<a href="en_US" class="lang-toggle-btn" aria-label="Switch to English">
+	<a href="charlie_en" class="lang-toggle-btn" aria-label="Switch to English">
 		<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z" stroke="currentColor" stroke-width="4"/><path d="M6 30.9856C8.63192 32.041 10.5266 32.041 11.6839 30.9856C13.4199 29.4025 11.9219 24.5978 14.3532 23.2727C16.7844 21.9476 20.4886 27.8214 23.9508 25.8887C27.4129 23.9559 23.6246 18.8023 26.0272 16.713C28.4298 14.6237 31.554 16.98 32.1001 13.4865C32.6462 9.99304 29.5521 11.5082 28.9584 8.20693C28.5625 6.00611 28.5625 4.84884 28.9584 4.73511" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M29.0209 43.3505C27.1468 41.4325 26.4721 39.6497 26.9969 38.0019C27.7841 35.5303 29.0826 35.6764 29.6488 34.1482C30.2149 32.6199 28.6156 30.4433 32.1643 28.5826C34.5301 27.3421 37.783 28.7794 41.9228 32.8944" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
 	</a>
 

@@ -86,7 +86,7 @@
                 background-color 0.3s ease, 
                 border-color 0.3s ease, 
                 box-shadow 0.3s ease;
-    box-shadow: 0 2px 6px rgba(14, 52, 112, 0.05);
+    box-shadow: var(--card-shadow);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -96,13 +96,13 @@
 .piano-checkbox:hover {
     transform: translateZ(0) scale(1.1);
     border-color: var(--primary-blue);
-    box-shadow: 0 5px 12px rgba(14, 52, 112, 0.1);
+    box-shadow: var(--card-hover-shadow);
 }
 
 .piano-checkbox:checked {
     background: var(--primary-blue);
     border-color: var(--primary-blue);
-    box-shadow: 0 4px 12px rgba(30, 102, 198, 0.25);
+    box-shadow: var(--card-shadow);
 }
 
 .piano-checkbox::after {
@@ -182,6 +182,7 @@
     border-radius: 8px;
     border: 1px solid var(--item-border);
     background: var(--card-bg);
+    box-shadow: var(--card-shadow);
     color: var(--text-sub);
     font-size: 0.85rem;
     cursor: pointer;
@@ -191,17 +192,19 @@
 .range-btn:hover {
     transform: scale(1.05);
     color: var(--primary-blue);
-    box-shadow: 0 5px 15px rgba(14, 52, 112, 0.1);
+    box-shadow: var(--card-hover-shadow);
 }
 
 .range-btn.active {
     background: var(--primary-blue);
     color: var(--on-primary);
     border-color: var(--primary-blue);
+    box-shadow: var(--card-shadow);
 }
 
 .range-btn.active:hover {
     color: var(--on-primary);
+    box-shadow: var(--card-hover-shadow)
 }
 
 /* 键盘外框容器，用于定位右下角按钮 */
@@ -242,11 +245,11 @@
     justify-content: center;
     z-index: 10;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
+    box-shadow: var(--card-shadow);
     line-height: 0;
     padding-bottom: 3px; /* 视觉微调：修正加减号在圆圈内的垂直居中 */
 }
-.range-toggle-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: 0 8px 20px rgba(14, 52, 112, 0.15); border-color: var(--item-border); }
+.range-toggle-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); border-color: var(--item-border); }
 
 .piano-keys {
     display: flex;

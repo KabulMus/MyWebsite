@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en-US">
 
 <head>
 	<meta name="referrer" content="no-referrer">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>联系支持 | Ethan Shaw</title>
+	<title>Support | Ethan Shaw</title>
 	<link rel="icon" href="favicon.webp" type="image/webp">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/pages.css">
@@ -17,24 +17,24 @@
 <body>
 	<nav class="navbar" id="top-nav">
 		<div class="nav-container">
-			<a href="./" class="nav-brand">
+			<a href="en_US" class="nav-brand">
 				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
 					<path d="M31 36L19 24L31 12" />
 				</svg>
 			</a>
 			<div class="nav-links desktop-only">
-				<a href="#email" data-text="个人邮箱">个人邮箱</a>
-				<a href="#qq" data-text="QQ*群">QQ 群</a>
+				<a href="#email" data-text="Email">Email</a>
+				<a href="#qq" data-text="QQ Group">QQ Group</a>
 				<a href="#discord" data-text="Discord">Discord</a>
 				<a href="#github" data-text="GitHub">GitHub</a>
-				<a href="#reward" data-text="赞赏码">赞赏码</a>
-				<a href="#duolingo" data-text="多邻国">多邻国</a>
+				<a href="#reward" data-text="Reward Code">Reward Code</a>
+				<a href="#duolingo" data-text="Duolingo">Duolingo</a>
 				<span class="nav-divider"></span>
-				<a href="https://blog.ethan929.com" data-text="博客">博客</a>
-				<a href="channels" data-text="频道列表">频道列表</a>
-				<a href="toolkit" data-text="工具箱">工具箱</a>
-				<a href="#" data-text="联系支持" class="active">联系支持</a>
-				<a href="charlie" data-text="关于周深">关于周深</a>
+				<a href="https://blog.ethan929.com" data-text="Blog">Blog</a>
+				<a href="channels_en" data-text="Channels">Channels</a>
+				<a href="toolkit_en" data-text="Toolkit">Toolkit</a>
+				<a href="#" data-text="Support" class="active">Support</a>
+				<a href="charlie_en" data-text="About Charlie">About Charlie</a>
 			</div>
 			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
 				<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
@@ -48,26 +48,26 @@
 			</button>
 		</div>
 		<div class="nav-dropdown" id="nav-dropdown">
-			<a href="#email" onclick="toggleMenu(false)" data-text="个人邮箱">个人邮箱</a>
-			<a href="#qq" onclick="toggleMenu(false)" data-text="QQ*群">QQ 群</a>
+			<a href="#email" onclick="toggleMenu(false)" data-text="Email">Email</a>
+			<a href="#qq" onclick="toggleMenu(false)" data-text="QQ Group">QQ Group</a>
 			<a href="#discord" onclick="toggleMenu(false)" data-text="Discord">Discord</a>
 			<a href="#github" onclick="toggleMenu(false)" data-text="GitHub">GitHub</a>
-			<a href="#reward" onclick="toggleMenu(false)" data-text="赞赏码">赞赏码</a>
-			<a href="#duolingo" onclick="toggleMenu(false)" data-text="多邻国">多邻国</a>
+			<a href="#reward" onclick="toggleMenu(false)" data-text="Reward Code">Reward Code</a>
+			<a href="#duolingo" onclick="toggleMenu(false)" data-text="Duolingo">Duolingo</a>
 			<div class="dropdown-divider"></div>
-			<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="博客">博客</a>
-			<a href="channels" onclick="toggleMenu(false)" data-text="频道列表">频道列表</a>
-			<a href="toolkit" onclick="toggleMenu(false)" data-text="工具箱">工具箱</a>
-			<a href="#" onclick="toggleMenu(false)" data-text="联系支持" class="active">联系支持</a>
-			<a href="charlie" onclick="toggleMenu(false)" data-text="关于周深">关于周深</a>
+				<a href="https://blog.ethan929.com" onclick="toggleMenu(false)" data-text="Blog">Blog</a>
+				<a href="channels_en" onclick="toggleMenu(false)" data-text="Channels">Channels</a>
+				<a href="toolkit_en" onclick="toggleMenu(false)" data-text="Toolkit">Toolkit</a>
+				<a href="#" onclick="toggleMenu(false)" data-text="Support" class="active">Support</a>
+				<a href="charlie_en" onclick="toggleMenu(false)" data-text="About Charlie">About Charlie</a>
 		</div>
 	</nav>
 
 	<header class="page-hero">
 		<section class="hero-content">
 			<div>
-				<h1>联系支持</h1>
-				<p class="tagline">交个朋友，或者……买杯咖啡？</p>
+				<h1>Support</h1>
+				<p class="tagline">Let’s be friends, or... buy me a coffee?</p>
 			</div>
 		</section>
 	</header>
@@ -77,35 +77,35 @@
 			<section class="main-container">
 				<section id="email" class="section-content grid">
 					<a href="mailto:ethanshaw@ethan929.com" class="card" onclick="toggleModal('email-overlay', true)">
-						<span class="card-subtitle"><icons>EMAIL</icons> 个人邮箱</span>
+						<span class="card-subtitle"><icons>EMAIL</icons> Email</span>
 					</a>
 					<div>
 						<h2>ethanshaw@ethan929.com</h2>
-						<p>期待与您的友好交流。</p>
-						<p><i>如未收到回信，请检查垃圾邮件箱。</i></p>
+						<p>Looking forward to hearing from you.</p>
+						<p><i>Please check your spam folder if you don’t receive a reply.</i></p>
 					</div>
 				</section>
 				<section id="qq" class="section-content grid">
 					<a href="javascript:void(0);" class="card qq" onclick="copyToClipboard('671065700', this)">
-						<span class="card-subtitle"><icons>qq QQ</icons> 群</span>
+						<span class="card-subtitle"><icons>qq QQ</icons> Group</span>
 					</a>
 					<div>
 						<h2>671065700</h2>
-						<p class="bottom10">欢迎加入我们的群聊！</p>
+						<p class="bottom10">Welcome to our group!</p>
 						<div class="main-text">
-							<p><strong>注意</strong>　加入群聊需经过群管理人员审核，问题为：「群主中文频道名称是？」输入「卡布米袋里的音符」方可进群。</p>
+							<p><strong>NOTE</strong>　Joining the group requires admin review. The verification question is: “What is the Chinese name of the owner’s channel?” Please enter “<span style="user-select: text;">卡布米袋里的音符</span>” <i>(Kǎbù Mǐdài Lǐ de Yīnfú)</i> to join successfully.</p>
 						</div>
 					</div>
 				</section>
 				<section id="discord" class="section-content grid">
 					<a href="https://discord.gg/ffpcn44j38" class="card discord" onclick="toggleModal('discord-overlay', true)">
-						<span class="card-subtitle"><icons>discord Discord</icons> 服务器</span>
+						<span class="card-subtitle"><icons>discord Discord</icons> Server</span>
 					</a>
 					<div>
 						<h2>Charlie’s Melody Bag</h2>
-						<p class="bottom10">欢迎加入我们的服务器！</p>
+						<p class="bottom10">Welcome to our server!</p>
 						<div class="main-text">
-							<p><strong>注意</strong>　加入服务器需提交申请，问题为：「Who is your favorite Chinese pop singer?」（您最喜欢的中国流行歌手是谁？）输入「周深」（或「Zhou Shen」「Charlie Zhou」等）后等待审核通过即可。</p>
+							<p><strong>NOTE</strong>　To join the server, you need to submit an application. The question is: “Who is your favorite Chinese pop singer?” Enter “Charlie Zhou Shen” (or “Zhou Shen”, “周深”, etc.) and wait for approval.</p>
 						</div>
 					</div>
 				</section>
@@ -115,28 +115,28 @@
 					</a>
 					<div>
 						<h2>KabulMus</h2>
-						<p>探索我的更多开源项目！</p>
+						<p>Explore more of my open-source projects!</p>
 					</div>
 				</section>
 				<section id="reward" class="section-content grid">
 					<a href="javascript:void(0);" class="card wechat" onclick="toggleModal('modal-overlay', true)">
-						<span class="card-subtitle"><icons>wechatpay WeixinZhifu</icons> 赞赏码</span>
+						<span class="card-subtitle"><icons>wechatpay WeChatPay</icons> Reward Code</span>
 					</a>
-					<p>感谢您的鼓励与支持！</p>
+					<p>Thank you for your support!</p>
 				</section>
 				<section id="duolingo" class="section-content grid">
 					<a href="https://www.duolingo.com/profile/EthanShaw929" class="card duolingo" target="_blank">
-						<span class="card-subtitle"><icons>duo duolinguo</icons></span>
+						<span class="card-subtitle"><icons>duo duolingo</icons></span>
 					</a>
 					<div>
 						<h2>EthanShaw929</h2>
-						<p>来多邻国一起学习吧！</p>
+						<p>Join me on Duolingo and let’s learn together!</p>
 					</div>
 				</section>
 			</section>
 			
 			<footer>
-				<a href="info">技术与版权</a>
+				<a href="info_en">Tech & Copyright</a>
 				<p><icons>CO</icons>2026 Ethan Shaw</p>
 				<p>Built with love for Charlie and you all</p>
 			</footer>
@@ -150,18 +150,18 @@
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
 			</button>
 			<div class="modal-body">
-				<h4 style="margin-bottom: 20px; color: var(--text-main); font-weight: 600;">赞赏码</h4>
+				<h4 style="margin-bottom: 20px; color: var(--text-main); font-weight: 600;">Reward Code</h4>
 				<picture>
 					<source srcset="images/reward_code_dark.webp" media="(prefers-color-scheme: dark)">
 					<img src="images/reward_code.webp" alt="微信赞赏码" class="modal-qr">
 				</picture>
-				<p style="margin-top: 15px; font-size: 0.85rem; color: var(--text-sub);">感谢您的鼓励与支持！</p>
+				<p style="margin-top: 15px; font-size: 0.85rem; color: var(--text-sub);">Thank you for your support!</p>
 			</div>
 		</article>
 	</section>
 
 	<!-- 语言切换按钮 -->
-	<a href="support_en" class="lang-toggle-btn" aria-label="Switch to English">
+	<a href="support" class="lang-toggle-btn" aria-label="Switch to English">
 		<svg width="24" height="24" viewBox="0 0 48 48" fill="none">
 			<path
 				d="M24 44.0002C35.0457 44.0002 44 35.0459 44 24.0002C44 12.9545 35.0457 4.00024 24 4.00024C12.9543 4.00024 4 12.9545 4 24.0002C4 35.0459 12.9543 44.0002 24 44.0002Z"

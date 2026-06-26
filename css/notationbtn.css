@@ -1,0 +1,30 @@
+
+.notation-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+.notation-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--item-border);
+    background: var(--card-bg);
+    font-family: 'Musical', sans-serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-sub);
+    box-shadow: var(--card-shadow);
+    font-feature-settings: normal;
+}
+.notation-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); }
+.notation-btn.active {
+    background: var(--primary-blue) !important;
+    color: var(--on-primary) !important;
+    border-color: var(--primary-blue) !important;
+    box-shadow: var(--card-shadow);
+}
