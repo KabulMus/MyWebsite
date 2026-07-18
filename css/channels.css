@@ -42,7 +42,9 @@
 }
 
 .fan-item .number {
-  font-size: 2rem;
-  font-weight: 900;
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-top: -5px;
+  font-family: 'Barlow Condensed', 'Inter', 'Noto Sans SC', sans-serif;
   color: var(--primary-blue);              /* 数字蓝色加粗 */
 }

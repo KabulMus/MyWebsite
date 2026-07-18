@@ -64,8 +64,8 @@ html[lang="en-US"] .hero-section h2 {
 
 .hero-section h2 {
 	position: absolute;
-	top: 196px;
 	filter: url(#clean-outline);
+	margin-bottom: 270px;
 }
 
 .text-group {
@@ -80,14 +80,13 @@ html[lang="en-US"] .hero-section h2 {
 .person-img, 
 .masked-text-container {
     position: absolute;
-    top: -40px;               /* 统一整体向上偏移量，你可以根据需要调这个值 */
-    height: 800px;            /* 强制统一渲染高度 */
-    width: 8000px;             /* 【大招】给它们一个一模一样的物理宽度边界！ */
+    width: 100%;
 }
 
 /* 3. 底层字独有样式 */
 .bottom-layer {
-	top: -180px;
+	top: 0;
+	height: 450px;
     z-index: 0;
     margin: 0;
     display: flex;
@@ -100,6 +99,9 @@ html[lang="en-US"] .hero-section h2 {
     z-index: 1;
     object-fit: contain;      /* 保持比例 */
     object-position: center; 
+    height: 800px;            /* 强制统一渲染高度 */
+	width: 10000px;
+	top: -40px;
 }
 
 /* 5. 顶层遮罩文字容器 */
@@ -109,6 +111,8 @@ html[lang="en-US"] .hero-section h2 {
 	display: flex;
     justify-content: center;
     align-items: center;      
+	height: 800px;
+	top: -40px;
     
     /* 遮罩配置：必须和图片的缩放及对齐完全同步 */
     -webkit-mask-image: url('../images/charlie.webp');
@@ -161,9 +165,11 @@ html[lang="en-US"] .hero-section h2 {
 	}
 	.bottom-layer {
 		justify-content: left;
+		height: 420px;
+		align-items: flex-end;
 		top: -60px;
 		z-index: 3;
-		width: 80%;
+		width: 90%;
 	}
 
 	.hero-section .tagline {
@@ -204,4 +210,9 @@ html[lang="en-US"] .milestone-card p {
 
 .card-subtitle {
 	font-size: 2rem;
+}
+
+sc {
+	font-family: 'Playfair Display SC';
+	display: inline;
 }

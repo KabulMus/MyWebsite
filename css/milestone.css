@@ -95,10 +95,9 @@
 	display: inline-block;
 	padding: 4px 8px;
 	border-radius: 6px;
-	font-family: 'Barlow', 'Inter', sans-serif;
+	font-family: 'Montserrat', 'Inter', sans-serif;
 	font-size: 0.6rem;
 	font-weight: 600;
-	font-variant: small-caps;
 	margin-right: 10px;
 	line-height: 1.2;
 }
