@@ -4,7 +4,7 @@
 /* Google Sans Flex */ @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
 /* Barlow & Montserrat */ @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 /* Playfair Display SC */ @import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@900&display=swap');
-
+/* Encode Sans SC */ @import url('https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&display=swap');
 
 /* Musical - 乐谱符号字体 */
 @font-face { font-family: 'Musical'; src: url('fonts/Musical-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -637,15 +637,13 @@ footer a:hover {
 .page-hero {
     position: relative;
     width: 100%;
-    min-height: 240px; /* 比主页 hero 小 */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 40px; /* 为固定导航留空间 */
-    color: #ffffff;
+    padding-top: 100px; /* 为固定导航留空间 */
     text-align: center;
-    background: linear-gradient(180deg, #90befc 24%, #0e347a 77.2%, #0b122a 100%);
+    color: #ffffff;
 }
 
 .page-hero section.hero-content {
@@ -656,26 +654,34 @@ footer a:hover {
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 5000px;
-    padding: 0 20px;
+    max-width: 800px;
 }
 
+/* ✨ 完美的文字渐变色保持不变 */
 .page-hero h1 {
     font-size: 2.8rem;
+    font-weight: 800;
     font-family: 'Montserrat', 'Inter', 'Noto Sans SC', sans-serif;
-    color: #ffffff;
-    margin-bottom: 5px;
-    text-shadow: 0 4px 12px rgba(8, 15, 38, 0.4);
+    background: linear-gradient(135deg, var(--primary-blue) 25%, #7463f1 75%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px; /* 标题和下面副标题的紧凑间距 */
+    padding: 0 32px;
+    line-height: 1.2;
+    text-shadow: none; 
+}
+
+@media (max-width: 768px) {
+    .page-hero h1 {
+        font-size: 2.2rem; /* 移动端适当缩小标题 */
+    }
 }
 
 .page-hero .tagline {
-    font-size: 1rem;
-    color: #ffffff;
-    max-width: 600px;
-    margin-bottom: 10px;
-}
-
-/* 子页面标题栏移动端适配 */
-@media (max-width: 768px) {
-    .page-hero h1 { font-size: 2.2rem; }
+    display: inline-block;
+    font-size: 0.95rem;
+    color: var(--text-sub);
+    margin-top: 6px;
+    padding: 0 32px;
 }

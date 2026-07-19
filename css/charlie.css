@@ -144,7 +144,7 @@ html[lang="en-US"] .hero-section h2 {
 }
 
 .hero-section .tagline span:not(:last-child) {
-	margin-right: 1em;
+	margin-right: 0.5em;
 }
 
 /* 桌面端：左对齐布局 */
@@ -180,6 +180,9 @@ html[lang="en-US"] .hero-section h2 {
 		text-align: left;
 		display: block;
 		margin-right: 0;
+	}
+	.hero-section .tagline .verbar {
+		display: none;
 	}
 	.text-group {
 		justify-content: left;
