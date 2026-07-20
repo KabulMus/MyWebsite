@@ -66,14 +66,7 @@
 
 /* --- 响应式适配 (移动端强制单列) --- */
 @media (max-width: 768px) {
-    .desktop-only { display: none; }
-    .menu-toggle.mobile-only { display: flex; }
-    .page-hero h1 { font-size: 2rem; }
     .filter-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
     .filter-btn { width: auto; }
     .scales-grid { grid-template-columns: 1fr; } /* 放在最后确保能覆盖双列设置 */
-    .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-    .footer-column { align-items: center; }
-    .footer-column p, .footer-column span, .footer-column a { white-space: normal; }
-    .reward-modal { padding: 30px; width: 85%; }
 }

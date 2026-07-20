@@ -1,6 +1,5 @@
 .grid {
   	flex-direction: column;
-    flex: 1;
 }
 
 .main-container {
@@ -12,7 +11,12 @@
 }
 
 @media (max-width: 768px) {
-  .grid { width: 100%; }
+  .grid {
+    min-width: 100%;
+  }
+  .main-container {
+    gap: 0px;
+  }
 }
 
 /* 1. 父容器：让三列整体“横向排列” */
@@ -22,8 +26,6 @@
 	justify-content: space-around; /* 三列在水平方向均匀散开，两边留空 */
 	align-items: center;         /* 垂直居中对齐 */
 	gap: 20px;                   /* 三列之间的间距 */
-	margin-bottom: -10px;
-  padding: 10px 0 20px 0;
 }
 
 /* 2. 每一列：让内部的标题和数字“竖向排列” */

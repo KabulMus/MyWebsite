@@ -125,8 +125,8 @@ body {
 
 .card {
 	background-color: var(--card-bg);
-	border-radius: 150px;
-	padding: 20px;
+	border-radius: 100px;
+	padding: 10px 20px;
 	box-shadow: var(--card-shadow);
 	text-decoration: none;
 	color: var(--text-main);
@@ -137,7 +137,6 @@ body {
 	border: 1px solid var(--item-border);
 	transition: transform 0.3s ease, translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 	cursor: pointer;
-	height: 60px;
 	flex-direction: row;
 }
 
