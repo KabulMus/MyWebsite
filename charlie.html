@@ -32,7 +32,7 @@
                 <a href="#" data-text="关于周深" class="active">关于周深</a>
 			</div>
 			<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="菜单">
-				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M7.94971 11.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 23.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.94971 35.9497H39.9497" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+				<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M7.94971 11.9497H39.9497"/><path d="M7.94971 23.9497H39.9497"/><path d="M7.94971 35.9497H39.9497"/></svg>
 			</button>
 		</div>
 		<div class="nav-dropdown" id="nav-dropdown">
@@ -50,15 +50,20 @@
 	</nav>
 
 	<header class="hero-section">
-		<svg style="display: none; ">
-			<filter id="clean-outline">
-				<feMorphology operator="dilate" radius="1" in="SourceAlpha" result="dilated_alpha" />
-				<feComposite operator="out" in="dilated_alpha" in2="SourceGraphic" result="outline_mask" />
-				<feColorMatrix type="matrix" values="0 0 0 0 1
-													0 0 0 0 1
-													0 0 0 0 1
-													0 0 0 1 0" in="outline_mask" />
-       		</filter>
+		<svg style="display: none;">
+		<filter id="clean-outline">
+			<!-- 1. 向内收缩 Alpha 通道（Radius 可以按需调整描边粗细） -->
+			<feMorphology operator="erode" radius="1" in="SourceAlpha" result="eroded_alpha" />
+			
+			<!-- 2. 用原始图形 (SourceGraphic) 掏空收缩后的图形，只保留边缘内侧 -->
+			<feComposite operator="out" in="SourceGraphic" in2="eroded_alpha" result="inner_edge" />
+			
+			<!-- 3. 将内部边缘着色为白色 (RGBA 均设为 1) -->
+			<feColorMatrix type="matrix" values="0 0 0 0 1
+												0 0 0 0 1
+												0 0 0 0 1
+												0 0 0 1 0" in="inner_edge" />
+		</filter>
 		</svg>
 		<section class="hero-content">
 			<img src="images/charlie.webp" class="person-img" fetchpriority="high">
