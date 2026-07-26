@@ -18,8 +18,8 @@ function applyTheme(theme) {
     // 同步更新赞赏码图片（如果页面上有的话）
     const qrImg = document.querySelector('.modal-qr');
     const qrSource = document.querySelector('#modal-overlay picture source');
-    if (qrImg) qrImg.src = isDark ? "images/reward_code_dark.webp" : "images/reward_code.webp";
-    if (qrSource) qrSource.srcset = isDark ? "images/reward_code_dark.webp" : "images/reward_code.webp";
+    if (qrImg) qrImg.src = isDark ? "../images/reward_code_dark.webp" : "../images/reward_code.webp";
+    if (qrSource) qrSource.srcset = isDark ? "../images/reward_code_dark.webp" : "../images/reward_code.webp";
 }
 
 // 3. 获取当前系统的深浅状态

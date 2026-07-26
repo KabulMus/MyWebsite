@@ -50,7 +50,7 @@
 	visibility: hidden;
 	pointer-events: none;
 }
-.milestone-nav-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.milestone-nav-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 
 @media (max-width: 1100px) {
 	.milestone-nav-btn.prev { left: 10px; }
@@ -92,13 +92,13 @@
 
 .milestone-tag {
 	display: inline-block;
-	padding: 4px 8px;
+	padding: 4px 6px;
 	border-radius: 6px;
 	font-family: 'Encode Sans SC', 'Inter', 'Noto Sans SC', sans-serif;
 	font-size: 0.8rem;
-	font-weight: 600;
+	font-weight: 700;
 	margin-right: 10px;
-	line-height: 1.2;
+	line-height: 1;
 }
 .tag-channel { background: rgba(30, 102, 198, 0.1); color: var(--primary-blue); }
 .tag-insync { background: rgba(180, 83, 9, 0.1); color: #b45309; }
@@ -113,6 +113,7 @@
 .milestone-card h3 {
 	margin: 0 0 10px 0;
 	font-size: 1.25rem;
+	line-height: 1.4;
 	color: var(--text-main); /* 使用主题变量 */
 }
 

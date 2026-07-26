@@ -149,7 +149,7 @@ body {
     padding-top: 2px
 }
 
-.card-subtitle { font-size: 1.5rem; font-weight: 600; padding-top: 2px; }
+.card-subtitle { font-size: 1.5rem; font-weight: 700; padding-top: 2px; }
 .card:hover { background-color: var(--primary-blue); color: var(--on-primary); box-shadow: var(--card-hover-shadow); }
 
 .card.bilibili:hover { background-color: var(--bilibili-blue); color: #fff; }
@@ -542,12 +542,12 @@ html[lang="en-US"] .italic {
 
 /* --- 7. 页脚 --- */
 footer {
+    font-size: 0.85rem;
     margin-top: 80px; padding: 60px 0 30px; border-top: 1px solid var(--item-border);
     text-align: center;
 }
 
 footer p {
-    font-size: 0.85rem;
     color: var(--text-sub);
     margin: 4px 0;
     text-decoration: none;
@@ -555,7 +555,6 @@ footer p {
 }
 
 footer a {
-    font-size: 0.85rem;
     color: var(--primary-blue);
     text-decoration: none;
 	border-bottom: 1.5px solid transparent; /* 默认下划线为透明 */
