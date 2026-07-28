@@ -107,6 +107,14 @@ function showToast(message, isError = false) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+// 8. 智能弯引号
+function smartQuotes(text) {
+    return text
+        .replace(/"([^"]*)"/g, '\u201C$1\u201D')   // "hello" → "hello"
+        .replace(/'([^']*)'/g, '\u2018$1\u2019')   // 'hello' → 'hello'
+        .replace(/'/g, '\u2019');                   // what's → what's
+}
+
 // 复制功能
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -139,4 +147,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.querySelectorAll('.theme-toggle-btn svg, .nav-theme-toggle svg').forEach(s => s.innerHTML = ICONS.moon);
     }
+
+    // 智能弯引号：遍历所有文本节点，不依赖固定容器选择器
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode(node) {
+                // 跳过 script / style / svg 等不可见文本
+                const parent = node.parentElement;
+                if (!parent) return NodeFilter.FILTER_REJECT;
+                const tag = parent.tagName;
+                if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'SVG' || tag === 'TEXTAREA' || tag === 'OPTION')
+                    return NodeFilter.FILTER_REJECT;
+                // 只处理包含英文引号的文本节点
+                if (/["']/.test(node.textContent))
+                    return NodeFilter.FILTER_ACCEPT;
+                return NodeFilter.FILTER_REJECT;
+            }
+        }
+    );
+    const nodesToReplace = [];
+    while (walker.nextNode()) nodesToReplace.push(walker.currentNode);
+    nodesToReplace.forEach(node => {
+        node.textContent = smartQuotes(node.textContent);
+    });
 });

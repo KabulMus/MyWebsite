@@ -19,7 +19,7 @@
   }
 }
 
-/* 1. 父容器：让三列整体“横向排列” */
+/* 1. 父容器：让三列整体"横向排列" */
 .fan-container {
 	display: flex;
 	flex-direction: row;         /* 横向排成一排 */
@@ -28,7 +28,7 @@
 	gap: 20px;                   /* 三列之间的间距 */
 }
 
-/* 2. 每一列：让内部的标题和数字“竖向排列” */
+/* 2. 每一列：让内部的标题和数字"竖向排列" */
 .fan-item {
   display: flex;
   flex-direction: column;      /* 核心：切换为垂直排列 */

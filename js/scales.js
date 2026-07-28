@@ -52,7 +52,7 @@ function filterScale(btn) {
     btns.forEach(b => b.classList.remove('active'));
 
     if (isActive) {
-        // 如果是取消选择：让所有卡片丝滑地“归位”
+        // 如果是取消选择：让所有卡片丝滑地"归位"
         grid.classList.remove('filtered');
         updateGridNotation(currentNotation, true);
     } else {

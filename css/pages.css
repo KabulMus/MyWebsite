@@ -37,9 +37,8 @@ html[lang="en-US"] .main-text {
     flex-shrink: 0; width: 1.6em;
 }
 
-.icons-twice {
-    font-size: 2rem; line-height: 0px;
-    height: 1rem;
+.inline-together {
+    display: inline-block;
 }
 
 .left-padding {
