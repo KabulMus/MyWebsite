@@ -121,6 +121,11 @@ body {
     user-select: none; /* 默认所有文本不可选中 */
 }
 
+/* --- 选中文字颜色 --- */
+::selection {
+    background: var(--primary-blue);
+    color: var(--on-primary);
+}
 
 /* --- Card --- */
 
