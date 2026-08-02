@@ -107,7 +107,6 @@ footer {
     color: var(--primary-blue);
     margin: 5px 0; /* 压缩音高显示的垂直间距 */
     font-family: 'Musical', 'Inter', sans-serif;
-    letter-spacing: -1px;
     font-feature-settings: normal;
 }
 
