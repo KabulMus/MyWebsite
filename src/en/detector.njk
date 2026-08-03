@@ -1,0 +1,40 @@
+{% extends "_includes/layout.njk" %}
+
+{% block content %}
+    <header class="page-hero">
+        <section class="hero-content">
+            <div>
+                <h1>Audio Analyzer</h1>
+                <p class="tagline">Real-time frequency & pitch monitoring (Range: C2 - C7)</p>
+            </div>
+        </section>
+    </header>
+
+    <main class="content-section">
+        <section class="container">
+            <div class="notation-toggle">
+                <button class="notation-btn" onclick="analyzerApp.setNotation('sharp', this)">#</button>
+                <button class="notation-btn active" onclick="analyzerApp.setNotation('natural', this)">♮</button>
+                <button class="notation-btn" onclick="analyzerApp.setNotation('flat', this)">b</button>
+            </div>
+
+            <div class="analyzer-card grid">
+                <div id="meter">
+                    <div class="center-line"></div>
+                    <div id="pointer"></div>
+                </div>
+
+                <div class="current-note" id="note-display">—</div>
+                
+                <div class="frequency-val">
+                    <span id="hz-display">0.0</span> <small>Hz</small>
+                </div>
+
+                <button id="start-btn" class="card" style="font-size: 1.2rem; font-weight: 600">Start Analysis</button>
+                <p>Click the button and grant microphone access</p>
+            </div>
+
+			{% include "_includes/partials/footer.njk" %}
+        </section>
+    </main>
+{% endblock %}

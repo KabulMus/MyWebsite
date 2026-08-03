@@ -1,0 +1,88 @@
+{% extends "_includes/layout.njk" %}
+
+{% block content %}
+	<header class="page-hero">
+		<section class="hero-content">
+			<div>
+				<h1>频道列表</h1>
+				<p class="tagline">在各平台关注我的频道</p>
+			</div>
+		</section>
+	</header>
+
+	<main class="content-section">
+		<section class="container">
+			<section class="main-container">
+				<section id="bilibili" class="section-content grid";>
+					<a href="https://space.bilibili.com/1863501530" class="card bilibili" target="_blank">
+						<span class="card-subtitle"><icons>BILIBILI</icons> 卡布米袋里的音符</span>
+					</a>
+					<p>哔哩哔哩频道开通于 2022 年 1 月 3 日。</p>
+					<div class="fan-container">
+						<div class="fan-item">
+							<h3>粉丝数</h3>
+							<div class="number" id="count-bili-fans">-</div>
+						</div>
+						<div class="fan-item">
+							<h3>投稿数</h3>
+							<div class="number" id="count-bili-videos">-</div>
+						</div>
+						<div class="fan-item">
+							<h3>获赞数</h3>
+							<div class="number" id="count-bili-likes">-</div>
+						</div>
+					</div>
+					<p style="font-size: 0.8rem">每 30 分钟更新。</p>
+				</section>
+				<section id="rednote" class="section-content grid">
+					<a href="https://www.xiaohongshu.com/user/profile/633f8cdf000000001802ee53" class="card xhs" target="_blank">
+						<span class="card-subtitle"><icons>xhs</icons> 卡布米袋里的音符</span>
+					</a>
+					<p>小红书频道开通于 2025 年 10 月 1 日。</p>
+					<div class="fan-container">
+						<div class="fan-item">
+							<h3>粉丝数</h3>
+							<div class="number" id="count-xhs-fans">-</div>
+						</div>
+						<div class="fan-item">
+							<h3>笔记数</h3>
+							<div class="number" id="count-xhs-notes">-</div>
+						</div>
+						<div class="fan-item">
+							<h3>赞与收藏</h3>
+							<div class="number" id="count-xhs-likes">-</div>
+						</div>
+					</div>
+					<p style="font-size: 0.8rem">手动更新。</p>
+				</section>
+				<section id="youtube" class="section-content grid">
+					<a href="https://www.youtube.com/@KabuMelody" class="card youtube" target="_blank">
+						<span class="card-subtitle"><icons>YOUTUBE</icons> Melody of Charlie's</span>
+					</a>
+					<p>YouTube 频道开通于 2025 年 7 月 31 日。</p>
+					<div class="fan-container">
+						<div class="fan-item">
+							<h3>订阅人数</h3>
+							<div class="number" id="count-youtube-fans">-</div>
+						</div>
+						<div class="fan-item">
+							<h3>视频数</h3>
+							<div class="number" id="count-youtube-videos">-</div>
+						</div>
+						<div class="fan-item">
+							<h3>观看次数</h3>
+							<div class="number" id="count-youtube-views">-</div>
+						</div>
+					</div>
+					<p style="font-size: 0.8rem">实时更新。</p>
+				</section>
+			</section>
+
+			{% include "_includes/partials/footer.njk" %}
+		</section>
+	</main>
+{% endblock %}
+
+{% block scripts_extra %}
+	<script src="../js/apis.js"></script>
+{% endblock %}

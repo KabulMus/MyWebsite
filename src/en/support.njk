@@ -1,0 +1,96 @@
+{% extends "_includes/layout.njk" %}
+
+{% block content %}
+	<header class="page-hero">
+		<section class="hero-content">
+			<div>
+				<h1>Support</h1>
+				<p class="tagline">Let's be friends, or... buy me a coffee?</p>
+			</div>
+		</section>
+	</header>
+
+	<main class="content-section">
+		<section class="container">
+			<section class="main-container">
+				<section id="email" class="section-content grid">
+					<a href="mailto:ethanshaw@ethan929.com" class="card" onclick="toggleModal('email-overlay', true)">
+						<span class="card-subtitle"><icons>EMAIL</icons> Email</span>
+					</a>
+					<div>
+						<h2>ethanshaw@ethan929.com</h2>
+						<p>Looking forward to hearing from you.</p>
+						<p><i>Please check your spam folder if you don't receive a reply.</i></p>
+					</div>
+				</section>
+				<section id="qq" class="section-content grid">
+					<a href="javascript:void(0);" class="card qq" onclick="copyToClipboard('671065700', this)">
+						<span class="card-subtitle"><icons>qq QQ</icons> Group</span>
+					</a>
+					<div>
+						<h2>671065700</h2>
+						<p class="bottom10">Welcome to our group!</p>
+						<div class="main-text">
+							<p><strong>NOTE</strong>　Joining the group requires admin review. The verification question is: "What is the Chinese name of the owner's channel?" Please enter "<span style="user-select: text;">卡布米袋里的音符</span>" <i>(Kǎbù Mǐdài Lǐ de Yīnfú)</i> to join successfully.</p>
+						</div>
+					</div>
+				</section>
+				<section id="discord" class="section-content grid">
+					<a href="https://discord.gg/ffpcn44j38" class="card discord" onclick="toggleModal('discord-overlay', true)">
+						<span class="card-subtitle"><icons>discord Discord</icons> Server</span>
+					</a>
+					<div>
+						<h2>Charlie's Melody Bag</h2>
+						<p class="bottom10">Welcome to our server!</p>
+						<div class="main-text">
+							<p><strong>NOTE</strong>　To join the server, you need to submit an application. The question is: "Who is your favorite Chinese pop singer?" Enter "Charlie Zhou Shen" (or "Zhou Shen", "周深", etc.) and wait for approval.</p>
+						</div>
+					</div>
+				</section>
+				<section id="github" class="section-content grid">
+					<a href="https://github.com/KabulMus" class="card black">
+						<span class="card-subtitle"><icons>github GitHub</icons></span>
+					</a>
+					<div>
+						<h2>KabulMus</h2>
+						<p>Explore more of my open-source projects!</p>
+					</div>
+				</section>
+				<section id="reward" class="section-content grid">
+					<a href="javascript:void(0);" class="card wechat" onclick="toggleModal('modal-overlay', true)">
+						<span class="card-subtitle"><icons>wechatpay WeChatPay</icons> Reward</span>
+					</a>
+					<p>Thank you for your support!</p>
+				</section>
+				<section id="duolingo" class="section-content grid">
+					<a href="https://www.duolingo.com/profile/EthanShaw929" class="card duolingo" target="_blank">
+						<span class="card-subtitle"><icons>duo duolingo</icons></span>
+					</a>
+					<div>
+						<h2>EthanShaw929</h2>
+						<p>Join me on Duolingo and let's learn together!</p>
+					</div>
+				</section>
+			</section>
+
+			{% include "_includes/partials/footer.njk" %}
+		</section>
+	</main>
+
+	<!-- 微信 -->
+	<section id="modal-overlay" class="modal-overlay" onclick="toggleModal('modal-overlay', false)">
+		<article class="modal-modal" onclick="event.stopPropagation()">
+			<button class="close-btn" onclick="toggleModal('modal-overlay', false)" aria-label="关闭弹窗">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6L18 18"></path></svg>
+			</button>
+			<div class="modal-body">
+				<h4 style="margin-bottom: 20px; color: var(--text-main); font-weight: 600;">Reward</h4>
+				<picture>
+					<source srcset="../images/reward_code_dark.webp" media="(prefers-color-scheme: dark)">
+					<img src="../images/reward_code.webp" alt="微信赞赏码" class="modal-qr">
+				</picture>
+				<p style="margin-top: 15px; font-size: 0.85rem; color: var(--text-sub);">Thank you for your support!</p>
+			</div>
+		</article>
+	</section>
+{% endblock %}

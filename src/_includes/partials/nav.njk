@@ -1,0 +1,49 @@
+<nav class="navbar" id="top-nav">
+	<div class="nav-container">
+		{% if page.isHome %}
+			<a href="#" class="nav-brand">
+				<img src="https://i2.hdslb.com/bfs/face/fc65f0eb630fe0b35f46062548b7184f40eefeb9.jpg" alt="Avatar" class="nav-avatar">
+				<span>Ethan</span>
+			</a>
+		{% else %}
+			<a href="./" class="nav-brand">
+				{{ ICONS.back | safe }}
+			</a>
+		{% endif %}
+		<div class="nav-links desktop-only">
+			{% if page.isHome %}
+				<a href="#about" data-text="{{ t('nav.about', page.lang) }}">{{ t('nav.about', page.lang) }}</a>
+				<a href="#milestones" data-text="{{ t('nav.milestones', page.lang) }}">{{ t('nav.milestones', page.lang) }}</a>
+				<span class="nav-divider"></span>
+				<a href="#explore" data-text="{{ t('nav.explore', page.lang) }}">{{ t('nav.explore', page.lang) }}</a>
+			{% else %}
+				{% for item in page.navLeft %}
+				<a href="{{ item.href }}" data-text="{{ item.text }}"{% if item.active %} class="active"{% endif %}>{{ item.text }}</a>
+				{% endfor %}
+				<span class="nav-divider"></span>
+				{% for item in t('main', page.lang) %}
+				<a href="{% if item.key == page.active %}#{% else %}{{ item.href }}{% endif %}" data-text="{{ item.text }}"{% if item.key == page.active %} class="active"{% endif %}>{{ item.text }}</a>
+				{% endfor %}
+			{% endif %}
+		</div>
+		<button class="menu-toggle mobile-only" onclick="toggleMenu()" aria-label="{{ t('menu.aria', page.lang) }}">
+			{{ ICONS.menu | safe }}
+		</button>
+	</div>
+	<div class="nav-dropdown" id="nav-dropdown">
+		{% if page.isHome %}
+			<a href="#about" onclick="toggleMenu(false)" data-text="{{ t('nav.about', page.lang) }}">{{ t('nav.about', page.lang) }}</a>
+			<a href="#milestones" onclick="toggleMenu(false)" data-text="{{ t('nav.milestones', page.lang) }}">{{ t('nav.milestones', page.lang) }}</a>
+			<div class="dropdown-divider"></div>
+			<a href="#explore" onclick="toggleMenu(false)" data-text="{{ t('nav.explore', page.lang) }}">{{ t('nav.explore', page.lang) }}</a>
+		{% else %}
+			{% for item in page.navLeft %}
+			<a href="{{ item.href }}" onclick="toggleMenu(false)" data-text="{{ item.text }}"{% if item.active %} class="active"{% endif %}>{{ item.text }}</a>
+			{% endfor %}
+			<div class="dropdown-divider"></div>
+			{% for item in t('main', page.lang) %}
+			<a href="{% if item.key == page.active %}#{% else %}{{ item.href }}{% endif %}" onclick="toggleMenu(false)" data-text="{{ item.text }}"{% if item.key == page.active %} class="active"{% endif %}>{{ item.text }}</a>
+			{% endfor %}
+		{% endif %}
+	</div>
+</nav>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ page.htmlLang }}">
+
+<head>
+	{% include "_includes/partials/head.njk" %}
+</head>
+
+<body>
+	{% if page.nav != false %}
+		{% include "_includes/partials/nav.njk" %}
+	{% endif %}
+
+	{% block content %}{% endblock %}
+
+	{% if page.showLangToggle != false %}
+		{% include "_includes/partials/lang-toggle.njk" %}
+	{% endif %}
+
+	{% include "_includes/partials/theme-toggle.njk" %}
+
+	{% block scripts_extra %}{% endblock %}
+
+</body>
+</html>

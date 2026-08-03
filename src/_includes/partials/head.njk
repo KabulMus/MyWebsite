@@ -1,0 +1,18 @@
+	<meta name="referrer" content="no-referrer">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ page.title }}</title>
+	<link rel="icon" href="../favicon.webp" type="image/webp">
+	{% if page.preload %}
+	<link rel="preload" href="../images/ZhouShenALPHA.webp" as="image" type="image/webp" fetchpriority="high">
+	{% endif %}
+	<link rel="stylesheet" href="../css/main.css">
+	{% for css in page.css %}
+	<link rel="stylesheet" href="../css/{{ css }}">
+	{% endfor %}
+	{% if page.inlineHead %}{{ page.inlineHead | safe }}
+	{% endif %}
+	<script src="../js/core.js" defer></script>
+	{% for js in page.js %}
+	<script src="../js/{{ js }}" defer></script>
+	{% endfor %}
