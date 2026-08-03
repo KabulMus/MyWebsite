@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "node build.js",
-    "deploy": "powershell -c \"$f=New-TemporaryFile; iwr https://host.retiehe.com/cli -OutFile $f; node $f --site ethan929 --outdir .; rm $f -Force\""
+    "deploy": "powershell -c \"$f=New-TemporaryFile; iwr https://host.retiehe.com/cli -OutFile $f; node $f --site ethan929 --outdir dist; rm $f -Force\""
   },
   "dependencies": {
     "nunjucks": "^3.2.4"

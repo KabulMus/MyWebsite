@@ -21,11 +21,21 @@
 
 ```bash
 npm install     # 首次安装依赖（nunjucks）
-npm run build   # 渲染全部页面到站点根目录（覆盖根目录与 en-US/ 下的 .html）
-npm run deploy  # 上传站点根目录到线上（host.retiehe.com）
+npm run build   # 渲染全部页面到 dist/ 并复制静态资源
+npm run deploy  # （可选）手动上传 dist/（host.retiehe.com）
 ```
 
-> 以后修改导航、页脚或按钮只需改 `src/_includes/` 或 `build.js` 里的配置，重新 `npm run build` 即可全站生效。**请勿直接编辑根目录 / `en-US/` 下的 HTML，它们由构建生成。**
+## ☁️ Cloudflare Pages 自动部署（Git 集成）
+
+在 Cloudflare Pages 新建项目并连接本仓库时，设置：
+
+- **Build command**: `npm run build`
+- **Build output directory**: `dist`
+
+之后每次 `git push` 到 GitHub，Cloudflare Pages 会自动拉取源码 → 安装依赖 → 构建 → 部署 `dist/`。
+本地只需要 push 源码（`src/`、`build.js`、`package.json`），无需提交 `dist/`（已 .gitignore 忽略）。
+
+> 修改导航、页脚或按钮只需改 `src/_includes/` 或 `build.js` 里的配置，重新 `npm run build` 即可全站生效。**请勿直接编辑 `dist/` 下的 HTML，它们由构建生成。**
 
 ---
 Built with love to you all and Charlie Zhou Shen by Ethan Shaw.

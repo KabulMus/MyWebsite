@@ -1,2 +1,5 @@
 # 依赖
 node_modules/
+
+# 构建产物（由 `npm run build` 生成，勿直接编辑）
+dist/

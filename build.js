@@ -2,14 +2,13 @@
  * MyWebsite 静态站构建脚本
  * -------------------------
  * 用法:
- *   node build.js            # 渲染 HTML 到站点根目录(覆盖根目录与 en-US/ 下的 .html)
+ *   node build.js            # 渲染 HTML 到 dist/ 并复制静态资源
  *
  * 说明:
  *   - 页面正文模板位于 src/zh/*.njk 与 src/en/*.njk
  *   - 公共部分(layout/nav/footer/按钮)位于 src/_includes/
  *   - 每页元数据(标题/样式/脚本/导航高亮)集中配置在下方 PAGES
- *   - 构建产物直接输出到根目录(HTML 覆盖根目录与 en-US/ 的 .html)，
- *     css/js/images/favicon 等静态资源本就位于根目录，无需复制。
+ *   - 构建产物输出到 dist/(HTML + css/js/images/favicon)，供 Cloudflare Pages 等部署。
  */
 const fs = require('fs');
 const path = require('path');
@@ -17,6 +16,20 @@ const nunjucks = require('nunjucks');
 
 const ROOT = __dirname;
 const SRC = path.join(ROOT, 'src');
+const DIST = path.join(ROOT, 'dist');
+
+/* ---------------------------- 静态资源复制 ---------------------------- */
+const STATIC_DIRS = ['css', 'js', 'images'];
+function copyStatic() {
+  fs.rmSync(DIST, { recursive: true, force: true });
+  fs.mkdirSync(DIST, { recursive: true });
+  for (const d of STATIC_DIRS) {
+    fs.cpSync(path.join(ROOT, d), path.join(DIST, d), { recursive: true });
+  }
+  if (fs.existsSync(path.join(ROOT, 'favicon.webp'))) {
+    fs.copyFileSync(path.join(ROOT, 'favicon.webp'), path.join(DIST, 'favicon.webp'));
+  }
+}
 
 /* -------------------------------- 文案 -------------------------------- */
 const I18N = {
@@ -333,6 +346,7 @@ const TEMPLATES = {
 };
 
 function build() {
+  copyStatic();
   for (const lang of ['zh', 'en']) {
     for (const { tpl, out, page } of TEMPLATES[lang]) {
       const ctx = {
@@ -344,13 +358,13 @@ function build() {
         }),
       };
       const html = env.render(tpl, ctx);
-      const outPath = path.join(ROOT, out);
+      const outPath = path.join(DIST, out);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html, 'utf8');
       console.log('✓', out);
     }
   }
-  console.log('\n构建完成 → 站点根目录');
+  console.log('\n构建完成 →', DIST);
 }
 
 build();
