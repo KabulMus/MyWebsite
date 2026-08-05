@@ -125,3 +125,85 @@ section.hero-content {
 @media (max-width: 768px) {
 	.person-img { max-height: 240px; }
 }
+
+/* --- 纪念日天数计数器（自 2020.05.20 起，喜欢周深的天数） --- */
+.days-counter {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 10px 0;
+	text-align: center;
+}
+.days-counter-line {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: var(--text-main);
+	text-align: center;
+	line-height: 2.4rem;
+}
+.days-counter-line .days-counter-number {
+	font-size: 2.4rem;
+	font-weight: 900;
+	font-family: 'Montserrat', 'Inter', 'Noto Sans SC', sans-serif;
+	/* 降级：不支持渐变文字时保持纯蓝（旧浏览器） */
+	color: var(--primary-blue);
+	margin: 0 6px;
+	/* 渐变文字：与 hero 标题同款蓝→紫 135°，但端点用 0%→100%，
+	   窄数字也能完整走完蓝→紫过渡（hero 的 25%/75% 会在窄盒上只显示中间段） */
+	background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+/* 引号：内联 SVG 元素（fill=currentColor 真正跟随 CSS 颜色，可随主题深浅变化） */
+.days-quote {
+	width: 22px;
+	height: 22px;
+	color: var(--primary-blue);
+	opacity: 0.8;
+	flex-shrink: 0;
+}
+.days-quote-before {
+	margin-right: 14px;
+	position: relative;
+	top: -6px;   /* 单行错落：前引号偏上 */
+}
+.days-quote-after {
+	margin-left: 14px;
+	position: relative;
+	top: 6px;    /* 单行错落：后引号偏下 */
+}
+/* 计数器副标题：灰色小字，标注起始日期 */
+.days-counter-note {
+	font-size: 0.8rem;
+	color: var(--text-sub);
+	text-align: center;
+	margin-top: 6px;
+}
+/* 第二行容器：数字 + 尾字（天/days），桌面端作为行内整体 */
+.days-counter-line .days-counter-row {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+/* 移动端：计数器分两行显示（第一行文字，第二行数字+尾字），行宽随内容收缩 */
+@media (max-width: 768px) {
+	.days-counter-line {
+		flex-direction: column;
+		gap: 4px;
+		line-height: normal;
+	}
+	/* 移动端两行：引号贴首/末行（前引号贴第一行、后引号贴第二行），并取消单行错落偏移 */
+	.days-quote-before {
+		align-self: flex-start;
+		top: 0;
+	}
+	.days-quote-after {
+		align-self: flex-end;
+		top: 0;
+	}
+}

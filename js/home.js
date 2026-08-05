@@ -94,6 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
 		updateMilestoneButtons();
 	}
+
+	// 纪念日天数计数器：自 2020.05.20 起，喜欢周深的天数
+	const daysCounter = document.getElementById('days-since-zs');
+	if (daysCounter) {
+		const startDate = new Date(2020, 4, 20); // 2020-05-20（月从 0 起）
+		const today = new Date();
+		const days = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+		daysCounter.textContent = days.toLocaleString();
+	}
 });
 
 // 页面滚动逻辑
