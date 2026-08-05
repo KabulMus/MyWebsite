@@ -184,7 +184,7 @@ const PAGES = {
     key: 'piano',
     titles: { zh: '在线钢琴 | Ethan Shaw', en: 'Online Piano | Ethan Shaw' },
     css: ['piano.css'],
-    js: [],
+    js: ['soundfont-player.js', 'piano.js'],
     active: 'piano',
     navLeft: {
       zh: [

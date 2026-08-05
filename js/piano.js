@@ -165,7 +165,8 @@ window.toggleKeyboardRange = function() {
     if (settings.range === 'full') {
         pianoContainer.classList.add('full-range');
         if (pageContainer) pageContainer.classList.add('piano-full-width');
-        currentKeyMap = KEY_MAP_FULL; 
+        currentKeyMap = KEY_MAP_FULL;
+        preloadFullRangeSf();
     } else {
         pianoContainer.classList.remove('full-range');
         if (pageContainer) pageContainer.classList.remove('piano-full-width');
@@ -193,7 +194,12 @@ function noteOn(note, el) {
     if (!el || !el.classList.contains('active')) return; 
     if (playingNotes.has(note)) return;
     const transposedNote = shiftNote(note, transposeAmount);
-    playingNotes.set(note, pianoInstrument.play(transposedNote));
+    // 该音符所在分片尚未加载时，按需触发加载（首次点击可能无声，随后即可用）
+    if (!pianoInstrument.buffers[Soundfont.noteToMidi(transposedNote)]) {
+        ensureSfNote(transposedNote);
+    }
+    const played = pianoInstrument.play(transposedNote);
+    if (played) playingNotes.set(note, played);
 }
 
 function noteOff(note) {
@@ -207,9 +213,16 @@ function bindKeyEvents(key) {
     key.addEventListener('pointerdown', (e) => {
         if (e.button !== 0) return;
         e.preventDefault();
-        key.releasePointerCapture(e.pointerId);
+        // 防御性释放指针捕获：无真实指针（如合成事件）时不会中断按下逻辑
+        try { key.releasePointerCapture(e.pointerId); } catch (err) { /* 忽略 */ }
         key.classList.add('active');
         noteOn(key.dataset.note, key);
+    });
+    // 松开左键时立即释放琴键（即使指针仍悬停在键上），修复“松键后仍保持激活”的 bug
+    key.addEventListener('pointerup', (e) => {
+        if (e.button !== 0) return;
+        noteOff(key.dataset.note);
+        key.classList.remove('active');
     });
     key.addEventListener('pointerenter', (e) => {
         if (e.buttons === 1) {
@@ -265,10 +278,69 @@ window.addEventListener('keyup', e => {
     }
 });
 
+// ---------------- 钢琴音源分片加载（按需） ----------------
+// 说明：
+//   core 分片 = C4~C5（迷你键盘默认音域），页面加载时优先加载；
+//   其余分片按八度拆分，进入全键盘或按到未加载音符时才按需加载。
 window.Soundfont = window.Soundfont || {};
-if (window.MIDI && window.MIDI.Soundfont) Object.assign(window.Soundfont, window.MIDI.Soundfont);
 
-Soundfont.instrument(audioCtx, 'acoustic_grand_piano', { destination: clarityFilter }).then(piano => {
+const SF_DIR = '../js/soundfont/';
+const SF_CHUNKS = {
+    core: SF_DIR + 'acoustic_grand_piano-mp3-C4-C5.js',
+    '0': SF_DIR + 'acoustic_grand_piano-mp3-A0-B0.js',
+    '1': SF_DIR + 'acoustic_grand_piano-mp3-C1-B1.js',
+    '2': SF_DIR + 'acoustic_grand_piano-mp3-C2-B2.js',
+    '3': SF_DIR + 'acoustic_grand_piano-mp3-C3-B3.js',
+    '5': SF_DIR + 'acoustic_grand_piano-mp3-Db5-B5.js',
+    '6': SF_DIR + 'acoustic_grand_piano-mp3-C6-B6.js',
+    '7': SF_DIR + 'acoustic_grand_piano-mp3-C7-B7.js',
+    '8': SF_DIR + 'acoustic_grand_piano-mp3-C8.js'
+};
+const loadedSfChunks = new Set(['core']);
+const sfLoading = new Map(); // url -> Promise
+
+// 音符名（如 "C#4"）→ 所属分片 key
+function sfChunkOf(note) {
+    const m = note.match(/^([A-G]#?)(\d+)$/);
+    if (!m) return null;
+    const oct = parseInt(m[2], 10);
+    if (oct === 4) return 'core';
+    if (oct === 5) return m[1] === 'C' ? 'core' : '5';
+    return String(oct);
+}
+
+// 加载并合并一个分片到主乐器
+function loadSfChunk(key) {
+    const url = SF_CHUNKS[key];
+    if (!url || loadedSfChunks.has(key)) return Promise.resolve();
+    if (sfLoading.has(url)) return sfLoading.get(url);
+    const p = Soundfont.instrument(audioCtx, url, { destination: clarityFilter })
+        .then(chunkPlayer => {
+            if (pianoInstrument) Object.assign(pianoInstrument.buffers, chunkPlayer.buffers);
+            loadedSfChunks.add(key);
+        })
+        .catch(err => console.warn('音源分片加载失败:', key, err));
+    sfLoading.set(url, p);
+    return p;
+}
+
+// 确保某音符对应的分片已加载（未加载则触发）
+function ensureSfNote(note) {
+    const key = sfChunkOf(note);
+    if (key) loadSfChunk(key);
+}
+
+// 全键盘模式：按序预载剩余分片（从常用音区向两侧扩散）
+const SF_PRELOAD_ORDER = ['3', '5', '2', '6', '1', '7', '0', '8'];
+let sfFullRangePreloaded = false;
+function preloadFullRangeSf() {
+    if (sfFullRangePreloaded) return;
+    sfFullRangePreloaded = true;
+    SF_PRELOAD_ORDER.reduce((chain, key) => chain.then(() => loadSfChunk(key)), Promise.resolve());
+}
+
+// 优先加载核心分片（C4~C5），就绪后渲染键盘并解锁
+Soundfont.instrument(audioCtx, SF_CHUNKS.core, { destination: clarityFilter }).then(piano => {
     pianoInstrument = piano; 
     setTimeout(() => {
         renderKeyboard(); 
