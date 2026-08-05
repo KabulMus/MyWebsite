@@ -109,7 +109,7 @@ body {
     color: var(--text-main);
     line-height: 1.6;
     line-break: strict;
-    font-feature-settings: "liga" 1, "calt" 1, "halt" 1, "chws" 1;
+    font-feature-settings: "liga" 1, "calt" 1, "halt" 1;
     transition: background-color 0.3s ease, color 0.3s ease;
     user-select: none; /* 默认所有文本不可选中 */
 }
