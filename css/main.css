@@ -105,6 +105,7 @@ body {
     font-size: 1rem;
     font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
     font-optical-sizing: auto;
+    font-synthesis: none; /* 禁止浏览器合成伪斜体/伪粗体 */
     background-color: var(--bg-light);
     color: var(--text-main);
     line-height: 1.6;
