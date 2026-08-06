@@ -18,6 +18,12 @@
 
 	{% include "_includes/partials/theme-toggle.njk" %}
 
+	<!-- 全局 Toast 通知容器 -->
+	<div id="global-toast" class="toast-notice" role="status" aria-live="polite">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></svg>
+		<span></span>
+	</div>
+
 	{% block scripts_extra %}{% endblock %}
 
 </body>

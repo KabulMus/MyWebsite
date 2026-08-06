@@ -350,4 +350,12 @@ Soundfont.instrument(audioCtx, SF_CHUNKS.core, { destination: clarityFilter }).t
         }
         showToast(document.documentElement.lang === 'en-US' ? "Piano sounds ready" : "钢琴音源已就绪");
     }, 300);
+}).catch(err => {
+    console.error('钢琴音源加载失败:', err);
+    // 关闭加载弹窗，避免永久卡在加载界面
+    if(loadingOverlay) {
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => { loadingOverlay.style.visibility = 'hidden'; }, 400);
+    }
+    showToast(document.documentElement.lang === 'en-US' ? 'Failed to load piano sounds' : '钢琴音源加载失败', true);
 });
