@@ -2,6 +2,15 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ page.title }}</title>
+	{% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
+	{% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
+	{% if page.url %}<link rel="canonical" href="{{ page.url }}">{% endif %}
+	<meta property="og:site_name" content="Ethan Shaw">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="{{ page.title }}">
+	{% if page.description %}<meta property="og:description" content="{{ page.description }}">{% endif %}
+	{% if page.url %}<meta property="og:url" content="{{ page.url }}">{% endif %}
+	<meta property="og:locale" content="{{ page.htmlLang }}">
 	<link rel="icon" href="../favicon.webp" type="image/webp">
 	{% if page.preload %}
 	<link rel="preload" href="../images/ZhouShenALPHA.webp" as="image" type="image/webp" fetchpriority="high">

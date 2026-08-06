@@ -97,6 +97,7 @@ const PAGES = {
   index: {
     key: 'index', isHome: true,
     titles: { zh: '个人主页 | Ethan Shaw', en: 'Home | Ethan Shaw' },
+    desc: { zh: 'Ethan Shaw 的个人主页——一名热爱音乐的中学生、B 站 up 主，也是一枚深爱周深的「生米」。这里有我的简介、成长里程碑、创作频道与音乐小工具。', en: 'The personal homepage of Ethan Shaw — a music-loving student, Bilibili creator, and a devoted fan of Zhou Shen (Charlie). Explore my story, milestones, channels, and music tools.' },
     css: ['home.css', 'milestone.css'],
     js: ['home.js'],
     preload: true,
@@ -105,6 +106,7 @@ const PAGES = {
   channels: {
     key: 'channels',
     titles: { zh: '频道列表 | Ethan Shaw', en: 'Channels | Ethan Shaw' },
+    desc: { zh: 'Ethan Shaw 在哔哩哔哩、YouTube、小红书等平台的频道列表，欢迎来关注我的创作。', en: "Ethan Shaw's channels on Bilibili, YouTube, Xiaohongshu, and more — come follow my creations." },
     css: ['channels.css'],
     js: ['home.js'],
     active: 'channels',
@@ -124,6 +126,7 @@ const PAGES = {
   charlie: {
     key: 'charlie',
     titles: { zh: '关于周深 | Ethan Shaw', en: 'About Charlie | Ethan Shaw' },
+    desc: { zh: '关于歌手周深的介绍、音乐作品与工作室信息——来自一枚「生米」的深深热爱。', en: 'An introduction to singer Charlie Zhou Shen, his music, and his studio — with deep love from a devoted fan.' },
     css: ['charlie.css', 'milestone.css'],
     js: ['home.js'],
     preload: true,
@@ -146,6 +149,7 @@ const PAGES = {
   detector: {
     key: 'detector',
     titles: { zh: '音频分析仪 | Ethan Shaw', en: 'Audio Analyzer | Ethan Shaw' },
+    desc: { zh: '使用麦克风实时测量声音频率与音高的音频分析仪，适用于乐器调音、练耳与音高训练。', en: 'A real-time audio analyzer that measures sound frequency and pitch via your microphone — ideal for tuning, ear training, and pitch practice.' },
     css: ['detector.css', 'pages.css', 'notationbtn.css'],
     js: ['detector.js'],
     active: 'detector',
@@ -165,10 +169,12 @@ const PAGES = {
   info: {
     key: 'info',
     titles: { zh: '技术与版权 | Ethan Shaw', en: 'Tech & Copyright | Ethan Shaw' },
+    desc: { zh: '本站背后的技术支持与版权归属：开源仓库、托管服务、图标字体、字体与协议说明。', en: 'The technology and copyright behind this site: source repository, hosting, icon fonts, typefaces, and licenses.' },
     css: ['pages.css'],
     js: ['home.js'],
     active: null,
     showFooterLink: false,
+    noindex: true,
     navLeft: {
       zh: [
         { href: '#tech', text: '技术支持' },
@@ -183,6 +189,7 @@ const PAGES = {
   piano: {
     key: 'piano',
     titles: { zh: '在线钢琴 | Ethan Shaw', en: 'Online Piano | Ethan Shaw' },
+    desc: { zh: '在线钢琴：显示音名、黑键标注、移调与全键盘模式，可直接用电脑键盘弹奏。', en: 'An online piano with note labels, notation options, transpose, and full-keyboard mode — playable with your computer keyboard.' },
     css: ['piano.css'],
     js: ['soundfont-player.js', 'piano.js'],
     active: 'piano',
@@ -202,6 +209,7 @@ const PAGES = {
   scales: {
     key: 'scales',
     titles: { zh: '音阶构成 | Ethan Shaw', en: 'Musical Scale Composition | Ethan Shaw' },
+    desc: { zh: '直观展示 12 个自然大调的音阶构成及其关系小调，支持升号降号与根音选择。', en: 'Visualize the 12 major scales and their relative minors, with sharp/flat and root-note switching.' },
     css: ['scales.css', 'notationbtn.css'],
     js: ['scales.js'],
     active: 'scales',
@@ -221,6 +229,7 @@ const PAGES = {
   support: {
     key: 'support',
     titles: { zh: '联系支持 | Ethan Shaw', en: 'Support | Ethan Shaw' },
+    desc: { zh: '联系 Ethan Shaw：加入交流群、反馈问题或通过邮箱与我取得联系。', en: 'Get in touch with Ethan Shaw: join the community, report issues, or reach me by email.' },
     css: ['pages.css'],
     js: ['home.js'],
     active: 'support',
@@ -246,6 +255,7 @@ const PAGES = {
   toolkit: {
     key: 'toolkit',
     titles: { zh: '工具箱 | Ethan Shaw', en: 'Toolkit | Ethan Shaw' },
+    desc: { zh: 'Ethan Shaw 的音乐工具箱：在线钢琴、音阶构成、音频分析仪等实用小工具。', en: "Ethan's music toolkit: online piano, scale visualizer, audio analyzer, and more handy tools." },
     css: ['pages.css', 'toolkit.css'],
     js: [],
     active: 'toolkit',
@@ -345,6 +355,59 @@ const TEMPLATES = {
   ],
 };
 
+/* ---------------------------- SEO: Sitemap / Robots ---------------------------- */
+const SITE_URL = 'https://www.ethan929.com';
+
+// 页 key → 该页路径（中文在根，英文在 /en-US 下）
+function pageUrl(key, lang) {
+  const root = lang === 'zh' ? '' : '/en-US';
+  return key === 'index' ? (root || '/') : root + '/' + key;
+}
+
+function generateSitemap() {
+  const lastmod = new Date().toISOString().slice(0, 10);
+  const keys = new Set();
+  for (const lang of ['zh', 'en']) {
+    for (const { page } of TEMPLATES[lang]) {
+      if (page.key !== 'notfound' && !page.noindex) keys.add(page.key);
+    }
+  }
+  const urls = [];
+  for (const key of keys) {
+    const zh = SITE_URL + pageUrl(key, 'zh');
+    const en = SITE_URL + pageUrl(key, 'en');
+    for (const [lang, loc] of [['zh-CN', zh], ['en-US', en]]) {
+      urls.push(
+        '  <url>\n' +
+        `    <loc>${loc}</loc>\n` +
+        `    <lastmod>${lastmod}</lastmod>\n` +
+        `    <xhtml:link rel="alternate" hreflang="zh-CN" href="${zh}"/>\n` +
+        `    <xhtml:link rel="alternate" hreflang="en-US" href="${en}"/>\n` +
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/"/>\n` +
+        '  </url>'
+      );
+    }
+  }
+  const xml =
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
+    urls.join('\n') + '\n' +
+    '</urlset>\n';
+  const out = path.join(DIST, 'sitemap.xml');
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, xml, 'utf8');
+  console.log('✓ sitemap.xml (' + keys.size * 2 + ' 个 URL)');
+}
+
+function generateRobots() {
+  const out = path.join(DIST, 'robots.txt');
+  fs.writeFileSync(out,
+    'User-agent: *\n' +
+    'Allow: /\n\n' +
+    `Sitemap: ${SITE_URL}/sitemap.xml\n`, 'utf8');
+  console.log('✓ robots.txt');
+}
+
 function build() {
   copyStatic();
   for (const lang of ['zh', 'en']) {
@@ -354,6 +417,8 @@ function build() {
           lang,
           htmlLang: lang === 'zh' ? 'zh-CN' : 'en-US',
           title: page.titles[lang],
+          description: page.desc ? page.desc[lang] : null,
+          url: SITE_URL + pageUrl(page.key, lang),
           navLeft: page.navLeft ? page.navLeft[lang] : null,
         }),
       };
@@ -364,6 +429,8 @@ function build() {
       console.log('✓', out);
     }
   }
+  generateSitemap();
+  generateRobots();
   console.log('\n构建完成 →', DIST);
 }
 
