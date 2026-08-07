@@ -1,5 +1,5 @@
 // 1. 你的 Worker 统一地址 (记得换成你的自定义域名！)
-const API_URL = 'https://api.ethan929.top'; 
+const API_URL = 'https://fansapi.ethan929.com'; 
 
 const CONFIG = {
     bilibiliUid: '1863501530',
