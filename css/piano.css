@@ -93,10 +93,12 @@
     vertical-align: middle;
 }
 
+@media (hover: hover) and (pointer: fine) {
 .piano-checkbox:hover {
     transform: translateZ(0) scale(1.1);
     border-color: var(--primary-blue);
     box-shadow: var(--card-hover-shadow);
+}
 }
 
 .piano-checkbox:checked {
@@ -153,10 +155,12 @@
     box-shadow: 0 2px 8px rgba(14, 52, 112, 0.05);
 }
 
+@media (hover: hover) and (pointer: fine) {
 .notation-btn:hover {
     transform: scale(1.1);
     color: var(--primary-blue);
     box-shadow: 0 8px 20px rgba(14, 52, 112, 0.15);
+}
 }
 
 /* 针对移调按钮里的加号进行视觉微调 */
@@ -171,8 +175,10 @@
     box-shadow: 0 4px 15px rgba(30, 102, 198, 0.3);
 }
 
+@media (hover: hover) and (pointer: fine) {
 .notation-btn.active:hover {
     color: var(--on-primary) !important;
+}
 }
 
 .range-btn {
@@ -189,10 +195,12 @@
     transition: all 0.3s;
 }
 
+@media (hover: hover) and (pointer: fine) {
 .range-btn:hover {
     transform: scale(1.05);
     color: var(--primary-blue);
     box-shadow: var(--card-hover-shadow);
+}
 }
 
 .range-btn.active {
@@ -202,9 +210,11 @@
     box-shadow: var(--card-shadow);
 }
 
+@media (hover: hover) and (pointer: fine) {
 .range-btn.active:hover {
     color: var(--on-primary);
     box-shadow: var(--card-hover-shadow)
+}
 }
 
 /* 键盘外框容器，用于定位右下角按钮 */
@@ -249,7 +259,9 @@
     line-height: 0;
     padding-bottom: 3px; /* 视觉微调：修正加减号在圆圈内的垂直居中 */
 }
+@media (hover: hover) and (pointer: fine) {
 .range-toggle-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); border-color: var(--item-border); }
+}
 
 .piano-keys {
     display: flex;

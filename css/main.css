@@ -328,7 +328,10 @@ html[lang="en-US"] .italic {
 
 }
 
+/* 触屏设备（无悬停能力）不启用按钮 hover，避免点击后样式残留/卡住 */
+@media (hover: hover) and (pointer: fine) {
 .menu-toggle:hover { color: var(--primary-blue); stroke-width: 6; }
+}
 
 .menu-toggle.active { color: var(--primary-blue); stroke-width: 6; }
 
@@ -496,7 +499,9 @@ html[lang="en-US"] .italic {
     border: none; background: transparent; cursor: pointer;
 }
 .close-btn svg { width: 18px; height: 18px; fill: none; stroke: #94a3b8; stroke-width: 2.5; stroke-linecap: round; transition: stroke 0.2s; }
+@media (hover: hover) and (pointer: fine) {
 .close-btn:hover svg { stroke: var(--primary-blue); }
+}
 
 .modal-btn {
     display: inline-block; margin-top: 20px; padding: 10px 35px;
@@ -504,7 +509,9 @@ html[lang="en-US"] .italic {
     text-decoration: none; border-radius: 8px; font-weight: 600; 
     transition: opacity 0.2s;
 }
+@media (hover: hover) and (pointer: fine) {
 .modal-btn:hover { opacity: 0.85; }
+}
 
 /* --- 6. 按钮与切换器 --- */
 .theme-toggle-btn, .lang-toggle-btn, .back-home-btn {
@@ -527,8 +534,10 @@ html[lang="en-US"] .italic {
 .theme-toggle-btn svg, .lang-toggle-btn svg, .back-home-btn svg { 
     width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
 }
+@media (hover: hover) and (pointer: fine) {
 .theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover { 
     transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); 
+}
 }
 
 /* --- 8. 响应式显隐控制 --- */
@@ -632,7 +641,9 @@ footer a:hover {
     font-variant-numeric: tabular-nums;
     font-feature-settings: normal;
 }
+@media (hover: hover) and (pointer: fine) {
 .filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); }
+}
 .filter-btn.active { 
     background: var(--primary-blue) !important; 
     color: var(--on-primary) !important; 
@@ -691,4 +702,31 @@ footer a:hover {
     color: var(--text-sub);
     margin-top: 6px;
     padding: 0 32px;
+}
+
+/* --- 9. 页面切换平滑过渡（View Transitions API） --- */
+/* 同源页面跳转时启用平滑过渡（Chrome/Edge 126+ 支持；
+    Firefox/Safari 不支持时优雅降级为普通跳转，不影响功能） */
+@view-transition {
+    navigation: auto;
+}
+
+/* 新页面：淡入 */
+::view-transition-new(root) {
+    animation: vt-in 0.5s ease both;
+}
+
+@keyframes vt-out {
+    to { opacity: 0; }
+}
+
+@keyframes vt-in {
+    from { opacity: 0; }
+}
+
+/* 尊重系统「减少动态效果」偏好：关闭页面切换过渡 */
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-new(root) {
+        animation: none;
+    }
 }

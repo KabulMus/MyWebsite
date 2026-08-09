@@ -21,7 +21,9 @@
     box-shadow: var(--card-shadow);
     font-feature-settings: normal;
 }
+@media (hover: hover) and (pointer: fine) {
 .notation-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); }
+}
 .notation-btn.active {
     background: var(--primary-blue) !important;
     color: var(--on-primary) !important;

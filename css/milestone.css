@@ -42,7 +42,9 @@
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	color: var(--text-main);
 }
+@media (hover: hover) and (pointer: fine) {
 .milestone-nav-btn:hover { scale: 1.1; box-shadow: var(--card-hover-shadow); color: var(--primary-blue); }
+}
 .milestone-nav-btn.prev { left: -22px; }
 .milestone-nav-btn.next { right: -22px; }
 .milestone-nav-btn.hidden {
