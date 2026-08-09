@@ -278,10 +278,11 @@ window.addEventListener('keyup', e => {
     }
 });
 
-// ---------------- 钢琴音源分片加载（按需） ----------------
+// ---------------- 钢琴音源分片加载（按需 + 后台预载） ----------------
 // 说明：
 //   core 分片 = C4~C5（迷你键盘默认音域），页面加载时优先加载；
-//   其余分片按八度拆分，进入全键盘或按到未加载音符时才按需加载。
+//   其余分片按八度拆分。核心就绪后会在后台按序预载全部剩余分片，
+//   同时保留“按到未加载音符才按需加载”与全键盘预载逻辑作为兜底。
 window.Soundfont = window.Soundfont || {};
 
 const SF_DIR = '../js/soundfont/';
@@ -339,6 +340,17 @@ function preloadFullRangeSf() {
     SF_PRELOAD_ORDER.reduce((chain, key) => chain.then(() => loadSfChunk(key)), Promise.resolve());
 }
 
+// 核心音源就绪后：延迟片刻，在浏览器空闲时后台按序预载剩余分片，
+// 避免与首屏渲染、其他页面资源抢占带宽。
+function scheduleBackgroundSfPreload() {
+    const start = preloadFullRangeSf;
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(start, { timeout: 4000 });
+    } else {
+        setTimeout(start, 1200);
+    }
+}
+
 // 优先加载核心分片（C4~C5），就绪后渲染键盘并解锁
 Soundfont.instrument(audioCtx, SF_CHUNKS.core, { destination: clarityFilter }).then(piano => {
     pianoInstrument = piano; 
@@ -349,6 +361,8 @@ Soundfont.instrument(audioCtx, SF_CHUNKS.core, { destination: clarityFilter }).t
             setTimeout(() => { loadingOverlay.style.visibility = 'hidden'; }, 400);
         }
         showToast(document.documentElement.lang === 'en-US' ? "Piano sounds ready" : "钢琴音源已就绪");
+        // 核心音源就绪后，自动在后台预载剩余分片
+        scheduleBackgroundSfPreload();
     }, 300);
 }).catch(err => {
     console.error('钢琴音源加载失败:', err);
