@@ -1,19 +1,9 @@
-// 1. SVG 图标资源
-const ICONS = {
-    sun: '<path d="M9.15039 9.15088L11.3778 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 24H6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.15039 38.8495L11.3778 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 38.8495L36.6221 36.6221" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44.9996 24H41.8496" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38.8495 9.15088L36.6221 11.3783" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3V6.15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 45.0001V41.8501" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>',
-    moon: '<path d="M28.0527 4.41085C22.5828 5.83695 18.5455 10.8106 18.5455 16.7273C18.5455 23.7564 24.2436 29.4545 31.2727 29.4545C37.1894 29.4545 42.1631 25.4172 43.5891 19.9473C43.8585 21.256 44 22.6115 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C25.3885 4 26.744 4.14149 28.0527 4.41085Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>'
-};
-
-// 2. 提取公共渲染函数：更新 DOM、图标、赞赏码
+// 1. 主题应用：设置 data-theme（主题按钮图标显隐由 CSS 控制），并同步赞赏码
 function applyTheme(theme) {
     const html = document.documentElement;
     html.setAttribute('data-theme', theme);
 
     const isDark = theme === 'dark';
-
-    // 更新所有位置的切换按钮图标
-    const svgs = document.querySelectorAll('.theme-toggle-btn svg, .nav-theme-toggle svg');
-    svgs.forEach(s => s.innerHTML = isDark ? ICONS.sun : ICONS.moon);
 
     // 同步更新赞赏码图片（如果页面上有的话）
     const qrImg = document.querySelector('.modal-qr');
@@ -142,11 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(el => toggleModal(el.id, false));
     });
-
-    // 初始化图标状态
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.querySelectorAll('.theme-toggle-btn svg, .nav-theme-toggle svg').forEach(s => s.innerHTML = ICONS.moon);
-    }
 
     // 智能弯引号：遍历所有文本节点，不依赖固定容器选择器
     const walker = document.createTreeWalker(

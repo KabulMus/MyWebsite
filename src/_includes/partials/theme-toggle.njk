@@ -1,4 +1,5 @@
-	<!-- 亮暗模式切换按钮 -->
+	<!-- 亮暗模式切换按钮（内置太阳/月亮双图标，由 data-theme + CSS 控制显隐，避免首屏闪烁） -->
 	<button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="{{ t('theme.aria', page.lang) }}">
-		{{ ICONS.theme | safe }}
+		<span class="icon-sun">{{ ICONS.theme | safe }}</span>
+		<span class="icon-moon">{{ ICONS.theme_moon | safe }}</span>
 	</button>

@@ -534,6 +534,11 @@ html[lang="en-US"] .italic {
 .theme-toggle-btn svg, .lang-toggle-btn svg, .back-home-btn svg { 
     width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
 }
+/* 主题按钮图标：按 data-theme 显示对应图标（浅色→月亮、深色→太阳），避免首屏图标闪烁 */
+.theme-toggle-btn .icon-sun { display: none; }
+.theme-toggle-btn .icon-moon { display: flex; }
+:root[data-theme='dark'] .theme-toggle-btn .icon-sun { display: flex; }
+:root[data-theme='dark'] .theme-toggle-btn .icon-moon { display: none; }
 @media (hover: hover) and (pointer: fine) {
 .theme-toggle-btn:hover, .lang-toggle-btn:hover, .back-home-btn:hover { 
     transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); 

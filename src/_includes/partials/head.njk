@@ -2,6 +2,17 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ page.title }}</title>
+	<script>
+	/* 首帧前同步设置 data-theme，避免主题背景/图标闪烁（FOUC） */
+	(function () {
+		var t;
+		try { t = sessionStorage.getItem('user-theme'); } catch (e) {}
+		if (t !== 'dark' && t !== 'light') {
+			t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		}
+		document.documentElement.setAttribute('data-theme', t);
+	})();
+	</script>
 	{% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
 	{% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
 	{% if page.url %}<link rel="canonical" href="{{ page.url }}">{% endif %}
