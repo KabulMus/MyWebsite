@@ -79,6 +79,132 @@ const ICONS = {
     '<svg viewBox="0 0 48 48">\n\t\t\t<path d="M28.0527 4.41085C22.5828 5.83695 18.5455 10.8106 18.5455 16.7273C18.5455 23.7564 24.2436 29.4545 31.2727 29.4545C37.1894 29.4545 42.1631 25.4172 43.5891 19.9473C43.8585 21.256 44 22.6115 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C25.3885 4 26.744 4.14149 28.0527 4.41085Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>\n\t\t</svg>',
 };
 
+/* --------------------- 智能引号（构建期：状态机 + HTML 保护） --------------------- */
+// 纯文本状态机：双引号对转弯引号；单引号按结构判断——
+// 单词中的撇号(it's/somethin')→右单引号 ’，开头撇号缩写('cause/'Twas/'em)→右单引号 ’，
+// 只有“成对”的单引号才转成左右弯引号 ‘…’。
+function smartQuotesText(text) {
+  // 1) 双引号对
+  text = text.replace(/"([^"\n]*)"/g, '\u201C$1\u201D');
+
+  // 2) 单引号状态机（纯结构判断，不猜单词）
+  const chars = text.split('');
+  const positions = [];
+  for (let i = 0; i < chars.length; i++) {
+    if (chars[i] === "'") positions.push(i);
+  }
+  if (positions.length === 0) return text;
+  const isAlnum = (ch) => /[A-Za-z0-9]/.test(ch);
+  let inQuote = false;
+  for (let i = 0; i < chars.length; i++) {
+    if (chars[i] !== "'") continue;
+    const prev = i > 0 ? chars[i - 1] : '';
+    const next = i < chars.length - 1 ? chars[i + 1] : '';
+    if (inQuote) {
+      if (isAlnum(next)) {
+        chars[i] = '\u2019';               // 后是字母 → 撇号（it's）
+      } else if (next === '' || /\s/.test(next)) {
+        chars[i] = '\u2019';               // 后是空白/结尾 → 闭引号
+        inQuote = false;
+      } else {
+        // 后是标点：若后面还有 ' → 是撇号（somethin'.' 中间），否则闭引号
+        if (positions.some((p) => p > i)) {
+          chars[i] = '\u2019';
+        } else {
+          chars[i] = '\u2019';
+          inQuote = false;
+        }
+      }
+    } else {
+      if (isAlnum(prev)) {
+        chars[i] = '\u2019';               // 前是字母 → 撇号（it's）
+      } else {
+        // 只有后面存在“闭引号候选”（某个 ' 后是非字母/结尾）才当开引号；
+        // 否则是开头撇号缩写（'cause / 'Twas / 'em / 'til）
+        const hasClosing = positions.some(
+          (j) => j > i && (j === chars.length - 1 || !isAlnum(chars[j + 1]))
+        );
+        if (hasClosing) {
+          chars[i] = '\u2018';             // 开引号
+          inQuote = true;
+        } else {
+          chars[i] = '\u2019';             // 开头撇号
+        }
+      }
+    }
+  }
+  return chars.join('');
+}
+
+// HTML 感知转换：保护标签属性与 script/style/pre/code/svg/textarea/option
+// 等内容区（含 svg 的 path 数据），只转换普通可见文本。
+const SMART_PROTECTED = /^(script|style|pre|code|svg|textarea|option)$/i;
+function smartQuotesHTML(html) {
+  let out = '';
+  let i = 0;
+  const n = html.length;
+  let rawTag = null; // 当前受保护元素名（小写）
+
+  while (i < n) {
+    // 1) 处于受保护元素内部：整段原样复制（含结束标签），直到 </rawTag>
+    if (rawTag) {
+      const closeIdx = html.toLowerCase().indexOf('</' + rawTag, i);
+      if (closeIdx === -1) { out += html.slice(i); break; }
+      const gt = html.indexOf('>', closeIdx);
+      const segEnd = (gt === -1) ? html.length : gt + 1;
+      out += html.slice(i, segEnd);
+      i = segEnd;
+      rawTag = null;
+      continue;
+    }
+
+    // 2) 找下一个 '<'
+    const lt = html.indexOf('<', i);
+    if (lt === -1) { out += smartQuotesText(html.slice(i)); break; }
+
+    // 3) '<' 之前的文本 → 转换
+    out += smartQuotesText(html.slice(i, lt));
+
+    // 4) 注释
+    if (html.startsWith('<!--', lt)) {
+      const end = html.indexOf('-->', lt);
+      const segEnd = (end === -1) ? html.length : end + 3;
+      out += html.slice(lt, segEnd);
+      i = segEnd;
+      continue;
+    }
+
+    // 5) 标签：整体原样复制，需找到真正的 '>'（跳过属性引号内的 >）
+    let j = lt + 1;
+    let q = null;
+    while (j < n) {
+      const ch = html[j];
+      if (q) {
+        if (ch === q) q = null;
+      } else if (ch === '"' || ch === "'") {
+        q = ch;
+      } else if (ch === '>') {
+        break;
+      }
+      j++;
+    }
+    const tagEnd = (j < n) ? j + 1 : n;
+    const tagStr = html.slice(lt, tagEnd);
+    out += tagStr;
+
+    // 判断是否为受保护元素的开标签（非自闭合、非结束标签）
+    if (!/^<\s*\//.test(tagStr)) {
+      const m = tagStr.match(/^<\s*([a-zA-Z][a-zA-Z0-9-]*)/);
+      const tagName = m ? m[1].toLowerCase() : '';
+      if (tagName && SMART_PROTECTED.test(tagName) && !/\/\s*>$/.test(tagStr)) {
+        rawTag = tagName;
+      }
+    }
+    i = tagEnd;
+  }
+  return out;
+}
+
 /* ------------------------------ 页面配置 ------------------------------ */
 /**
  * 每页配置字段:
@@ -424,7 +550,7 @@ function build() {
           navLeft: page.navLeft ? page.navLeft[lang] : null,
         }),
       };
-      const html = env.render(tpl, ctx);
+      const html = smartQuotesHTML(env.render(tpl, ctx));
       const outPath = path.join(DIST, out);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html, 'utf8');
