@@ -102,7 +102,7 @@ button, input, select, textarea { font-family: inherit; }
 
 body {
     font-size: 1rem;
-    font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+    font-family: 'Inter Var', 'Noto Sans SC', -apple-system, sans-serif;
     font-optical-sizing: auto;
     font-synthesis: none; /* 禁止浏览器合成伪斜体/伪粗体 */
     background-color: var(--bg-light);
@@ -196,7 +196,7 @@ section.container {
 .section-title {
 	font-size: 1.3rem;
 	font-weight: 600;
-    font-family: 'Montserrat', 'Inter', 'Noto Sans SC', sans-serif;
+    font-family: 'Montserrat', 'Inter Var', 'Noto Sans SC', sans-serif;
 	margin-bottom: 40px;
 	position: relative;
 	display: inline-block;
@@ -684,7 +684,7 @@ footer a:hover {
 .page-hero h1 {
     font-size: 2.8rem;
     font-weight: 800;
-    font-family: 'Montserrat', 'Inter', 'Noto Sans SC', sans-serif;
+    font-family: 'Montserrat', 'Inter Var', 'Noto Sans SC', sans-serif;
     background: linear-gradient(135deg, var(--primary-blue) 25%, var(--primary-purple) 75%);
     -webkit-background-clip: text;
     background-clip: text;

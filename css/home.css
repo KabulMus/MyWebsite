@@ -56,7 +56,7 @@ section.hero-content {
 
 .hero-section h1 {
 	font-size: 2.8rem;
-	font-family: 'Montserrat', 'Inter', 'Noto Sans SC', sans-serif;
+	font-family: 'Montserrat', 'Inter Var', 'Noto Sans SC', sans-serif;
 	font-weight: 800;
 	color: #ffffff;
 	margin-bottom: 5px;
@@ -147,7 +147,7 @@ section.hero-content {
 .days-counter-line .days-counter-number {
 	font-size: 2.4rem;
 	font-weight: 900;
-	font-family: 'Montserrat', 'Inter', 'Noto Sans SC', sans-serif;
+	font-family: 'Montserrat', 'Inter Var', 'Noto Sans SC', sans-serif;
 	/* 降级：不支持渐变文字时保持纯蓝（旧浏览器） */
 	color: var(--primary-blue);
 	margin: 0 6px;
