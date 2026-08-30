@@ -137,20 +137,20 @@ html[lang="en-US"] .milestone-card p {
 @media (prefers-color-scheme: dark) { 
 	html:not([data-theme='light']) .tag-channel { background: rgba(147, 197, 253, 0.15); }
 	html:not([data-theme='light']) .tag-insync { background: rgba(251, 191, 36, 0.15); color: #e9c15c; }
-	html:not([data-theme='light']) .tag-academic { background: rgba(88, 204, 2, 0.15); }
+	html:not([data-theme='light']) .tag-academic { background: rgba(88, 204, 2, 0.15); color: #96f150; }
 	html:not([data-theme='light']) .tag-life { background: rgba(148, 163, 184, 0.15); }
 	html:not([data-theme='light']) .tag-nation { background: rgba(248, 113, 113, 0.15); color: #f87171; }
-	html:not([data-theme='light']) .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+	html:not([data-theme='light']) .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c48efa; }
 	html:not([data-theme='light']) .tag-achievement { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; }
-	html:not([data-theme='light']) .tag-community { background: rgba(129, 140, 248, 0.15); color: #818cf8; }
+	html:not([data-theme='light']) .tag-community { background: rgba(129, 140, 248, 0.15); color: #a1aafb; }
 	html:not([data-theme='light']) .tag-anecdote { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
 }
 [data-theme='dark'] .tag-channel { background: rgba(147, 197, 253, 0.15); }
-[data-theme='dark'] .tag-insync { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
-[data-theme='dark'] .tag-academic { background: rgba(88, 204, 2, 0.15); }
+[data-theme='dark'] .tag-insync { background: rgba(251, 191, 36, 0.15); color: #e9c15c; }
+[data-theme='dark'] .tag-academic { background: rgba(88, 204, 2, 0.15); color: #96f150; }
 [data-theme='dark'] .tag-life { background: rgba(148, 163, 184, 0.15); }
 [data-theme='dark'] .tag-nation { background: rgba(248, 113, 113, 0.15); color: #f87171; }
-[data-theme='dark'] .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+[data-theme='dark'] .tag-skill { background: rgba(192, 132, 252, 0.15); color: #c48efa; }
 [data-theme='dark'] .tag-achievement { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; }
-[data-theme='dark'] .tag-community { background: rgba(129, 140, 248, 0.15); color: #818cf8; }
+[data-theme='dark'] .tag-community { background: rgba(129, 140, 248, 0.15); color: #a1aafb; }
 [data-theme='dark'] .tag-anecdote { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
