@@ -26,6 +26,9 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link rel="preconnect" href="https://rsms.me/">
+	{% if page.preconnect %}{% for origin in page.preconnect %}
+	<link rel="preconnect" href="{{ origin }}">{% endfor %}
+	{% endif %}
 	{% if page.preload %}
 	<link rel="preload" href="../images/ZhouShenALPHA.webp" as="image" type="image/webp" fetchpriority="high">
 	{% endif %}

@@ -1,0 +1,16 @@
+# Cloudflare Pages 响应头（build.js 会把它复制到 dist/）
+# css/js 的文件名没有内容哈希，所以用中等时长的浏览器缓存 + 过期后在后台校验：
+# 同一次访问里翻页不再重复发 304，又不会在部署后长时间看到旧资源。
+# HTML 不在这里配置，保持 Pages 默认的 max-age=0, must-revalidate。
+
+/css/*
+	Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/js/*
+	Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/images/*
+	Cache-Control: public, max-age=604800, stale-while-revalidate=604800
+
+/favicon.webp
+	Cache-Control: public, max-age=604800

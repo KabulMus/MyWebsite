@@ -3,13 +3,19 @@ function applyTheme(theme) {
     const html = document.documentElement;
     html.setAttribute('data-theme', theme);
 
-    const isDark = theme === 'dark';
-
-    // 同步更新赞赏码图片（如果页面上有的话）
+    // 赞赏码要等弹窗打开才加载，所以这里只在它已经加载过的时候跟随主题切换
     const qrImg = document.querySelector('.modal-qr');
-    const qrSource = document.querySelector('#modal-overlay picture source');
-    if (qrImg) qrImg.src = isDark ? "../images/reward_code_dark.webp" : "../images/reward_code.webp";
-    if (qrSource) qrSource.srcset = isDark ? "../images/reward_code_dark.webp" : "../images/reward_code.webp";
+    if (qrImg && qrImg.hasAttribute('src')) syncQrImage();
+}
+
+// 按当前主题给赞赏码取址（首次调用发生在弹窗打开时）
+function syncQrImage() {
+    const img = document.querySelector('.modal-qr');
+    if (!img) return;
+    const wanted = document.documentElement.getAttribute('data-theme') === 'dark'
+        ? img.dataset.srcDark
+        : img.dataset.srcLight;
+    if (wanted && img.getAttribute('src') !== wanted) img.setAttribute('src', wanted);
 }
 
 // 3. 获取当前系统的深浅状态
@@ -43,7 +49,7 @@ function toggleTheme() {
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     const newSystemTheme = e.matches ? 'dark' : 'light';
     sessionStorage.removeItem('user-theme'); // 清除本次会话的手动记录
-    applyTheme(newSystemSystemTheme || newSystemTheme);
+    applyTheme(newSystemTheme);
 });
 
 // 7. 页面加载完成后自动触发初始化
@@ -55,6 +61,7 @@ function toggleModal(id, show) {
     if (!overlay) return;
     
     if (show) {
+        syncQrImage();
         document.body.style.overflow = 'hidden';
         overlay.classList.add('active');
     } else {

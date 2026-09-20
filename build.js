@@ -29,6 +29,9 @@ function copyStatic() {
   if (fs.existsSync(path.join(ROOT, 'favicon.webp'))) {
     fs.copyFileSync(path.join(ROOT, 'favicon.webp'), path.join(DIST, 'favicon.webp'));
   }
+  if (fs.existsSync(path.join(ROOT, '_headers'))) {
+    fs.copyFileSync(path.join(ROOT, '_headers'), path.join(DIST, '_headers'));
+  }
 }
 
 /* -------------------------------- 文案 -------------------------------- */
@@ -213,6 +216,7 @@ function smartQuotesHTML(html) {
  *   css       <link> 追加的样式表(不含 main.css)
  *   js        <script> 追加的脚本(不含 core.js)
  *   preload   是否预加载 ZhouShenALPHA.webp
+ *   preconnect  需要提前建连的第三方源(数组)
  *   nav       是否渲染导航栏(默认 true)
  *   isHome    是否主页(主页导航/hero 特例)
  *   active    右侧主链接高亮 key(null 表示不高亮)
@@ -237,6 +241,7 @@ const PAGES = {
     desc: { zh: 'Ethan Shaw 在哔哩哔哩、YouTube、小红书等平台的频道列表，欢迎来关注我的创作。', en: "Ethan Shaw's channels on Bilibili, YouTube, Xiaohongshu, and more — come follow my creations." },
     css: ['channels.css'],
     js: ['home.js'],
+    preconnect: ['https://fansapi.ethan929.com'],
     active: 'channels',
     navLeft: {
       zh: [
