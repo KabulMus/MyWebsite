@@ -88,6 +88,7 @@ google {
 html {
 	scroll-behavior: smooth;
 	scroll-padding-top: 80px; /* 匹配导航栏高度，防止跳转后由于偏移过大露出英雄区背景 */
+	text-autospace: normal;
 }
 
 /* 彻底隐藏所有滚动条，但保留滑动/滚动功能 */
@@ -112,6 +113,19 @@ body {
     font-feature-settings: "liga" 1, "calt" 1, "halt" 1;
     transition: background-color 0.3s ease, color 0.3s ease;
     user-select: none; /* 默认所有文本不可选中 */
+}
+
+/* --- 中文标点：开明式（句内半宽、句末全角） --- */
+/* 基础层在 body 上（halt 1，全站标点默认半宽），这里只管把「该占全角的句末号」撤销半宽。
+   halt 是按元素生效的，所以构建期会把那些句末号包成 span.punct-full。
+   行尾那条要写在后面（同优先级靠后者生效），而且两个类必须落在同一个元素上，否则选择器匹配不到。 */
+.punct-full { font-feature-settings: "liga" 1, "calt" 1, "halt" 0; }
+.punct-full.punct-line-end { font-feature-settings: "liga" 1, "calt" 1, "halt" 1; }
+.punct-line-head { white-space: nowrap; }
+/* 打印是另一套版心宽度，屏幕上量出来的行尾在纸上不成立，所以运行时那层整个复位 */
+@media print {
+    .punct-full.punct-line-end { font-feature-settings: "liga" 1, "calt" 1, "halt" 0; }
+    .punct-line-head { white-space: normal; }
 }
 
 /* --- 选中文字颜色 --- */

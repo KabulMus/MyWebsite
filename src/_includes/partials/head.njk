@@ -42,6 +42,8 @@
 	{% if page.inlineHead %}{{ page.inlineHead | safe }}
 	{% endif %}
 	<script src="../js/core.js" defer></script>
+	{% if page.lang === 'zh' %}<script src="../js/typography.js" defer></script>
+	{% endif %}
 	{% for js in page.js %}
 	<script src="../js/{{ js }}" defer></script>
 	{% endfor %}

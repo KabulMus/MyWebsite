@@ -208,6 +208,148 @@ function smartQuotesHTML(html) {
   return out;
 }
 
+/* ------------------ 开明式标点（构建期：摊平判定 + 包 span） ------------------ */
+// 中文排版「开明式」：句内点号半宽、句末点号全角。半宽靠 CJK 字体的 "halt" 特性实现（body 上已经开着），
+// 而该特性按元素生效、不能按字符挑，所以只能把「该占全角的句末号」单独包一层 span.punct-full 来关掉它。
+// 判定前必须把整块的文字摊平：反例是 **周！深！**）——最后一个感叹号在加粗里，只看单个文本节点
+// 会把它当成「后面没字」而误判成半宽，其实它后面还跟着一个「）」。硬换行、代码段和块的起止
+// 摊平时插哨兵 U+0002，不用 \n 是因为软换行本来就会出现在正文里。
+const K_BLOCKS = new Set(['p', 'li', 'figcaption', 'blockquote', 'td', 'th', 'dd', 'dt']);
+const K_RAW = new Set(['script', 'style', 'code', 'pre', 'kbd', 'samp', 'textarea', 'svg']); // 整段跳过，点号一律不动
+const K_VOID = new Set(['br', 'img', 'input', 'hr', 'meta', 'link', 'source', 'area', 'base', 'col', 'embed', 'param', 'track', 'wbr']);
+const K_SENTINEL = '\u0002';            // 正文绝不会出现的控制字符
+const K_FULL = /[。！？]/;
+const K_CLOSER = /[）」』》】〕〉｝］〗”’]/;
+const K_SPAN = '<span class="punct-full">';
+
+function kaimingPunct(html) {
+  const inserts = [];                  // 待插入的标签：{ at, close }
+  const stack = [];                    // 打开中的文本块
+  const n = html.length;
+  let i = 0;
+
+  const blockTop = () => (stack.length ? stack[stack.length - 1] : null);
+  const pushText = (start, end) => {
+    const b = blockTop();
+    if (b) b.items.push({ start: start, text: html.slice(start, end) });
+  };
+  const pushSentinel = () => {
+    const b = blockTop();
+    if (b) b.items.push({ sentinel: true });
+  };
+
+  /* 一块收尾：摊平成一条字符串（哨兵占一位），逐字判命中的就记下插入位置 */
+  const flush = (b) => {
+    const flat = [];                   // 每一位存源串下标；哨兵存 -1
+    for (const it of b.items) {
+      if (it.sentinel) { flat.push(-1); continue; }
+      for (let k = 0; k < it.text.length; k++) flat.push(it.start + k);
+    }
+    // 源码是美化过的，块内首尾往往挂着缩进空白；不裁掉的话段末的句末号会看到后面还有一个空白，
+    // 被当成「段中」而错包成全角
+    let from = 0;
+    let to = flat.length;
+    const blank = (p) => p < 0 || /\s/.test(html.charAt(p));
+    while (from < to && blank(flat[from])) from++;
+    while (to > from && blank(flat[to - 1])) to--;
+    for (let p = from; p < to; p++) {
+      const at = flat[p];
+      if (at < 0 || !K_FULL.test(html.charAt(at))) continue;
+      const next = p + 1 < to ? flat[p + 1] : undefined;
+      if (next === undefined) continue;              // 块末 = 行尾，保持半宽
+      if (next < 0) continue;                        // 硬换行或代码段之后，同样算行尾
+      if (K_CLOSER.test(html.charAt(next))) continue; // 紧跟闭标号，那半格已经由括号给出
+      if (K_FULL.test(html.charAt(next))) continue;   // 连用：只有最后一个占全角
+      inserts.push({ at: at, close: false });
+      inserts.push({ at: at + 1, close: true });
+    }
+  };
+
+  while (i < n) {
+    const lt = html.indexOf('<', i);
+    if (lt === -1) { pushText(i, n); break; }
+    if (lt > i) pushText(i, lt);
+    if (html.startsWith('<!--', lt)) {
+      const end = html.indexOf('-->', lt);
+      i = end === -1 ? n : end + 3;
+      continue;
+    }
+    if (html.startsWith('<!', lt)) {
+      const end = html.indexOf('>', lt);
+      i = end === -1 ? n : end + 1;
+      continue;
+    }
+
+    // 找标签真正的 '>'，跳过属性引号里的 >
+    let j = lt + 1, q = null;
+    while (j < n) {
+      const ch = html.charAt(j);
+      if (q) { if (ch === q) q = null; }
+      else if (ch === '"' || ch === "'") q = ch;
+      else if (ch === '>') break;
+      j++;
+    }
+    const tagEnd = j < n ? j + 1 : n;
+    const tagStr = html.slice(lt, tagEnd);
+    const m = tagStr.match(/^<\s*\/?\s*([a-zA-Z][a-zA-Z0-9-]*)/);
+    const name = m ? m[1].toLowerCase() : '';
+
+    if (!name || K_VOID.has(name)) {
+      // 硬换行 = 新的行尾，判定时当边界（其余空元素不产生文字，忽略即可）
+      if (name === 'br' && !/^<\s*\//.test(tagStr)) pushSentinel();
+      i = tagEnd;
+      continue;
+    }
+
+    if (/^<\s*\//.test(tagStr)) {
+      for (let k = stack.length - 1; k >= 0; k--) {
+        if (stack[k].name === name) {
+          const closed = stack.splice(k);
+          for (const el of closed) {
+            el.items.push({ sentinel: true });         // 块末也是行尾
+            if (el.items.length) flush(el);
+            if (stack.length) pushSentinel();          // 块的起止对外层块也是边界
+          }
+          break;
+        }
+      }
+      i = tagEnd;
+      continue;
+    }
+
+    if (K_RAW.has(name) && !/\/\s*>$/.test(tagStr)) {
+      // 代码段/脚本/样式/SVG：整段原样复制，只在两端插哨兵
+      pushSentinel();
+      const close = html.toLowerCase().indexOf('</' + name, tagEnd);
+      if (close === -1) { i = n; continue; }
+      const gt = html.indexOf('>', close);
+      i = gt === -1 ? n : gt + 1;
+      pushSentinel();
+      continue;
+    }
+
+    if (K_BLOCKS.has(name)) {
+      pushSentinel();                                  // 嵌套块的起点
+      stack.push({ name: name, items: [] });
+    }
+    i = tagEnd;
+  }
+
+  while (stack.length) {                               // 标签没闭合时也别把已收的内容丢了
+    const el = stack.pop();
+    if (el.items.length) flush(el);
+  }
+
+  if (!inserts.length) return html;
+  // 从后往前插，位置才不会错；同一位置时先补开标签
+  inserts.sort((a, b) => (b.at - a.at) || (a.close ? 1 : -1));
+  let out = html;
+  for (const ins of inserts) {
+    out = out.slice(0, ins.at) + (ins.close ? '</span>' : K_SPAN) + out.slice(ins.at);
+  }
+  return out;
+}
+
 /* ------------------------------ 页面配置 ------------------------------ */
 /**
  * 每页配置字段:
@@ -555,7 +697,9 @@ function build() {
           navLeft: page.navLeft ? page.navLeft[lang] : null,
         }),
       };
-      const html = smartQuotesHTML(env.render(tpl, ctx));
+      const rendered = smartQuotesHTML(env.render(tpl, ctx));
+      // 开明式标点只给中文页做：英文页正文里没有 CJK 标点，不需要也不应去动
+      const html = lang === 'zh' ? kaimingPunct(rendered) : rendered;
       const outPath = path.join(DIST, out);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html, 'utf8');
@@ -567,4 +711,6 @@ function build() {
   console.log('\n构建完成 →', DIST);
 }
 
-build();
+// 直接 node build.js 时照旧构建；被 require 时只导出转换函数（用于排版自测）
+if (require.main === module) build();
+module.exports = { kaimingPunct: kaimingPunct };
