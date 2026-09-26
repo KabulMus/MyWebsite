@@ -115,6 +115,9 @@ body {
     user-select: none; /* 默认所有文本不可选中 */
 }
 
+/* 内核不认 text-autospace 时由 js/cjk-gap.js 插的空元素，宽度对齐 Chromium 的 1/8em */
+.cjk-latin-gap { display: inline-block; width: 0.125em; }
+
 /* --- 中文标点：开明式（句内半宽、句末全角） --- */
 /* 基础层在 body 上（halt 1，全站标点默认半宽），这里只管把「该占全角的句末号」撤销半宽。
    halt 是按元素生效的，所以构建期会把那些句末号包成 span.punct-full。
