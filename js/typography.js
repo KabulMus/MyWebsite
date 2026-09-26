@@ -21,26 +21,30 @@
 	var queued = false;
 	var widths = new WeakMap();
 
-	/* 粘接界限：本应只有半格（0.5em），但「这个字要占多宽」量不准。
-	   text-autospace 在中文西文交界处插的 1/8em 会被浏览器算进后面那个字的盒子里，
-	   所以跨交界的字量出来永远偏胖：16px 字号下数字 1 的真实推进是 6.44px，
-	   getBoundingClientRect() 量到的是 8.44px，正好差 2px（就是 1/8em）。
-	   半格 8px 加上这个误差就到 10.4px，所以界限取 0.5em * 1.3 ≈ 0.65em（16px 字号即 10.4px）。
-	   多粘一小块只是让断行更保守，漏粘才会把下一行的头一个字吸上来，两者代价差得远。 */
-	var GLUE_LIMIT = 0.65;
+	/* 粘接界限取 2em，不是半格。两条原因：
+	   一、压半宽只省下 0.5em，而那一行本来就有余量 —— justify 会把没占满的部分摊进字间，
+	       所以「下一项会不会被吸上来」的真实条件是 w ≤ 0.5em + 本行余量，余量取决于当初
+	       被挤下去的那一项有多宽，窄窗口（比如 397px）下七八像素很常见，整格汉字也会被吸上来。
+	   二、text-autospace 插在中西交界的那 1/8em 会被算进后面那个字的盒子里（数字 1 的推进
+	       6.44px、量出来 8.44px），所以「拿宽度当判据」本身就有系统误差。
+	   界限放宽没有副作用：粘的那一截本来就在下一行行首，宽度远小于一行，多粘几项只是
+	   禁止在它内部断行，而它在行首本来就不会跨行。算不准的漏网之鱼由 settle() 复验兜底。 */
+	var GLUE_LIMIT = 2;
+
+	/* 把包进去的 span 拆掉，把字还给父节点 */
+	function unwrap(span) {
+		var parent = span.parentNode;
+		if (!parent) return;
+		while (span.firstChild) parent.insertBefore(span.firstChild, span);
+		parent.removeChild(span);
+		parent.normalize();
+	}
 
 	/* 抹掉上一轮的痕迹：拆掉包裹、去掉行尾标记，并把相邻文本节点合回去。
 	   字体就绪和容器变宽都会让行尾换位置，所以必须能反复重跑，重跑前先 reset 才幂等。 */
 	function reset() {
 		var heads = document.querySelectorAll('.' + LINE_HEAD);
-		for (var i = 0; i < heads.length; i++) {
-			var el = heads[i];
-			var parent = el.parentNode;
-			if (!parent) continue;
-			while (el.firstChild) parent.insertBefore(el.firstChild, el);
-			parent.removeChild(el);
-			parent.normalize();
-		}
+		for (var i = 0; i < heads.length; i++) unwrap(heads[i]);
 		var ends = document.querySelectorAll('.' + LINE_END);
 		for (var j = 0; j < ends.length; j++) ends[j].classList.remove(LINE_END);
 	}
@@ -85,15 +89,14 @@
 		return { size: size, lines: lines };
 	}
 
-	/* 把下一行开头那几项粘成一块，合计宽度超过界限就塞不进压掉的那半格，断行点不动。
-	   数字和半角字母这类窄字符会被吸上来，所以要粘；整格汉字本来就超过界限，粘不粘一样。
+	/* 把下一行开头那几项粘成一块，合计宽度超过界限就塞不进压掉的那半格加本行余量，断行点不动。
 	   跨了加粗和链接这类元素边界就粘不住，返回 false，这一处宁可不压。 */
 	function glueHead(info, lineIndex) {
 		var next = info.lines[lineIndex + 1];
 		if (!next || !next.chars.length) return true;
 		var limit = info.size * GLUE_LIMIT;
 		var first = next.chars[0];
-		if (first.width > limit) return true;
+		if (first.width > limit) return true;         // 比界限还宽，塞不进那半格，粘不粘一样
 		var group = [first];
 		var total = first.width;
 		for (var i = 1; i < next.chars.length && total <= limit; i++) {
@@ -101,8 +104,7 @@
 			group.push(next.chars[i]);
 			total += next.chars[i].width;
 		}
-		if (total <= limit) return false;   // 下一行整行都不够这个界限，粘了也没用，不冒险压
-		wrap(group, first.node);
+		wrap(group, first.node);                      // 不够界限就把这一行能粘的都粘上
 		return true;
 	}
 
@@ -138,9 +140,10 @@
 		}
 	}
 
-	/* 压缩本身会改变断行，而「这个字要占多宽」量得再准也有误差，所以压完当场再验一次：
-	   看那个本该在下一行的字是不是还跟句末号同排。是的话就把它的后面的字一项项黏进
-	   粘接块，一直到它掉回下一行 —— 粘接只会让断行更保守，所以这一步一定收敛。 */
+	/* 压完复验一次，量的是事实而不是推算：看「本该在下一行的那一项」现在跟不跟点号同排。
+	   阈值再宽也有算不准的时候（下一项是很长的西文词时余量可以更大），同排就是被吸上来了，
+	   就把下一行开头按界限粘足再复验；试几轮还吸着 ⇒ 这一处不压，
+	   压缩类和粘接一起拆掉 —— 宁可留着那半格凹陷，也绝不改断行。 */
 	function settle() {
 		var ends = document.querySelectorAll('.' + LINE_END);
 		for (var i = 0; i < ends.length; i++) {
@@ -149,21 +152,36 @@
 			var node = el.firstChild;
 			if (!block || !node || node.nodeType !== 3 || !node.nodeValue) continue;
 			var size = parseFloat(getComputedStyle(block).fontSize) || 16;
+			var limit = size * GLUE_LIMIT;
 			var markTop = rectOf(node, 0).top;
 			var head = null;
-			for (var step = 0; step < 12; step++) {
-				var rest = head ? head.nextSibling : el.nextSibling;
-				if (!rest || rest.nodeType !== 3 || !rest.nodeValue) break;
-				/* 看「还没粘时的那一项」或「已经粘出来的那一块」是不是还跟句末号同排：
-				   本来就在下一行 ⇒ 不用管；还在同一排 ⇒ 再粘一个字进去，直到它塞不下、掉回下一行 */
-				if (Math.abs(rectOf(head || rest, 0).top - markTop) >= size * 0.5) break;
+			var pulled = false;
+			for (var round = 0; round < 3; round++) {
+				var probe = head || el.nextSibling;
+				if (!probe || probe.nodeType !== 3 || !probe.nodeValue) { pulled = false; break; }
+				pulled = Math.abs(rectOf(probe, 0).top - markTop) < size * 0.5;
+				if (!pulled) break;                                  // 已经掉回下一行，收工
 				if (!head) {
 					head = document.createElement('span');
 					head.className = LINE_HEAD;
-					rest.parentNode.insertBefore(head, rest);
+					probe.parentNode.insertBefore(head, probe);
+				} else {
+					probe = head.nextSibling;                        // 上一轮粘过，接着往后搬
+					if (!probe || probe.nodeType !== 3 || !probe.nodeValue) { pulled = false; break; }
 				}
-				head.appendChild(document.createTextNode(rest.nodeValue.charAt(0)));
-				rest.nodeValue = rest.nodeValue.slice(1);
+				/* 粘到合计宽超过界限为止，这一整块就塞不进那半格加余量了 */
+				while (head.getBoundingClientRect().width <= limit) {
+					if (!probe.nodeValue) {
+						probe = probe.nextSibling;
+						if (!probe || probe.nodeType !== 3 || !probe.nodeValue) break;
+					}
+					head.appendChild(document.createTextNode(probe.nodeValue.charAt(0)));
+					probe.nodeValue = probe.nodeValue.slice(1);
+				}
+			}
+			if (pulled) {
+				if (head) unwrap(head);
+				el.classList.remove(LINE_END);
 			}
 		}
 	}
