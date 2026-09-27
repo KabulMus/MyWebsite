@@ -44,7 +44,15 @@ function filterMilestones(year, btn) {
 	cards.forEach(card => {
 		const cardYear = card.getAttribute('data-year');
 		// 如果没有选中任何年份，则显示全部；否则仅显示匹配选中年份的卡片
-		card.style.display = (activeYears.length === 0 || activeYears.includes(cardYear)) ? 'block' : 'none';
+		const show = activeYears.length === 0 || activeYears.includes(cardYear);
+		card.classList.remove('appearing');
+		if (!show) {
+			card.style.display = 'none';
+			return;
+		}
+		card.style.display = 'block';
+		void card.offsetWidth; // 强制回流，让动画在连续筛选时也能重新播放
+		card.classList.add('appearing');
 	});
 	container.scrollLeft = 0;
 	updateMilestoneButtons();

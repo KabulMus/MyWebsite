@@ -37,6 +37,41 @@ if (window.innerWidth <= 768) {
     settings.range = 'mini';
 }
 
+// 「显示音名」和「黑键标注」用 localStorage 记住，下次进来沿用上次选择
+const PIANO_PREFS_KEY = 'piano-prefs';
+
+function loadPianoPrefs() {
+    let saved = {};
+    try {
+        saved = JSON.parse(localStorage.getItem(PIANO_PREFS_KEY) || '{}');
+    } catch (e) {
+        saved = {};
+    }
+    if (typeof saved.showLabels === 'boolean') settings.showLabels = saved.showLabels;
+    if (['natural', 'sharp', 'flat', 'both'].includes(saved.notation)) settings.notation = saved.notation;
+}
+
+function savePianoPrefs() {
+    try {
+        localStorage.setItem(PIANO_PREFS_KEY, JSON.stringify({ showLabels: settings.showLabels, notation: settings.notation }));
+    } catch (e) {}
+}
+
+// 键盘本身在音源就绪后按 settings 渲染，这里先把面板控件同步成记住的样子
+function applyPianoPrefsToControls() {
+    const checkbox = document.querySelector('.piano-checkbox');
+    if (checkbox) checkbox.checked = settings.showLabels;
+    const notationGroup = document.getElementById('notation-group');
+    if (!notationGroup) return;
+    notationGroup.classList.toggle('hidden', !settings.showLabels);
+    notationGroup.querySelectorAll('.notation-btn[data-notation]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.notation === settings.notation);
+    });
+}
+
+loadPianoPrefs();
+applyPianoPrefsToControls();
+
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const KEY_MAP_FULL = {
     'KeyZ': 'C3', 'KeyX': 'D3', 'KeyC': 'E3', 'KeyV': 'F3', 'KeyB': 'G3', 'KeyN': 'A3', 'KeyM': 'B3', 'Comma': 'C4', 'Period': 'D4', 'Slash': 'E4',
@@ -141,6 +176,7 @@ window.toggleLabels = function(checkbox) {
     if(container) container.classList.toggle('hide-labels', !settings.showLabels);
     const notationGroup = document.getElementById('notation-group');
     if (notationGroup) notationGroup.classList.toggle('hidden', !settings.showLabels);
+    savePianoPrefs();
 };
 
 window.changeTranspose = function(delta, reset = false) {
@@ -153,6 +189,7 @@ window.setPianoNotation = function(type, btn) {
     settings.notation = type;
     document.querySelectorAll('.notation-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    savePianoPrefs();
     renderKeyboard();
 };
 
