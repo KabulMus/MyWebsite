@@ -132,3 +132,63 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(el => toggleModal(el.id, false));
     });
 });
+
+// 背景图案视差：这一层是 fixed 的，所以「滑动」其实是改 mask 的纵向偏移。
+// 偏移量按两块 tile 各自的高度取模（1360 / 920），取多大都接得上。
+var DOODLE_RATE = 0.35;
+var DOODLE_TILES = [1360, 920];
+function shiftDoodles() {
+    var body = document.body;
+    if (!body) return;
+    var y = (window.scrollY || window.pageYOffset || 0) * DOODLE_RATE;
+    body.style.setProperty('--bg-shift-a', (-(y % DOODLE_TILES[0])).toFixed(2) + 'px');
+    body.style.setProperty('--bg-shift-b', (-(y % DOODLE_TILES[1])).toFixed(2) + 'px');
+}
+// 不套 rAF：蹭上惯性滚动那类场景 rAF 会被暂停，图案会卡住不动
+window.addEventListener('scroll', shiftDoodles, { passive: true });
+shiftDoodles();
+
+// 页脚「Charlie」连点三下的彩蛋：显示区域中央弹一颗米子星，三秒后收
+function initCharlieEgg() {
+    var footer = document.querySelector('footer');
+    if (!footer) return;
+    var walker = document.createTreeWalker(footer, NodeFilter.SHOW_TEXT, null);
+    var node = null;
+    while ((node = walker.nextNode())) {
+        if (node.nodeValue.indexOf('Charlie') >= 0) break;
+    }
+    if (!node) return;
+    var at = node.nodeValue.indexOf('Charlie');
+    node.splitText(at + 7);
+    var mid = node.splitText(at);
+    var word = document.createElement('span');
+    word.className = 'charlie-word';
+    word.textContent = 'Charlie';
+    mid.parentNode.replaceChild(word, mid);
+
+    var star = document.createElement('div');
+    star.className = 'charlie-star';
+    star.setAttribute('aria-hidden', 'true');
+    // 米子星原坐标只占 0..24，viewBox 就按这个盒子留一点余量；填充用蓝紫渐变（颜色见 CSS）
+    star.innerHTML = '<svg viewBox="-1 -1 26 26" fill="url(#charlieStarGrad)">'
+        + '<defs><linearGradient id="charlieStarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0"/><stop offset="1"/></linearGradient></defs>'
+        + '<path d="M23.69,11.56l-6.44-2.24,1.05-3.39c.04-.14-.09-.28-.23-.23l-3.39,1.05L12.44.31c-.14-.41-.73-.41-.87,0l-2.24,6.44-3.39-1.05c-.14-.04-.28.09-.23.23l1.05,3.39L.31,11.56c-.41.14-.41.73,0,.87l6.44,2.24-1.05,3.39c-.04.14.09.28.23.23l3.39-1.05,2.24,6.44c.14.41.73.41.87,0l2.24-6.44,3.39,1.05c.14.04.28-.09.23-.23l-1.05-3.39,6.44-2.24c.41-.14.41-.73,0-.87Z"/></svg>';
+    document.body.appendChild(star);
+
+    var hits = 0, lastHit = 0;
+    word.addEventListener('click', function () {
+        var now = Date.now();
+        hits = now - lastHit > 1500 ? 1 : hits + 1;
+        lastHit = now;
+        if (hits < 3) return;
+        hits = 0;
+        star.classList.remove('is-on');
+        void star.offsetWidth;   // 强制一次重排，让动画能重新播
+        star.classList.add('is-on');
+    });
+    // 动画播完自己收场（出入场都在那条 keyframes 里，所以不用计时器）
+    star.addEventListener('animationend', function () {
+        star.classList.remove('is-on');
+    });
+}
+document.addEventListener('DOMContentLoaded', initCharlieEgg);

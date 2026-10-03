@@ -36,6 +36,10 @@
     --qqmusic-bg: #00eb81;
     --wyy-bg: #dd001b;
     --spotify-bg: #1ed760;
+
+    /* 背景装饰的墨色（线稿小图形）。两档是按「看起来一样淡」配的：
+       亮底 ≈0.105 的品牌蓝 与 暗底 0.075 的亮蓝，感知亮度差接近（ΔL* 都 ≈5）。 */
+    --bg-doodle: rgba(30, 102, 198, 0.105);
 }
 
 /* 深色模式变量 */
@@ -51,6 +55,9 @@
     --card-hover-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.7);
     --item-border: rgba(255, 255, 255, 0.08);
     --on-primary: #0f172a; /* 深色模式下设为与背景相同的深蓝色/黑色 */
+
+    /* 背景装饰：暗底对比低，给亮蓝并提高一档透明度 */
+    --bg-doodle: rgba(147, 197, 253, 0.075);
 }
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
@@ -65,6 +72,9 @@
         --card-hover-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.7);
         --item-border: rgba(255, 255, 255, 0.08);
         --on-primary: #0f172a;
+
+        /* 背景装饰：暗底对比低，给亮蓝并提高一档透明度 */
+        --bg-doodle: rgba(147, 197, 253, 0.075);
     }
 }
 
@@ -116,6 +126,40 @@ body {
     font-feature-settings: "liga" 1, "calt" 1, "halt" 1;
     transition: background-color 0.3s ease, color 0.3s ease;
     user-select: none; /* 默认所有文本不可选中 */
+}
+
+/* ------------------------------------------------------------------
+   页面背景装饰：线稿小字形（话筒 / 五角星 / 米子星 / 音符 / 耳机 / 爱心）
+   散在两块可平铺的 SVG 上（images/bg-doodle-a.svg 大间距 1680×1360、
+   bg-doodle-b.svg 小间距 1120×920）。
+   用 mask + background-color 上色：这样深浅两套主题各给一档墨色，不用把图案导两份。
+   ⚠️ 两块 tile 的尺寸错开（横向要 A 铺两块、B 铺三块才对齐，纵向 31280px 才重样）
+      ⇒ 屏幕上看不出「一块一块重复」。
+   ⚠️ 挂在 body::before 上（position: fixed + z-index: -1）：body 的底色会被传播到 canvas
+      （即最底那层），所以这一层在它之上、在所有内容之下；又因为 pointer-events: none，
+      完全不参与交互。卡片是不透明的，所以图案只在两边的空档里显形。
+   ------------------------------------------------------------------ */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--bg-doodle);
+    -webkit-mask-image: url('/images/bg-doodle-a.svg'), url('/images/bg-doodle-b.svg');
+    mask-image: url('/images/bg-doodle-a.svg'), url('/images/bg-doodle-b.svg');
+    -webkit-mask-size: 1680px 1360px, 1120px 920px;
+    mask-size: 1680px 1360px, 1120px 920px;
+    -webkit-mask-repeat: repeat, repeat;
+    mask-repeat: repeat, repeat;
+    /* 视差：滚动时让图案慢慢往上走（见全局脚本里的 shiftDoodles）。偏移量是按各自
+       tile 高度取模后传进来的，所以取多大值图案都接得上，不会露出边缘。 */
+    -webkit-mask-position: 0 var(--bg-shift-a, 0px), 190px calc(110px + var(--bg-shift-b, 0px));
+    mask-position: 0 var(--bg-shift-a, 0px), 190px calc(110px + var(--bg-shift-b, 0px));
+}
+
+@media print {
+    body::before { display: none; }
 }
 
 /* 内核不认 text-autospace 时由 js/cjk-gap.js 插的空元素，宽度对齐 Chromium 的 1/8em */
@@ -200,7 +244,8 @@ body {
 
 /* --- 内容区域布局 --- */
 .content-section {
-	background-color: var(--bg-light);
+	/* 不涂底色：页面底色由 body 提供，这里再涂一层整幅不透明的会把 body::before 的
+	   背景装饰整个盖掉。留透明才能让图案从两侧留白和卡片空档里透出来。 */
 	padding: 60px 20px;
 	text-align: center;
 	position: relative;
@@ -596,6 +641,54 @@ footer a {
 
 footer a:hover {
     border-bottom-color: var(--primary-blue);
+}
+
+/* 页脚那颗「Charlie」彩蛋：连点三下，屏幕中央弹一颗米子星，三秒后收回去 */
+.charlie-word {
+    touch-action: manipulation;   /* 连着轻点不被当成双击缩放 */
+}
+
+.charlie-star {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 132px;
+    height: 132px;
+    z-index: 1900;
+    pointer-events: none;
+    color: var(--primary-blue, #1e66c6);
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    will-change: transform, opacity;   /* 提前提升图层，缩放时描边不会一帧一帧重新光栅化 */
+}
+
+/* 出入场连成一条动画（0.45s 进 + 3s 停 + 0.45s 出）：两段各自带缓动，
+   比让它反向播同一条 transition 顺得多（反向播会先窜一下再缓，很涩）。 */
+.charlie-star.is-on {
+    animation: charlie-star-pop 3.9s both;
+}
+
+@keyframes charlie-star-pop {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+    12%  { opacity: 1; transform: translate(-50%, -50%) scale(1); animation-timing-function: linear; }
+    88%  { opacity: 1; transform: translate(-50%, -50%) scale(1); animation-timing-function: cubic-bezier(0.4, 0, 1, 1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.94); }
+}
+
+/* 填充色是一套蓝 → 紫渐变，跟标题同一套色：亮底 #1e66c6 → #7463f1，暗底 #93c5fd → #aaa2e9 */
+.charlie-star stop:first-child { stop-color: var(--primary-blue, #1e66c6); }
+.charlie-star stop:last-child { stop-color: var(--primary-purple, #7463f1); }
+
+:root[data-theme='dark'] {
+    .charlie-star stop:first-child { stop-color: var(--primary-blue, #93c5fd); }
+    .charlie-star stop:last-child { stop-color: var(--primary-purple, #aaa2e9); }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        .charlie-star stop:first-child { stop-color: var(--primary-blue, #93c5fd); }
+        .charlie-star stop:last-child { stop-color: var(--primary-purple, #aaa2e9); }
+    }
 }
 
 /* --- 全局 Toast 通知样式 --- */
