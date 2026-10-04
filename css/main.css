@@ -201,6 +201,7 @@ body::before {
 	transition: transform 0.3s ease, translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 	cursor: pointer;
 	flex-direction: row;
+    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
 }
 
 .card-svg {
@@ -261,7 +262,7 @@ section.container {
 .section-title {
 	font-size: 1.3rem;
 	font-weight: 600;
-    font-family: 'Montserrat', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
 	margin-bottom: 40px;
 	position: relative;
 	display: inline-block;
@@ -300,7 +301,13 @@ section.container {
 }
 
 .grid p { color: var(--text-sub); }
-.grid h2 { font-size: 1.6rem; font-weight: 800; color: var(--primary-blue); }
+.grid h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-stretch: 100%;
+    color: var(--primary-blue);
+}
 
 /* --- 4. 斜体逻辑定制 --- */
 /* 针对中文环境：斜体变细正体（字重降至300） */
@@ -797,7 +804,7 @@ footer a:hover {
 .page-hero h1 {
     font-size: 2.8rem;
     font-weight: 800;
-    font-family: 'Montserrat', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
     background: linear-gradient(135deg, var(--primary-blue) 25%, var(--primary-purple) 75%);
     -webkit-background-clip: text;
     background-clip: text;
