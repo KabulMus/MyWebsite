@@ -117,7 +117,8 @@ footer {
     color: var(--text-main);
     margin-bottom: 20px; /* 压缩频率数值下方的间距 */
     font-variant-numeric: tabular-nums;
-    font-weight: 500;
+    font-weight: 600;
+    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
 }
 
 .frequency-val small {

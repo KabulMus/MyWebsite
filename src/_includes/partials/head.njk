@@ -36,17 +36,36 @@
 	{% for css in page.css %}
 	<link rel="stylesheet" href="../css/{{ css }}">
 	{% endfor %}
-	{% set fontMain = "https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Sans+SC:wght@100..900&family=Noto+Serif+SC:wght@200..900&family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" %}
+	{% set fontMain = "https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Sans+SC:wght@100..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" %}
 	{% set fontGoogleSansFlex = "https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wdth,wght@6..144,25..151,1..1000&display=swap" %}
 	{% set fontInter = "https://rsms.me/inter/inter.css" %}
+	<!-- Playfair 只渲染几个固定词组（charlie 标题、info 字样示例），所以用 text= 把它裁成子集：
+	     Playfair Display → en charlie 的 "Charlie" + info 的 "Playfair Display"；
+	     Playfair Display SC → en charlie 的 "Zhou"。
+	     ⚠️ 改这些文案时必须同步改下面的 text=，否则缺失字符会静默回退到 serif，不报错。
+	     子集没有 unicode-range，字重留 400..900 覆盖标题(900)与字样示例(700/400)。 -->
+	{% set fontPlayfair = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&text=Charlie%20Playfair%20Display&display=swap" %}
+	{% set fontPlayfairSC = "https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@900&text=Zhou&display=swap" %}
+	<!-- Noto Serif SC 在本站只渲染 4 处固定文案（zh charlie 的「周深 中国男歌手 音乐制作人 青年歌唱家｜」、
+	     en charlie 的 "Charlie / Chinese Male Singer / Music Producer / Young Vocalist"、
+	     zh info 的「思源宋体」、en info 的 "Source Han Serif / Noto Serif CJK"），
+	     默认要实现整整 49 个字得下载好几个 50~105 KB 的 CJK 分片（zh charlie 实测 515 KB），
+	     所以这里按这 49 个字符裁成子集（实测单个文件 15 KB）。字重留 200..900 覆盖 600/700/900。
+	     ⚠️ 上述任何一处文案改动，都必须把新字符补进下面的 text=（可直接改动等号后的编码串）。 -->
+	{% set fontNotoSerifSC = "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200..900&text=%20%2FCHJKMNPSVYacdefghilnorstu%7C%E4%B8%AD%E4%B9%90%E4%BA%BA%E4%BD%93%E4%BD%9C%E5%88%B6%E5%91%A8%E5%94%B1%E5%9B%BD%E5%AE%8B%E5%AE%B6%E5%B9%B4%E6%80%9D%E6%89%8B%E6%AD%8C%E6%B7%B1%E6%BA%90%E7%94%B7%E9%9D%92%E9%9F%B3%EF%BD%9C&display=swap" %}
 	<!-- 字体 CSS 用 media 换成异步加载，不阻塞首屏；禁用 JS 时由下面的 noscript 兜底 -->
 	<link rel="stylesheet" href="{{ fontMain | safe }}" media="print" onload="this.media='all'">
 	<link rel="stylesheet" href="{{ fontGoogleSansFlex | safe }}" media="print" onload="this.media='all'">
 	<link rel="stylesheet" href="{{ fontInter | safe }}" media="print" onload="this.media='all'">
+	<link rel="stylesheet" href="{{ fontPlayfair | safe }}" media="print" onload="this.media='all'">
+	<link rel="stylesheet" href="{{ fontPlayfairSC | safe }}" media="print" onload="this.media='all'">
+	<link rel="stylesheet" href="{{ fontNotoSerifSC | safe }}" media="print" onload="this.media='all'">
 	<noscript>
 		<link rel="stylesheet" href="{{ fontMain | safe }}">
 		<link rel="stylesheet" href="{{ fontGoogleSansFlex | safe }}">
 		<link rel="stylesheet" href="{{ fontInter | safe }}">
+		<link rel="stylesheet" href="{{ fontPlayfair | safe }}">
+		<link rel="stylesheet" href="{{ fontPlayfairSC | safe }}">
 	</noscript>
 	{% if page.inlineHead %}{{ page.inlineHead | safe }}
 	{% endif %}

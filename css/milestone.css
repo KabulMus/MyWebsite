@@ -99,7 +99,6 @@
 	color: var(--primary-blue);
 	margin-bottom: 12px;
 	font-size: 0.9rem;
-	font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
 	font-variant-numeric: tabular-nums;
 }
 
@@ -128,6 +127,7 @@
 	font-size: 1.25rem;
 	line-height: 1.4;
 	color: var(--text-main); /* 使用主题变量 */
+	font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
 }
 
 
@@ -165,7 +165,3 @@ html[lang="en-US"] .milestone-card p {
 [data-theme='dark'] .tag-achievement { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; }
 [data-theme='dark'] .tag-community { background: rgba(129, 140, 248, 0.15); color: #a1aafb; }
 [data-theme='dark'] .tag-anecdote { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
-
-.filter-btn {
-	font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
-}

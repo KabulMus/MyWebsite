@@ -308,6 +308,24 @@ section.container {
     font-stretch: 100%;
     color: var(--primary-blue);
 }
+/* 邮箱 / Discord 两个 h2：宽度装得下就用 100%，装不下才压到刚好贴合。
+   文案固定不变，所以把「字宽 ↔ font-stretch」实测成直线再反解，不必运行时测量：
+     ethanshaw@ethan929.com   W(s) ≈ 246.34219 + 1.405904·s    （拟合残差 ≤0.08px）
+     Charlie's Melody Bag     W(s) ≈ 189.54293 + 1.102532·s    （拟合残差 ≤0.06px）
+   （s 为 font-stretch 的百分数；25% 已是该字的轴下限，100% 以上斜率会突变，故只拟合 25~100 这段。）
+   反解所需值 s = (可用宽度 − a) / b，再夹在 25%~100%。
+   可用宽度 = min(600px, 100vw − 40px)：.content-section 左右各 20px 内边距 + section.container 上限 600px，
+   实测 320~1440px 各档与真实 clientWidth 完全一致。
+   前一条 25%/50% 是旧内核兜底（沿用各自原来的值），支持 calc 里「长度÷长度」的新内核会用后一条覆盖它。
+   ⚠️ 这两个串改了文案、或 h2 字号 / 容器宽度规则变了，都要重新拟合这组常数。 */
+#email h2 {
+    font-stretch: 25%;
+    font-stretch: clamp(25%, calc((min(600px, 100vw - 40px) - 246.34219px) / 1.405904px * 1%), 100%);
+}
+#discord h2 {
+    font-stretch: 50%;
+    font-stretch: clamp(25%, calc((min(600px, 100vw - 40px) - 189.54293px) / 1.102532px * 1%), 100%);
+}
 
 /* --- 4. 斜体逻辑定制 --- */
 /* 针对中文环境：斜体变细正体（字重降至300） */

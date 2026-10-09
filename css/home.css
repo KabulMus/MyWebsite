@@ -144,12 +144,13 @@ section.hero-content {
 	color: var(--text-main);
 	text-align: center;
 	line-height: 2.4rem;
+	font-stretch: 90%;
+	font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
 }
 .days-counter-line .days-counter-number {
 	font-size: 2.4rem;
 	font-weight: 900;
-	font-stretch: 110%;
-	font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
+	font-stretch: 115%;
 	/* 降级：不支持渐变文字时保持纯蓝（旧浏览器） */
 	color: var(--primary-blue);
 	margin: 0 6px;
