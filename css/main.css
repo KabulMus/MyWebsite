@@ -94,6 +94,8 @@ google {
 
 /* --- 3. 基础复位 --- */
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+/* <picture> 只用于格式切换，不参与布局，避免改变原来的 flex/绝对定位行为 */
+picture { display: contents; }
 
 html {
 	scroll-behavior: smooth;

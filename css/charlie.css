@@ -115,8 +115,8 @@ html[lang="en-US"] .hero-section h2 {
 	top: -40px;
     
     /* 遮罩配置：必须和图片的缩放及对齐完全同步 */
-    -webkit-mask-image: url('../images/charlie.webp');
-    mask-image: url('../images/charlie.webp');
+    -webkit-mask-image: url('../images/charlie-mask.webp');
+    mask-image: url('../images/charlie-mask.webp');
     -webkit-mask-size: contain;
     mask-size: contain;
     -webkit-mask-position: center;

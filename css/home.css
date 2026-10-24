@@ -75,7 +75,10 @@ section.hero-content {
 }
 
 .person-img {
-	max-height: 350px;
+	/* 原图 984px 高，实际始终被限制到 350px；写成固定高度是为了让浏览器在图片下载前
+	   就能按 HTML width/height 的比例预留位置，避免首屏抖动 */
+	height: 350px;
+	width: auto;
 	position: relative;
 	margin-top: 20px;
 	margin-bottom: -1px;
@@ -124,7 +127,7 @@ section.hero-content {
 .about-text a:hover { border-bottom-color: var(--primary-blue); }
 
 @media (max-width: 768px) {
-	.person-img { max-height: 240px; }
+	.person-img { height: 240px; }
 }
 
 /* --- 纪念日天数计数器（自 2020.05.20 起，喜欢周深的天数） --- */

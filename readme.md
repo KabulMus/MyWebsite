@@ -37,5 +37,7 @@ npm run deploy  # （可选）手动上传 dist/（host.retiehe.com）
 
 > 修改导航、页脚或按钮只需改 `src/_includes/` 或 `build.js` 里的配置，重新 `npm run build` 即可全站生效。**请勿直接编辑 `dist/` 下的 HTML，它们由构建生成。**
 
+> `images/` 下的人像 / 头像 / 赞赏码提供了多尺寸与 AVIF 版本（HTML 中通过 `<picture>`、`srcset` 按屏幕选择）。替换 `charlie.webp`、`ZhouShenALPHA.webp`、`avatar.webp`、`reward_code*.webp` 等源图后，需要按现有文件名里的尺寸重新导出对应版本；`charlie-mask.webp` 是 `charlie.webp` 的 alpha 通道遮罩，也要同步更新。
+
 ---
 Built with love to you all and Charlie Zhou Shen by Ethan Shaw.

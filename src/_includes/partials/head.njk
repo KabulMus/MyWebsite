@@ -29,9 +29,6 @@
 	{% if page.preconnect %}{% for origin in page.preconnect %}
 	<link rel="preconnect" href="{{ origin }}">{% endfor %}
 	{% endif %}
-	{% if page.preload %}
-	<link rel="preload" href="../images/ZhouShenALPHA.webp" as="image" type="image/webp" fetchpriority="high">
-	{% endif %}
 	<link rel="stylesheet" href="../css/main.css">
 	{% for css in page.css %}
 	<link rel="stylesheet" href="../css/{{ css }}">

@@ -357,7 +357,6 @@ function kaimingPunct(html) {
  *   titles    中/英文标题 { zh, en }
  *   css       <link> 追加的样式表(不含 main.css)
  *   js        <script> 追加的脚本(不含 core.js)
- *   preload   是否预加载 ZhouShenALPHA.webp
  *   preconnect  需要提前建连的第三方源(数组)
  *   nav       是否渲染导航栏(默认 true)
  *   isHome    是否主页(主页导航/hero 特例)
@@ -374,7 +373,6 @@ const PAGES = {
     desc: { zh: 'Ethan Shaw 的个人主页——一名热爱音乐的中学生、B 站 up 主，也是一枚深爱周深的「生米」。这里有我的简介、成长里程碑、创作频道与音乐小工具。', en: 'The personal homepage of Ethan Shaw — a music-loving student, Bilibili creator, and a devoted fan of Zhou Shen (Charlie). Explore my story, milestones, channels, and music tools.' },
     css: ['home.css', 'milestone.css'],
     js: ['home.js'],
-    preload: true,
     active: null,
   },
   channels: {
@@ -404,7 +402,6 @@ const PAGES = {
     desc: { zh: '关于歌手周深的介绍、音乐作品与工作室信息——来自一枚「生米」的深深热爱。', en: 'An introduction to singer Charlie Zhou Shen, his music, and his studio — with deep love from a devoted fan.' },
     css: ['charlie.css', 'milestone.css'],
     js: ['home.js'],
-    preload: true,
     active: 'charlie',
     navLeft: {
       zh: [

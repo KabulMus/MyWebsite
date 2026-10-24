@@ -4,11 +4,14 @@
 	<header class="hero-section">
 		<section class="hero-content">
 			<div class="hero-text-group">
-				<img src="../images/avatar.webp" class="avatar" width="130" height="130">
+				<img src="../images/avatar-390.webp" class="avatar" width="130" height="130">
 				<h1>Ethan Shaw</h1>
 				<p class="tagline">一颗尘埃 一枚星星</p>
 			</div>
-			<img src="../images/ZhouShenALPHA.webp" class="person-img" fetchpriority="high">
+			<picture>
+				<source type="image/avif" srcset="../images/ZhouShenALPHA-228w.avif 228w, ../images/ZhouShenALPHA-333w.avif 333w, ../images/ZhouShenALPHA-468w.avif 468w" sizes="(max-width: 768px) 114px, 166px">
+				<img src="../images/ZhouShenALPHA-333w.webp" class="person-img" width="468" height="984" fetchpriority="high">
+			</picture>
 		</section>
 	</header>
 
