@@ -4,36 +4,42 @@
 	font-style: normal;
 	font-weight: 100 900;
 	font-display: swap;
-	src: url('fonts/Inter.woff2') format('woff2');
+	src: url('fonts/Inter.98d40f1e.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'Inter';
 	font-style: italic;
 	font-weight: 100 900;
 	font-display: swap;
-	src: url('fonts/Inter-italic.woff2') format('woff2');
+	src: url('fonts/Inter-italic.a69ac0bc.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'Noto Sans SC';
 	font-style: normal;
 	font-weight: 100 900;
 	font-display: swap;
-	src: url('fonts/NotoSansSC.woff2') format('woff2');
+	src: url('fonts/NotoSansSC.73123e63.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'Google Sans Flex';
 	font-style: normal;
 	font-weight: 400 900;
+	font-display: block;
+	src: url('fonts/GoogleSansFlex.752e5f1b.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Google Sans Flex';
+	font-style: italic;
+	font-weight: 400 900;
 	font-display: swap;
-	src: url('fonts/GoogleSansFlex.woff2') format('woff2');
-	unicode-range: U+9-A, U+20-7E, U+A5, U+A9, U+B7, U+E0, U+E9, U+F3, U+F8-FA, U+2014, U+2018-2019, U+201C-201D, U+2026, U+2122, U+2212;
+	src: url('fonts/GoogleSansFlex-italic.773bec04.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'Encode Sans SC';
 	font-style: normal;
 	font-weight: 100 900;
 	font-display: swap;
-	src: url('fonts/EncodeSansSC.woff2') format('woff2');
+	src: url('fonts/EncodeSansSC.e82575c7.woff2') format('woff2');
 	unicode-range: U+9-A, U+20-7E, U+A5, U+A9, U+B7, U+E0, U+E9, U+F3, U+F8-FA, U+2014, U+2018-2019, U+201C-201D, U+2026, U+2122, U+2212;
 }
 @font-face {
@@ -41,7 +47,7 @@
 	font-style: normal;
 	font-weight: 200 900;
 	font-display: swap;
-	src: url('fonts/SourceSerif4.woff2') format('woff2');
+	src: url('fonts/SourceSerif4.9b3890b2.woff2') format('woff2');
 	unicode-range: U+9-A, U+20-7E, U+A5, U+A9, U+B7, U+E0, U+E9, U+F3, U+F8-FA, U+2014, U+2018-2019, U+201C-201D, U+2026, U+2122, U+2212;
 }
 @font-face {
@@ -49,7 +55,7 @@
 	font-style: normal;
 	font-weight: 100 800;
 	font-display: swap;
-	src: url('fonts/JetBrainsMono.woff2') format('woff2');
+	src: url('fonts/JetBrainsMono.1fc2985a.woff2') format('woff2');
 	unicode-range: U+9-A, U+20-7E, U+A5, U+A9, U+B7, U+E0, U+E9, U+F3, U+F8-FA, U+2014, U+2018-2019, U+201C-201D, U+2026, U+2122, U+2212;
 }
 @font-face {
@@ -57,7 +63,7 @@
 	font-style: normal;
 	font-weight: 400 900;
 	font-display: swap;
-	src: url('fonts/PlayfairDisplay.woff2') format('woff2');
+	src: url('fonts/PlayfairDisplay.3d158411.woff2') format('woff2');
 	unicode-range: U+20, U+43-44, U+50, U+61, U+65-66, U+68-69, U+6C, U+70, U+72-73, U+79;
 }
 @font-face {
@@ -65,7 +71,7 @@
 	font-style: normal;
 	font-weight: 900;
 	font-display: swap;
-	src: url('fonts/PlayfairDisplaySC.woff2') format('woff2');
+	src: url('fonts/PlayfairDisplaySC.001e8510.woff2') format('woff2');
 	unicode-range: U+5A, U+68, U+6F, U+75;
 }
 @font-face {
@@ -73,6 +79,6 @@
 	font-style: normal;
 	font-weight: 200 900;
 	font-display: swap;
-	src: url('fonts/NotoSerifSC.woff2') format('woff2');
+	src: url('fonts/NotoSerifSC.3ef1fa81.woff2') format('woff2');
 	unicode-range: U+20, U+2F, U+43, U+48, U+4A-4B, U+4D-4E, U+50, U+53, U+56, U+59, U+61, U+63-69, U+6C, U+6E-6F, U+72-75, U+7C, U+4E2D, U+4E50, U+4EBA, U+4F53, U+4F5C, U+5236, U+5468, U+5531, U+56FD, U+5B8B, U+5BB6, U+5E74, U+601D, U+624B, U+6B4C, U+6DF1, U+6E90, U+7537, U+9752, U+97F3, U+FF5C;
 }

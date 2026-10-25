@@ -40,6 +40,8 @@
     /* 背景装饰的墨色（线稿小图形）。两档是按「看起来一样淡」配的：
        亮底 ≈0.105 的品牌蓝 与 暗底 0.075 的亮蓝，感知亮度差接近（ΔL* 都 ≈5）。 */
     --bg-doodle: rgba(30, 102, 198, 0.105);
+
+    --selection-bg: #1e67c640;
 }
 
 /* 深色模式变量 */
@@ -58,6 +60,7 @@
 
     /* 背景装饰：暗底对比低，给亮蓝并提高一档透明度 */
     --bg-doodle: rgba(147, 197, 253, 0.075);
+    --selection-bg: #93c5fd80;
 }
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
@@ -75,6 +78,7 @@
 
         /* 背景装饰：暗底对比低，给亮蓝并提高一档透明度 */
         --bg-doodle: rgba(147, 197, 253, 0.075);
+        --selection-bg: #93c5fd80;
     }
 }
 
@@ -182,8 +186,7 @@ body::before {
 
 /* --- 选中文字颜色 --- */
 ::selection {
-    background: var(--primary-blue);
-    color: var(--on-primary);
+    background: var(--selection-bg);
 }
 
 /* --- Card --- */

@@ -30,13 +30,16 @@
 	     配上 imagesrcset 会让 Chromium 先按 1x 猜一张、再按实际 DPR 换一张 -->
 	<link rel="preload" href="../images/{{ page.preload }}" as="image" type="image/avif" fetchpriority="high">
 	{% endif %}
-	<!-- 首屏正文用到的两个字体（拉丁 + 中文）提前拉取，与 HTML 并行；其余字体按需加载。
-	     crossorigin 是字体请求的硬性要求，同源也要写，否则会重复下载。 -->
-	<link rel="preload" href="../css/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
-	<link rel="preload" href="../css/fonts/NotoSansSC.woff2" as="font" type="font/woff2" crossorigin>
-	{% if page.preload %}
-	<link rel="preload" href="../css/fonts/GoogleSansFlex.woff2" as="font" type="font/woff2" crossorigin>
-	{% endif %}
+	<!-- 首屏正文用到的字体提前拉取，与 HTML 并行；其余字体按需加载。
+	     crossorigin 是字体请求的硬性要求，同源也要写，否则会重复下载。
+	     Google Sans Flex 用于各页的 .section-title / h1，因 font-display:block 必须 preload。
+	     中文字体只在正文含 CJK 的页面上 preload（build.js 会按页剥离这一行）。 -->
+	<link rel="preload" href="../css/fonts/{{ fontFile('Inter.woff2') }}" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="../css/fonts/{{ fontFile('GoogleSansFlex.woff2') }}" as="font" type="font/woff2" crossorigin>
+	<!-- 图标字体（ligature）用于卡片/导航内的图标，字体在 main.css 里才被发现；
+	     它 font-display:auto 等同 block，不 preload 会在慢网下让图标空白最多 3s。 -->
+	<link rel="preload" href="../css/fonts/{{ fontFile('Icons-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="../css/fonts/{{ fontFile('NotoSansSC.woff2') }}" as="font" type="font/woff2" crossorigin>
 	{% if page.preconnect %}{% for origin in page.preconnect %}
 	<link rel="preconnect" href="{{ origin }}">{% endfor %}
 	{% endif %}

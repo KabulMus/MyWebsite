@@ -58,6 +58,19 @@ npm run deploy  # （可选）手动上传 dist/（host.retiehe.com）
 >
 > ⚠️ 顺序很重要：脚本靠扫描 `dist/` 的 HTML 提取字符集，所以必须先把页面构建出来。
 >
+> **Google Sans Flex 的斜体**：Google Fonts 上架的版本只有 `opsz`/`wdth`/`wght` 三个轴，
+> **没有 `slnt`**，所以从 Google Fonts 取不到斜体。脚本改从上游发布版
+> （`googlefonts/googlesans-flex` 的 `GoogleSansFlex-v5.000.zip`，版本号与 Google 版一致）
+> 取全轴 VF `[ROND,opsz,slnt,wdth,wght]`，再用 `slnt = -10` 实例化出斜体面。
+> 因此会产出两个文件：`GoogleSansFlex.woff2`（`slnt=0`）与 `GoogleSansFlex-italic.woff2`。
+> 斜体面只在真的用到 `<i>`/`<em>` 的页面加载（站点规定仅 en-US 生效），中文页不会下载。
+>
+> **斜体默认单层 a**：字体把单层 a 放在 `ss01`（`a → a.alt`，含带变音符的变体）里，而 ss01 默认关闭。
+> 脚本在生成斜体面后，把 ss01 引用的 lookup 并入 `ccmp`（所有 shaper 默认应用），
+> 所以斜体无需任何 CSS 声明就是单层 a（canvas、导出同样生效）；直立体保持双层不变。
+> 已确认该字体中只有 ss01 引用字形 `a`，`calt` 只处理 `:~` 与 `数字:`，因此这一步不会破坏其他特性。
+> 注意：子集化后 `ccmp` 可能被整体丢弃，脚本会在缺失时新建并注册到每个 LangSys。
+>
 > **缺字检查**：`npm run build` 会自动执行 `node tools/check-fonts.js`——它解析各 `.woff2` 的 cmap 表，逐字比对全站文案，**有缺字就报错并列出来源页面**（缺字本身不会报错，只会静默回退到系统字体，所以必须有这道闸门）。Cloudflare Pages 用 `npm run build`，因此新字符漏生成时构建会失败，而不是悄悄上线一个混排的页面。
 
 ---

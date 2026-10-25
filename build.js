@@ -640,6 +640,12 @@ const PAGES = {
 };
 
 /* ---------------------------- 渲染环境与全局 ---------------------------- */
+/* 字体文件名清单（内容哈希），由 tools/build-fonts.py 生成 */
+const FONT_MANIFEST_PATH = path.join(ROOT, 'css', 'fonts', 'manifest.json');
+const FONT_MANIFEST = fs.existsSync(FONT_MANIFEST_PATH)
+  ? JSON.parse(fs.readFileSync(FONT_MANIFEST_PATH, 'utf8'))
+  : {};
+
 const env = new nunjucks.Environment(new nunjucks.FileSystemLoader(SRC), {
   autoescape: true,
   trimBlocks: true,
@@ -647,6 +653,9 @@ const env = new nunjucks.Environment(new nunjucks.FileSystemLoader(SRC), {
 });
 
 env.addGlobal('ICONS', ICONS);
+// 字体文件名（带内容哈希）: {{ fontFile('Inter.woff2') }}
+// 清单由 tools/build-fonts.py 生成；没有清单时（尚未跑过字体脚本）退回原名。
+env.addGlobal('fontFile', (name) => FONT_MANIFEST[name] || name);
 // 文案取值: {{ t('key', page.lang) }}
 env.addGlobal('t', (key, lang) => I18N[lang || 'zh'][key]);
 // 语言切换链接: {{ langHref(page) }}
@@ -735,6 +744,24 @@ function generateRobots() {
   console.log('✓ robots.txt');
 }
 
+/* 首屏是否需要中文字体：只在页面正文真的出现 CJK 时才值得 preload。
+   全站共用一份 300 KB 的 NotoSansSC 子集，对整页无中文的页面（多数 en-US 页）
+   preload 它纯属浪费——字体按需加载即可，首屏并不需要它。 */
+const CJK_RE = /[\u2E80-\u9FFF\u3000-\u303F\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]/;
+
+function hasCJKText(html) {
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<[^>]+>/g, ' ');
+  return CJK_RE.test(text);
+}
+
+function dropCJKPreload(html) {
+  return html.replace(/[ \t]*<link rel="preload"[^>]*NotoSansSC[^>]*>\r?\n/g, '');
+}
+
 function build() {
   copyStatic();
   for (const lang of ['zh', 'en']) {
@@ -751,7 +778,8 @@ function build() {
       };
       const rendered = smartQuotesHTML(env.render(tpl, ctx));
       // 开明式标点只给中文页做：英文页正文里没有 CJK 标点，不需要也不应去动
-      const html = lang === 'zh' ? kaimingPunct(rendered) : rendered;
+      let html = lang === 'zh' ? kaimingPunct(rendered) : rendered;
+      if (!hasCJKText(html)) html = dropCJKPreload(html);
       const outPath = path.join(DIST, out);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html, 'utf8');
