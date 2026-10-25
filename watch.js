@@ -12,7 +12,8 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 const ROOT = __dirname;
-const BUILD_SCRIPT = path.join(ROOT, 'build.js');
+// 走编排脚本：构建 → 字体覆盖检查 → 缺字时自动补字形 → 重建
+const BUILD_SCRIPT = path.join(ROOT, 'tools', 'build-all.js');
 
 // 需要监听的源目录/文件（dist/ 由构建生成，不监听）
 const WATCH_TARGETS = [
@@ -20,11 +21,14 @@ const WATCH_TARGETS = [
   path.join(ROOT, 'css'),
   path.join(ROOT, 'js'),
   path.join(ROOT, 'images'),
-  BUILD_SCRIPT,
+  path.join(ROOT, 'tools'),
+  path.join(ROOT, 'build.js'),
   path.join(ROOT, 'package.json'),
 ];
 
-const IGNORE_RE = /[\\/](dist|node_modules)[\\/]/;
+// 生成产物不触发重建：字体子集与 @font-face 由 tools/build-fonts.py 写出，
+// 若不忽略会形成「构建 → 写字体 → 又触发构建」的多余循环。
+const IGNORE_RE = /[\\/](dist|node_modules)[\\/]|[\\/]css[\\/]fonts[\\/]|_fonts\.generated\.css$|[\\/]\.font-cache[\\/]/;
 
 let building = false;
 let queued = false;

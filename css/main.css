@@ -118,7 +118,7 @@ code { font-family: 'JetBrains Mono', monospace; }
 
 body {
     font-size: 1rem;
-    font-family: 'Inter Var', 'Noto Sans SC', -apple-system, sans-serif;
+    font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
     font-optical-sizing: auto;
     font-synthesis: none; /* 禁止浏览器合成伪斜体/伪粗体 */
     background-color: var(--bg-light);
@@ -203,7 +203,7 @@ body::before {
 	transition: transform 0.3s ease, translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 	cursor: pointer;
 	flex-direction: row;
-    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
 }
 
 .card-svg {
@@ -264,7 +264,7 @@ section.container {
 .section-title {
 	font-size: 1.3rem;
 	font-weight: 600;
-    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
 	margin-bottom: 40px;
 	position: relative;
 	display: inline-block;
@@ -306,7 +306,7 @@ section.container {
 .grid h2 {
     font-size: 1.8rem;
     font-weight: 800;
-    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
     font-stretch: 100%;
     color: var(--primary-blue);
 }
@@ -824,7 +824,7 @@ footer a:hover {
 .page-hero h1 {
     font-size: 2.8rem;
     font-weight: 800;
-    font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
     background: linear-gradient(135deg, var(--primary-blue) 25%, var(--primary-purple) 75%);
     -webkit-background-clip: text;
     background-clip: text;

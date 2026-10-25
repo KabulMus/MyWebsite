@@ -32,6 +32,56 @@ function copyStatic() {
   if (fs.existsSync(path.join(ROOT, '_headers'))) {
     fs.copyFileSync(path.join(ROOT, '_headers'), path.join(DIST, '_headers'));
   }
+  inlineCssBackgrounds();
+}
+
+/* --------------------- CSS 里的背景线稿 → 内联 data URI ---------------------
+ * bg-doodle-*.svg 只被 body::before 的 mask-image 使用。Chrome 对 mask 图是「绘制时」
+ * 才发请求，既不认 <link rel=preload>，也不与隐藏 <img> 的请求合并（实测都会多下一份），
+ * 结果首帧画不出底纹、要到 1s 后才冒出来。内联进 CSS 后彻底没有这个请求：
+ * 少 2 个请求 + 2 个 RTT，gzip 后反而比单独下载小约 1.4 KB。
+ * SVG 源文件仍是可编辑母版，改完重新构建即可。 */
+const INLINE_CSS_BACKGROUNDS = ['bg-doodle-a', 'bg-doodle-b'];
+
+function encodeSvgDataUri(svg) {
+  const min = svg
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/>\s+</g, '><')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return 'data:image/svg+xml,' + min
+    .replace(/%/g, '%25')
+    .replace(/#/g, '%23')
+    .replace(/"/g, '%22')
+    .replace(/'/g, '%27')
+    .replace(/</g, '%3C')
+    .replace(/>/g, '%3E');
+}
+
+function inlineCssBackgrounds() {
+  const cssPath = path.join(DIST, 'css', 'main.css');
+  if (!fs.existsSync(cssPath)) return;
+  let css = fs.readFileSync(cssPath, 'utf8');
+  for (const name of INLINE_CSS_BACKGROUNDS) {
+    const svgPath = path.join(ROOT, 'images', name + '.svg');
+    if (!fs.existsSync(svgPath)) continue;
+    const dataUri = encodeSvgDataUri(fs.readFileSync(svgPath, 'utf8'));
+    css = css.split('/images/' + name + '.svg').join(dataUri);
+  }
+  css = inlineFontFaces(css);
+  fs.writeFileSync(cssPath, css);
+}
+
+/* ------------------------- 自托管字体的 @font-face -------------------------
+ * 字体文件已按站点字符子集化（tools/build-fonts.py 生成），这里只做拼接：
+ * 把 @font-face 放到阻塞渲染的 main.css 最前面，浏览器解析到就立刻请求字体，
+ * 不必像以前那样先等 6 个 Google Fonts / rsms.me 的 CSS 回来再发现字体。 */
+function inlineFontFaces(css) {
+  const facesPath = path.join(ROOT, 'css', '_fonts.generated.css');
+  if (!fs.existsSync(facesPath)) return css;
+  const faces = fs.readFileSync(facesPath, 'utf8');
+  const marker = '/* --- 1. 字体声明 --- */';
+  return css.includes(marker) ? css.replace(marker, faces + '\n' + marker) : faces + '\n' + css;
 }
 
 /* -------------------------------- 文案 -------------------------------- */
@@ -357,6 +407,9 @@ function kaimingPunct(html) {
  *   titles    中/英文标题 { zh, en }
  *   css       <link> 追加的样式表(不含 main.css)
  *   js        <script> 追加的脚本(不含 core.js)
+ *   preload   首屏图预加载的文件名(images/ 下，AVIF)。必须与模板里 <source> 的
+ *             唯一候选一致，否则会白下一份；preload 一旦和 <img> 选的不是同一张，
+ *             Chromium 会多抓一次。
  *   preconnect  需要提前建连的第三方源(数组)
  *   nav       是否渲染导航栏(默认 true)
  *   isHome    是否主页(主页导航/hero 特例)
@@ -373,6 +426,7 @@ const PAGES = {
     desc: { zh: 'Ethan Shaw 的个人主页——一名热爱音乐的中学生、B 站 up 主，也是一枚深爱周深的「生米」。这里有我的简介、成长里程碑、创作频道与音乐小工具。', en: 'The personal homepage of Ethan Shaw — a music-loving student, Bilibili creator, and a devoted fan of Zhou Shen (Charlie). Explore my story, milestones, channels, and music tools.' },
     css: ['home.css', 'milestone.css'],
     js: ['home.js'],
+    preload: 'ZhouShenALPHA-333w.avif',
     active: null,
   },
   channels: {
@@ -402,6 +456,7 @@ const PAGES = {
     desc: { zh: '关于歌手周深的介绍、音乐作品与工作室信息——来自一枚「生米」的深深热爱。', en: 'An introduction to singer Charlie Zhou Shen, his music, and his studio — with deep love from a devoted fan.' },
     css: ['charlie.css', 'milestone.css'],
     js: ['home.js'],
+    preload: 'charlie-1101w.avif',
     active: 'charlie',
     navLeft: {
       zh: [

@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "build": "node build.js",
+    "build": "node tools/build-all.js",
+    "build:check": "node tools/build-all.js --check",
+    "fonts": "node tools/build-all.js --force",
     "watch": "node watch.js",
     "pub": "node tools/pub.js",
     "deploy": "powershell -c \"$f=New-TemporaryFile; iwr https://host.retiehe.com/cli -OutFile $f; node $f --site ethan929 --outdir dist; rm $f -Force\""

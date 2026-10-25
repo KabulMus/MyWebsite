@@ -5,3 +5,5 @@ node_modules/
 dist/
 
 .fiveserverrc
+# 字体生成脚本的下载缓存（源字体，体积大，可重新获取）
+tools/.font-cache/

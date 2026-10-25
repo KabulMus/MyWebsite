@@ -106,7 +106,7 @@
 	display: inline-block;
 	padding: 4px 6px;
 	border-radius: 6px;
-	font-family: 'Encode Sans SC', 'Inter Var', 'Noto Sans SC', sans-serif;
+	font-family: 'Encode Sans SC', 'Inter', 'Noto Sans SC', sans-serif;
 	font-size: 0.8rem;
 	font-weight: 700;
 	margin-right: 10px;
@@ -127,7 +127,7 @@
 	font-size: 1.25rem;
 	line-height: 1.4;
 	color: var(--text-main); /* 使用主题变量 */
-	font-family: 'Google Sans Flex', 'Inter Var', 'Noto Sans SC', sans-serif;
+	font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
 }
 
 
