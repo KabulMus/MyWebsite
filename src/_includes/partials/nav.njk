@@ -6,7 +6,7 @@
 				<span>Ethan</span>
 			</a>
 		{% else %}
-			<a href="./" class="nav-brand">
+			<a href="{{ page.root }}" class="nav-brand">
 				{{ ICONS.back | safe }}
 			</a>
 		{% endif %}
@@ -18,11 +18,11 @@
 				<a href="#explore" data-text="{{ t('nav.explore', page.lang) }}">{{ t('nav.explore', page.lang) }}</a>
 			{% else %}
 				{% for item in page.navLeft %}
-				<a href="{{ item.href }}" data-text="{{ item.text }}"{% if item.active %} class="active"{% endif %}>{{ item.text }}</a>
+				<a href="{{ rel(item.href, page) }}" data-text="{{ item.text }}"{% if item.active %} class="active"{% endif %}>{{ item.text }}</a>
 				{% endfor %}
 				<span class="nav-divider"></span>
 				{% for item in t('main', page.lang) %}
-				<a href="{% if item.key == page.active %}#{% else %}{{ item.href }}{% endif %}" data-text="{{ item.text }}"{% if item.key == page.active %} class="active"{% endif %}>{{ item.text }}</a>
+				<a href="{% if item.key == page.active %}#{% else %}{{ rel(item.href, page) }}{% endif %}" data-text="{{ item.text }}"{% if item.key == page.active %} class="active"{% endif %}>{{ item.text }}</a>
 				{% endfor %}
 			{% endif %}
 		</div>
@@ -38,11 +38,11 @@
 			<a href="#explore" onclick="toggleMenu(false)" data-text="{{ t('nav.explore', page.lang) }}">{{ t('nav.explore', page.lang) }}</a>
 		{% else %}
 			{% for item in page.navLeft %}
-			<a href="{{ item.href }}" onclick="toggleMenu(false)" data-text="{{ item.text }}"{% if item.active %} class="active"{% endif %}>{{ item.text }}</a>
+			<a href="{{ rel(item.href, page) }}" onclick="toggleMenu(false)" data-text="{{ item.text }}"{% if item.active %} class="active"{% endif %}>{{ item.text }}</a>
 			{% endfor %}
 			<div class="dropdown-divider"></div>
 			{% for item in t('main', page.lang) %}
-			<a href="{% if item.key == page.active %}#{% else %}{{ item.href }}{% endif %}" onclick="toggleMenu(false)" data-text="{{ item.text }}"{% if item.key == page.active %} class="active"{% endif %}>{{ item.text }}</a>
+			<a href="{% if item.key == page.active %}#{% else %}{{ rel(item.href, page) }}{% endif %}" onclick="toggleMenu(false)" data-text="{{ item.text }}"{% if item.key == page.active %} class="active"{% endif %}>{{ item.text }}</a>
 			{% endfor %}
 		{% endif %}
 	</div>

@@ -29,8 +29,8 @@ function copyStatic() {
   if (fs.existsSync(path.join(ROOT, 'favicon.webp'))) {
     fs.copyFileSync(path.join(ROOT, 'favicon.webp'), path.join(DIST, 'favicon.webp'));
   }
-  if (fs.existsSync(path.join(ROOT, '_headers'))) {
-    fs.copyFileSync(path.join(ROOT, '_headers'), path.join(DIST, '_headers'));
+  for (const f of ['_headers', '_redirects']) {
+    if (fs.existsSync(path.join(ROOT, f))) fs.copyFileSync(path.join(ROOT, f), path.join(DIST, f));
   }
   inlineCssBackgrounds();
 }
@@ -404,6 +404,8 @@ function kaimingPunct(html) {
 /**
  * 每页配置字段:
  *   key       页面标识(用于语言切换与输出文件名)
+ *   path      站内路径(不含语言前缀)。默认等于 key；工具箱下的子页面写成
+ *             'toolkit/scales' 这样，输出到 dist/toolkit/scales.html
  *   titles    中/英文标题 { zh, en }
  *   css       <link> 追加的样式表(不含 main.css)
  *   js        <script> 追加的脚本(不含 core.js)
@@ -473,23 +475,24 @@ const PAGES = {
       ],
     },
   },
-  detector: {
-    key: 'detector',
+  analyzer: {
+    key: 'analyzer',
+    path: 'toolkit/analyzer',
     titles: { zh: '音频分析仪 | Ethan Shaw', en: 'Audio Analyzer | Ethan Shaw' },
     desc: { zh: '使用麦克风实时测量声音频率与音高的音频分析仪，适用于乐器调音、练耳与音高训练。', en: 'A real-time audio analyzer that measures sound frequency and pitch via your microphone — ideal for tuning, ear training, and pitch practice.' },
-    css: ['detector.css', 'pages.css', 'notationbtn.css'],
-    js: ['detector.js'],
-    active: 'detector',
+    css: ['analyzer.css', 'pages.css', 'notationbtn.css'],
+    js: ['analyzer.js'],
+    active: 'analyzer',
     navLeft: {
       zh: [
-        { href: 'scales', text: '音阶构成' },
+        { href: 'toolkit/scales', text: '音阶构成' },
         { href: '#', text: '音频分析仪', active: true },
-        { href: 'piano', text: '在线钢琴' },
+        { href: 'toolkit/piano', text: '在线钢琴' },
       ],
       en: [
-        { href: 'scales', text: 'Scale Visualizer' },
+        { href: 'toolkit/scales', text: 'Scale Explorer' },
         { href: '#', text: 'Audio Analyzer', active: true },
-        { href: 'piano', text: 'Online Piano' },
+        { href: 'toolkit/piano', text: 'Online Piano' },
       ],
     },
   },
@@ -515,6 +518,7 @@ const PAGES = {
   },
   piano: {
     key: 'piano',
+    path: 'toolkit/piano',
     titles: { zh: '在线钢琴 | Ethan Shaw', en: 'Online Piano | Ethan Shaw' },
     desc: { zh: '在线钢琴：显示音名、黑键标注、移调与全键盘模式，可直接用电脑键盘弹奏。', en: 'An online piano with note labels, notation options, transpose, and full-keyboard mode — playable with your computer keyboard.' },
     css: ['piano.css'],
@@ -522,34 +526,35 @@ const PAGES = {
     active: 'piano',
     navLeft: {
       zh: [
-        { href: 'scales', text: '音阶构成' },
-        { href: 'detector', text: '音频分析仪' },
+        { href: 'toolkit/scales', text: '音阶构成' },
+        { href: 'toolkit/analyzer', text: '音频分析仪' },
         { href: '#', text: '在线钢琴', active: true },
       ],
       en: [
-        { href: 'scales', text: 'Scale Visualizer' },
-        { href: 'detector', text: 'Audio Analyzer' },
+        { href: 'toolkit/scales', text: 'Scale Explorer' },
+        { href: 'toolkit/analyzer', text: 'Audio Analyzer' },
         { href: '#', text: 'Online Piano', active: true },
       ],
     },
   },
   scales: {
     key: 'scales',
-    titles: { zh: '音阶构成 | Ethan Shaw', en: 'Musical Scale Composition | Ethan Shaw' },
-    desc: { zh: '直观展示 12 个自然大调的音阶构成及其关系小调，支持升号降号与根音选择。', en: 'Visualize the 12 major scales and their relative minors, with sharp/flat and root-note switching.' },
+    path: 'toolkit/scales',
+    titles: { zh: '音阶构成 | Ethan Shaw', en: 'Scale Explorer | Ethan Shaw' },
+    desc: { zh: '直观展示 12 个自然大调的音阶构成及其关系小调，支持升号降号与根音选择。', en: 'Explore the 12 major scales and their relative minors, with sharp/flat and root-note switching.' },
     css: ['scales.css', 'notationbtn.css'],
     js: ['scales.js'],
     active: 'scales',
     navLeft: {
       zh: [
         { href: '#', text: '音阶构成', active: true },
-        { href: 'detector', text: '音频分析仪' },
-        { href: 'piano', text: '在线钢琴' },
+        { href: 'toolkit/analyzer', text: '音频分析仪' },
+        { href: 'toolkit/piano', text: '在线钢琴' },
       ],
       en: [
-        { href: '#', text: 'Scale Visualizer', active: true },
-        { href: 'detector', text: 'Audio Analyzer' },
-        { href: 'piano', text: 'Online Piano' },
+        { href: '#', text: 'Scale Explorer', active: true },
+        { href: 'toolkit/analyzer', text: 'Audio Analyzer' },
+        { href: 'toolkit/piano', text: 'Online Piano' },
       ],
     },
   },
@@ -582,19 +587,19 @@ const PAGES = {
   toolkit: {
     key: 'toolkit',
     titles: { zh: '工具箱 | Ethan Shaw', en: 'Toolkit | Ethan Shaw' },
-    desc: { zh: 'Ethan Shaw 的音乐工具箱：在线钢琴、音阶构成、音频分析仪等实用小工具。', en: "Ethan's music toolkit: online piano, scale visualizer, audio analyzer, and more handy tools." },
+    desc: { zh: 'Ethan Shaw 的音乐工具箱：在线钢琴、音阶构成、音频分析仪等实用小工具。', en: "Ethan's music toolkit: online piano, scale explorer, audio analyzer, and more handy tools." },
     css: ['pages.css', 'toolkit.css'],
     js: [],
     active: 'toolkit',
     navLeft: {
       zh: [
         { href: '#scales', text: '音阶构成' },
-        { href: '#detector', text: '音频分析仪' },
+        { href: '#analyzer', text: '音频分析仪' },
         { href: '#piano', text: '在线钢琴' },
       ],
       en: [
-        { href: '#scales', text: 'Scale Visualizer' },
-        { href: '#detector', text: 'Audio Analyzer' },
+        { href: '#scales', text: 'Scale Explorer' },
+        { href: '#analyzer', text: 'Audio Analyzer' },
         { href: '#piano', text: 'Online Piano' },
       ],
     },
@@ -640,6 +645,11 @@ const PAGES = {
 };
 
 /* ---------------------------- 渲染环境与全局 ---------------------------- */
+/* 页面在站内的路径（不含语言前缀）：默认取 key，工具箱子页面取 path */
+function pagePath(page) {
+  return page.path || (page.isHome ? '' : page.key);
+}
+
 /* 字体文件名清单（内容哈希），由 tools/build-fonts.py 生成 */
 const FONT_MANIFEST_PATH = path.join(ROOT, 'css', 'fonts', 'manifest.json');
 const FONT_MANIFEST = fs.existsSync(FONT_MANIFEST_PATH)
@@ -659,10 +669,12 @@ env.addGlobal('fontFile', (name) => FONT_MANIFEST[name] || name);
 // 文案取值: {{ t('key', page.lang) }}
 env.addGlobal('t', (key, lang) => I18N[lang || 'zh'][key]);
 // 语言切换链接: {{ langHref(page) }}
-env.addGlobal('langHref', (page) => {
-  if (page.isHome) return page.lang === 'en' ? '../' : 'en-US';
-  return page.lang === 'en' ? '../' + page.key : '../en-US/' + page.key;
-});
+env.addGlobal('langHref', (page) => page.root + (page.lang === 'en' ? '' : 'en-US/') + pagePath(page));
+// 站内相对链接: {{ rel('toolkit/scales', page) }}
+// 传入的是相对站点根的路径，按当前页面深度补 ../；绝对 URL、锚点、根路径原样返回
+env.addGlobal('rel', (href, page) => (
+  /^(?:[a-z][a-z0-9+.-]*:|\/|#|\?)/i.test(href) ? href : page.root + href
+));
 
 /* -------------------------------- 构建 -------------------------------- */
 const TEMPLATES = {
@@ -670,10 +682,10 @@ const TEMPLATES = {
     { tpl: 'zh/index.njk', out: 'index.html', page: PAGES.index },
     { tpl: 'zh/channels.njk', out: 'channels.html', page: PAGES.channels },
     { tpl: 'zh/charlie.njk', out: 'charlie.html', page: PAGES.charlie },
-    { tpl: 'zh/detector.njk', out: 'detector.html', page: PAGES.detector },
+    { tpl: 'zh/analyzer.njk', out: 'toolkit/analyzer.html', page: PAGES.analyzer },
     { tpl: 'zh/info.njk', out: 'info.html', page: PAGES.info },
-    { tpl: 'zh/piano.njk', out: 'piano.html', page: PAGES.piano },
-    { tpl: 'zh/scales.njk', out: 'scales.html', page: PAGES.scales },
+    { tpl: 'zh/piano.njk', out: 'toolkit/piano.html', page: PAGES.piano },
+    { tpl: 'zh/scales.njk', out: 'toolkit/scales.html', page: PAGES.scales },
     { tpl: 'zh/support.njk', out: 'support.html', page: PAGES.support },
     { tpl: 'zh/toolkit.njk', out: 'toolkit.html', page: PAGES.toolkit },
     { tpl: 'zh/404.njk', out: '404.html', page: PAGES.notfound },
@@ -682,10 +694,10 @@ const TEMPLATES = {
     { tpl: 'en/index.njk', out: 'en-US/index.html', page: PAGES.index },
     { tpl: 'en/channels.njk', out: 'en-US/channels.html', page: PAGES.channels },
     { tpl: 'en/charlie.njk', out: 'en-US/charlie.html', page: PAGES.charlie },
-    { tpl: 'en/detector.njk', out: 'en-US/detector.html', page: PAGES.detector },
+    { tpl: 'en/analyzer.njk', out: 'en-US/toolkit/analyzer.html', page: PAGES.analyzer },
     { tpl: 'en/info.njk', out: 'en-US/info.html', page: PAGES.info },
-    { tpl: 'en/piano.njk', out: 'en-US/piano.html', page: PAGES.piano },
-    { tpl: 'en/scales.njk', out: 'en-US/scales.html', page: PAGES.scales },
+    { tpl: 'en/piano.njk', out: 'en-US/toolkit/piano.html', page: PAGES.piano },
+    { tpl: 'en/scales.njk', out: 'en-US/toolkit/scales.html', page: PAGES.scales },
     { tpl: 'en/support.njk', out: 'en-US/support.html', page: PAGES.support },
     { tpl: 'en/toolkit.njk', out: 'en-US/toolkit.html', page: PAGES.toolkit },
   ],
@@ -694,24 +706,25 @@ const TEMPLATES = {
 /* ---------------------------- SEO: Sitemap / Robots ---------------------------- */
 const SITE_URL = 'https://www.ethan929.com';
 
-// 页 key → 该页路径（中文在根，英文在 /en-US 下）
-function pageUrl(key, lang) {
+// 页路径 → 站点 URL（中文在根，英文在 /en-US 下）
+function pageUrl(page, lang) {
   const root = lang === 'zh' ? '' : '/en-US';
-  return key === 'index' ? (root || '/') : root + '/' + key;
+  const p = pagePath(page);
+  return p ? root + '/' + p : (root || '/');
 }
 
 function generateSitemap() {
   const lastmod = new Date().toISOString().slice(0, 10);
-  const keys = new Set();
+  const pages = new Map();
   for (const lang of ['zh', 'en']) {
     for (const { page } of TEMPLATES[lang]) {
-      if (page.key !== 'notfound' && !page.noindex) keys.add(page.key);
+      if (page.key !== 'notfound' && !page.noindex) pages.set(pagePath(page), page);
     }
   }
   const urls = [];
-  for (const key of keys) {
-    const zh = SITE_URL + pageUrl(key, 'zh');
-    const en = SITE_URL + pageUrl(key, 'en');
+  for (const page of pages.values()) {
+    const zh = SITE_URL + pageUrl(page, 'zh');
+    const en = SITE_URL + pageUrl(page, 'en');
     for (const [lang, loc] of [['zh-CN', zh], ['en-US', en]]) {
       urls.push(
         '  <url>\n' +
@@ -732,7 +745,7 @@ function generateSitemap() {
   const out = path.join(DIST, 'sitemap.xml');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, xml, 'utf8');
-  console.log('✓ sitemap.xml (' + keys.size * 2 + ' 个 URL)');
+  console.log('✓ sitemap.xml (' + pages.size * 2 + ' 个 URL)');
 }
 
 function generateRobots() {
@@ -772,7 +785,9 @@ function build() {
           htmlLang: lang === 'zh' ? 'zh-CN' : 'en-US',
           title: page.titles[lang],
           description: page.desc ? page.desc[lang] : null,
-          url: SITE_URL + pageUrl(page.key, lang),
+          url: SITE_URL + pageUrl(page, lang),
+          // 相对站点根的路径深度决定资源/链接要补几层 ../
+          root: '../'.repeat(pagePath(page).split('/').length || 1),
           navLeft: page.navLeft ? page.navLeft[lang] : null,
         }),
       };

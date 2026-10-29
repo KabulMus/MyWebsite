@@ -322,7 +322,8 @@ window.addEventListener('keyup', e => {
 //   同时保留“按到未加载音符才按需加载”与全键盘预载逻辑作为兜底。
 window.Soundfont = window.Soundfont || {};
 
-const SF_DIR = '../js/soundfont/';
+// 音源分片用根路径（页面可能位于 /toolkit/ 之类的子目录，相对路径会指错）
+const SF_DIR = '/js/soundfont/';
 const SF_CHUNKS = {
     core: SF_DIR + 'acoustic_grand_piano-mp3-C4-C5.js',
     '0': SF_DIR + 'acoustic_grand_piano-mp3-A0-B0.js',

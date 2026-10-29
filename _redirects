@@ -1,0 +1,12 @@
+# Cloudflare Pages 重定向（build.js 会把它复制到 dist/）
+# scales / analyzer / piano 已挂到工具箱下，且 detector 更名为 analyzer，旧链接 301 到新地址
+
+/scales /toolkit/scales 301
+/detector /toolkit/analyzer 301
+/piano /toolkit/piano 301
+/toolkit/detector /toolkit/analyzer 301
+
+/en-US/scales /en-US/toolkit/scales 301
+/en-US/detector /en-US/toolkit/analyzer 301
+/en-US/piano /en-US/toolkit/piano 301
+/en-US/toolkit/detector /en-US/toolkit/analyzer 301
