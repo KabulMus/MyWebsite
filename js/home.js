@@ -1,3 +1,12 @@
+let activeMilestoneTransition = null;
+let activeMilestoneDecades = new Set();
+let activeMilestoneYears = new Set();
+const MILESTONE_TRANSITION_DURATION = 360;
+const MILESTONE_TRANSITION_EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
+const MILESTONE_GROUP_DURATION = 200;
+const MILESTONE_GROUP_EASING = 'ease-in-out';
+const MILESTONE_DECADE_SUFFIX = 's';
+
 // 里程碑横向滚动控制 - 实现卡片居中翻页
 function scrollMilestones(direction) {
 	const container = document.getElementById('milestoneScrollContainer');
@@ -29,32 +38,292 @@ function scrollMilestones(direction) {
 	container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
 }
 
-// 里程碑年份筛选
-function filterMilestones(year, btn) {
+// 按卡片年份生成年代 / 年份两级筛选器
+function initMilestoneFilters() {
+	const controls = document.getElementById('milestoneFilters');
 	const container = document.getElementById('milestoneScrollContainer');
-	const cards = container.querySelectorAll('.milestone-card');
+	if (!controls || !container) return;
 
-	// 切换当前按钮的激活状态
-	btn.classList.toggle('active');
+	const years = [...new Set([...container.querySelectorAll('.milestone-card')]
+		.map(card => card.dataset.year)
+		.filter(year => /^\d{4}$/.test(year)))].sort((a, b) => Number(a) - Number(b));
+	const decades = [...new Set(years.map(year => Math.floor(Number(year) / 10) * 10))];
+	const isEnglish = document.documentElement.lang.startsWith('en');
 
-	// 获取所有当前选中的年份
-	const activeButtons = document.querySelectorAll('.filter-btn.active');
-	const activeYears = Array.from(activeButtons).map(b => b.textContent.trim());
+	const decadeFilters = document.createElement('div');
+	decadeFilters.className = 'milestone-decade-filters';
+	const yearBar = document.createElement('div');
+	yearBar.id = 'milestoneYearBar';
+	yearBar.className = 'milestone-year-bar';
+	yearBar.setAttribute('aria-hidden', 'true');
+	yearBar.inert = true;
+	const yearBarInner = document.createElement('div');
+	yearBarInner.className = 'milestone-year-bar-inner';
+	yearBar.appendChild(yearBarInner);
+	yearBar.addEventListener('animationend', event => {
+		if (event.target !== yearBar || event.animationName !== 'milestoneYearBarClose') return;
+		yearBar.classList.remove('is-closing');
+		yearBarInner.replaceChildren();
+	});
 
-	cards.forEach(card => {
-		const cardYear = card.getAttribute('data-year');
-		// 如果没有选中任何年份，则显示全部；否则仅显示匹配选中年份的卡片
-		const show = activeYears.length === 0 || activeYears.includes(cardYear);
-		card.classList.remove('appearing');
-		if (!show) {
-			card.style.display = 'none';
-			return;
+	activeMilestoneDecades = new Set();
+	activeMilestoneYears = new Set();
+
+	for (const decade of decades) {
+		const decadeLabel = `${decade}${MILESTONE_DECADE_SUFFIX}`;
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'milestone-filter-btn milestone-decade-btn';
+		button.textContent = decadeLabel;
+		button.dataset.filterType = 'decade';
+		button.dataset.filterValue = String(decade);
+		button.setAttribute('aria-pressed', 'false');
+		button.setAttribute('aria-expanded', 'false');
+		button.setAttribute('aria-controls', yearBar.id);
+		button.setAttribute('aria-label', isEnglish ? `Filter the ${decadeLabel}` : `筛选 ${decadeLabel}`);
+		button.addEventListener('click', () => filterMilestones('decade', String(decade)));
+		decadeFilters.appendChild(button);
+	}
+
+	controls.replaceChildren(decadeFilters, yearBar);
+	controls.dataset.years = years.join(',');
+	controls.dataset.decades = decades.join(',');
+}
+
+// 同一个年代组只更新状态，新增/移除年代时才增删对应的年份组
+function updateMilestoneYearBar(controls, isEnglish) {
+	const yearBar = controls.querySelector('.milestone-year-bar');
+	const inner = yearBar.querySelector('.milestone-year-bar-inner');
+	const years = controls.dataset.years ? controls.dataset.years.split(',') : [];
+	const decades = [...activeMilestoneDecades].sort((a, b) => a - b);
+	const wasOpen = yearBar.classList.contains('is-open');
+	const isOpen = decades.length > 0;
+
+	for (const button of controls.querySelectorAll('.milestone-decade-btn')) {
+		const decade = Number(button.dataset.filterValue);
+		const active = activeMilestoneDecades.has(decade);
+		button.classList.toggle('active', active);
+		button.setAttribute('aria-pressed', String(active));
+		button.setAttribute('aria-expanded', String(active));
+	}
+
+	if (!isOpen) {
+		yearBar.inert = true;
+		yearBar.setAttribute('aria-hidden', 'true');
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			yearBar.classList.remove('is-open', 'is-closing');
+			inner.replaceChildren();
+		} else if (wasOpen) {
+			yearBar.classList.remove('is-open');
+			yearBar.classList.add('is-closing');
 		}
-		card.style.display = 'block';
-		void card.offsetWidth; // 强制回流，让动画在连续筛选时也能重新播放
-		card.classList.add('appearing');
+		return;
+	}
+
+	yearBar.inert = false;
+	yearBar.setAttribute('aria-hidden', 'false');
+	yearBar.classList.remove('is-closing');
+
+	const groups = new Map([...inner.querySelectorAll('.milestone-year-group')]
+		.map(group => [Number(group.dataset.decade), group]));
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const gap = parseFloat(getComputedStyle(inner).rowGap) || 0;
+
+	for (const [decade, group] of groups) {
+		if (decades.includes(decade)) continue;
+		groups.delete(decade);
+		if (reduceMotion) {
+			group.remove();
+			continue;
+		}
+		const height = group.offsetHeight;
+		group.style.overflow = 'hidden';
+		group.animate([
+			{ height: `${height}px`, marginBottom: '0px', opacity: 1 },
+			{ height: '0px', marginBottom: `${-gap}px`, opacity: 0 },
+		], { duration: MILESTONE_GROUP_DURATION, easing: MILESTONE_GROUP_EASING, fill: 'forwards' })
+			.finished.catch(() => {}).then(() => group.remove());
+	}
+
+	for (const decade of decades) {
+		const isNew = !groups.has(decade);
+		let group = groups.get(decade);
+		if (isNew) {
+			inner.querySelectorAll(`.milestone-year-group[data-decade="${decade}"]`)
+				.forEach(stale => stale.remove());
+			group = document.createElement('div');
+			group.className = 'milestone-year-group';
+			group.dataset.decade = String(decade);
+			group.setAttribute('role', 'group');
+			group.setAttribute('aria-label', isEnglish
+				? `Years in the ${decade}${MILESTONE_DECADE_SUFFIX}`
+				: `${decade}${MILESTONE_DECADE_SUFFIX} 内的年份`);
+
+			for (const year of years.filter(value => Math.floor(Number(value) / 10) * 10 === decade)) {
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'milestone-filter-btn milestone-year-btn';
+				button.textContent = year;
+				button.dataset.filterType = 'year';
+				button.dataset.filterValue = year;
+				button.setAttribute('aria-label', isEnglish ? `Filter milestones from ${year}` : `筛选 ${year} 年的里程碑`);
+				button.addEventListener('click', () => filterMilestones('year', year));
+				group.appendChild(button);
+			}
+			groups.set(decade, group);
+		}
+
+		if (group.parentElement !== inner) {
+			const next = [...inner.children].find(child => Number(child.dataset.decade) > decade);
+			if (isNew && wasOpen && !reduceMotion) {
+				group.style.overflow = 'hidden';
+				group.style.height = '0px';
+				group.style.marginBottom = `${-gap}px`;
+				group.style.opacity = '0';
+			}
+			inner.insertBefore(group, next || null);
+		}
+
+		if (isNew && wasOpen && !reduceMotion) {
+			group.style.height = '';
+			const height = group.offsetHeight;
+			group.style.height = '0px';
+			group.style.opacity = '';
+			const animation = group.animate([
+				{ height: '0px', marginBottom: `${-gap}px`, opacity: 0 },
+				{ height: `${height}px`, marginBottom: '0px', opacity: 1 },
+			], { duration: MILESTONE_GROUP_DURATION, easing: MILESTONE_GROUP_EASING });
+			animation.finished.catch(() => {}).then(() => {
+				group.style.removeProperty('height');
+				group.style.removeProperty('overflow');
+				group.style.removeProperty('margin-bottom');
+			});
+		}
+
+		for (const button of group.querySelectorAll('.milestone-year-btn')) {
+			const active = activeMilestoneYears.has(button.dataset.filterValue);
+			button.classList.toggle('active', active);
+			button.setAttribute('aria-pressed', String(active));
+		}
+	}
+
+	if (!wasOpen) yearBar.classList.add('is-open');
+}
+
+// 里程碑年代 / 年份筛选
+function filterMilestones(type, value) {
+	const container = document.getElementById('milestoneScrollContainer');
+	const controls = document.getElementById('milestoneFilters');
+	if (!container || !controls) return;
+	const cards = container.querySelectorAll('.milestone-card');
+	const transitionContainer = container.parentElement;
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (activeMilestoneTransition) {
+		activeMilestoneTransition.animations.forEach(animation => animation.cancel());
+		activeMilestoneTransition.overlay.remove();
+		activeMilestoneTransition = null;
+	}
+
+	const isRemovingFilter = type === 'decade'
+		? activeMilestoneDecades.has(Number(value))
+		: activeMilestoneYears.has(value);
+	if (type === 'decade') {
+		const decade = Number(value);
+		if (isRemovingFilter) {
+			activeMilestoneDecades.delete(decade);
+			activeMilestoneYears = new Set([...activeMilestoneYears]
+				.filter(year => Math.floor(Number(year) / 10) * 10 !== decade));
+		} else {
+			activeMilestoneDecades.add(decade);
+		}
+	} else if (type === 'year') {
+		if (isRemovingFilter) {
+			activeMilestoneYears.delete(value);
+		} else {
+			activeMilestoneYears.add(value);
+		}
+	}
+
+	// 年份属于年代：选中具体年份时年代保持选中，只在该年代内收窄
+	const hasFilters = activeMilestoneDecades.size > 0;
+	updateMilestoneYearBar(controls, document.documentElement.lang.startsWith('en'));
+
+	const shouldShow = [...cards].map(card => {
+		const year = card.dataset.year;
+		if (!hasFilters) return true;
+		if (!/^\d{4}$/.test(year)) return false;
+		const decade = Math.floor(Number(year) / 10) * 10;
+		if (!activeMilestoneDecades.has(decade)) return false;
+		const yearsInDecade = [...activeMilestoneYears]
+			.filter(value => Math.floor(Number(value) / 10) * 10 === decade);
+		return yearsInDecade.length === 0 || yearsInDecade.includes(year);
+	});
+	if (shouldShow.every((show, index) => show === (cards[index].style.display !== 'none'))) return;
+
+	const oldHeight = transitionContainer.offsetHeight;
+	let outgoing = null;
+	if (!reduceMotion) {
+		outgoing = container.cloneNode(true);
+		outgoing.removeAttribute('id');
+		outgoing.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+		outgoing.querySelectorAll('.appearing, .disappearing').forEach(element => {
+			element.classList.remove('appearing', 'disappearing');
+			element.style.removeProperty('--milestone-animation-delay');
+		});
+		outgoing.setAttribute('aria-hidden', 'true');
+		outgoing.inert = true;
+		outgoing.classList.add('milestone-transition-overlay');
+		outgoing.style.left = `${container.offsetLeft}px`;
+		outgoing.style.top = `${container.offsetTop}px`;
+		outgoing.style.width = `${container.offsetWidth}px`;
+		outgoing.style.height = `${container.offsetHeight}px`;
+		outgoing.scrollLeft = container.scrollLeft;
+		transitionContainer.appendChild(outgoing);
+	}
+
+	cards.forEach((card, index) => {
+		card.classList.remove('appearing', 'disappearing');
+		card.style.display = shouldShow[index] ? 'block' : 'none';
 	});
 	container.scrollLeft = 0;
+
+	if (outgoing) {
+		const newHeight = transitionContainer.offsetHeight;
+		const direction = isRemovingFilter ? 1 : -1;
+		const offset = direction * 12;
+		const timing = {
+			duration: MILESTONE_TRANSITION_DURATION,
+			easing: MILESTONE_TRANSITION_EASING,
+			fill: 'both',
+		};
+		const animations = [
+			outgoing.animate(
+				[{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: `translateY(${offset}px)` }],
+				timing,
+			),
+			container.animate(
+				[{ opacity: 0, transform: `translateY(${-offset}px)` }, { opacity: 1, transform: 'translateY(0)' }],
+				timing,
+			),
+		];
+		if (oldHeight !== newHeight) {
+			animations.push(transitionContainer.animate(
+				[{ height: `${oldHeight}px` }, { height: `${newHeight}px` }],
+				timing,
+			));
+		}
+
+		const transition = { animations, overlay: outgoing };
+		activeMilestoneTransition = transition;
+		Promise.all(animations.map(animation => animation.finished.catch(() => {}))).then(() => {
+			if (activeMilestoneTransition !== transition) return;
+			outgoing.remove();
+			animations.forEach(animation => animation.cancel());
+			activeMilestoneTransition = null;
+		});
+	}
+
 	updateMilestoneButtons();
 }
 
@@ -99,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 初始化里程碑滚动按钮状态
 	const milestoneScrollContainer = document.getElementById('milestoneScrollContainer');
 	if (milestoneScrollContainer) {
+		initMilestoneFilters();
 		milestoneScrollContainer.addEventListener('scroll', updateMilestoneButtons);
 		updateMilestoneButtons();
 	}

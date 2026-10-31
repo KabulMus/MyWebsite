@@ -23,23 +23,35 @@
 	{% if page.url %}<meta property="og:url" content="{{ page.url }}">{% endif %}
 	<meta property="og:locale" content="{{ page.htmlLang }}">
 	<link rel="icon" href="{{ page.root }}favicon.webp" type="image/webp">
-	<!-- 字体全部自托管（见 tools/build-fonts.py），不再有跨域的 Google Fonts / rsms.me 请求，
-	     所以也不需要 preconnect。@font-face 在 main.css 里，浏览器解析到即开始下载。 -->
+	<!-- 除中文外，字体全部自托管（见 tools/build-fonts.py），@font-face 就写在 main.css 里，
+	     浏览器解析到即开始下载，不需要额外的字体 CSS 请求。中文见下面的 cjk-font 区块。 -->
 	{% if page.preload %}
 	<!-- 首屏图在 <body> 里才会被发现，这里提前到 <head> 发起；只写单一候选，
 	     配上 imagesrcset 会让 Chromium 先按 1x 猜一张、再按实际 DPR 换一张 -->
 	<link rel="preload" href="{{ page.root }}images/{{ page.preload }}" as="image" type="image/avif" fetchpriority="high">
 	{% endif %}
-	<!-- 首屏正文用到的字体提前拉取，与 HTML 并行；其余字体按需加载。
+	<!-- 只 preload「不 preload 就会明显出问题」的字体。
 	     crossorigin 是字体请求的硬性要求，同源也要写，否则会重复下载。
-	     Google Sans Flex 用于各页的 .section-title / h1，因 font-display:block 必须 preload。
-	     中文字体只在正文含 CJK 的页面上 preload（build.js 会按页剥离这一行）。 -->
-	<link rel="preload" href="{{ page.root }}css/fonts/{{ fontFile('Inter.woff2') }}" as="font" type="font/woff2" crossorigin>
+	     Google Sans Flex 用于各页的 .section-title / h1，因 font-display:block 必须 preload；
+	     Inter 是 font-display:swap 的正文体，解析 main.css 时就会开始下载，不再占用 preload 名额；
+	     中文（思源黑体）使用本地子集，但不 preload，等 main.css 按需触发下载。 -->
 	<link rel="preload" href="{{ page.root }}css/fonts/{{ fontFile('GoogleSansFlex.woff2') }}" as="font" type="font/woff2" crossorigin>
 	<!-- 图标字体（ligature）用于卡片/导航内的图标，字体在 main.css 里才被发现；
 	     它 font-display:auto 等同 block，不 preload 会在慢网下让图标空白最多 3s。 -->
 	<link rel="preload" href="{{ page.root }}css/fonts/{{ fontFile('Icons-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
-	<link rel="preload" href="{{ page.root }}css/fonts/{{ fontFile('NotoSansSC.woff2') }}" as="font" type="font/woff2" crossorigin>
+	<!-- 中文（思源黑体 / Noto Sans SC）：
+	     1. 本地子集（family 名 `Noto Sans SC Local`，约 300 KB，字体栈里排第一位）承担日常全部字符，
+	        不预加载；浏览器解析 main.css 并确认页面实际用到该字体后才下载，之后由 immutable 长缓存复用。
+	     2. Google Fonts 只做兜底：本地子集缺字时（构建在无 Python 的 CI 上没能补字，或以后新增的生僻字）
+	        才由它的 unicode-range 分片接手。用 media="print" 异步加载，不阻塞首帧，
+	        Google 不可达时也只是几个连接干等超时，不影响渲染。
+	     正文没有 CJK 的页面由 build.js 把整段删掉，那些页面不会有任何第三方请求。 -->
+	<!-- cjk-font:start -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&display=swap" media="print" onload="this.media='all'">
+	<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&display=swap"></noscript>
+	<!-- cjk-font:end -->
 	{% if page.preconnect %}{% for origin in page.preconnect %}
 	<link rel="preconnect" href="{{ origin }}">{% endfor %}
 	{% endif %}

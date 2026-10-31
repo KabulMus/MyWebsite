@@ -10,11 +10,16 @@
     css/fonts/*.woff2           子集字体（已提交到仓库，构建时不需 Python）
     css/_fonts.generated.css    @font-face 声明，由 build.js 注入 dist/css/main.css
 
-为什么不用 Google Fonts / rsms.me：
-    * 每个字体 family 都要先下一个 CSS 才有字体文件，6 个 family = 6 个 CSS 请求
-      再叠加 DNS/TLS，首字要等 3 个 RTT 以上；实测这些 CSS 在 4Mbps 下 1.15s 才完成。
-    * Noto Sans SC 被 Google 切成 101 个 unicode-range 分片，中文正文会命中多个。
-    自托管后同源、无额外连接，且能按站点实际字符裁到最小。
+哪些自托管、哪些走 CDN：
+    * 西文/装饰字体（Inter、Google Sans Flex、Source Serif 4、Playfair、JetBrains Mono…）
+      自托管：这些 family 用 Google Fonts 要先拉一份 CSS 才知道字体地址，叠加 DNS/TLS
+      首字要等 3 个 RTT 以上（实测这些 CSS 在 4Mbps 下 1.15s 才完成）；自托管后同源、
+      无额外连接，还能按站点实际字符裁到最小。
+    * 中文思源黑体（Noto Sans SC）也自托管，但注册成独立的 family
+      `Noto Sans SC Local`，字体栈里排在 Google 的 `Noto Sans SC` 之前：
+      日常全部字符由本地 300 KB 子集渲染（一次下载、immutable 长缓存）；
+      构建期没补上的字（CI 无 Python 时的漏网字符、或以后新增的生僻字）
+      才由 Google Fonts 的分片接手。详见 src/_includes/partials/head.njk 的 cjk-font 区块。
 """
 
 import glob
@@ -24,7 +29,6 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 import zipfile
 
@@ -224,7 +228,9 @@ def subset_face(src, chars, out, limits=None):
     path = src
     tmp = None
     if limits:
-        f = TTFont(src)
+        # recalcTimestamp=False: 否则每次生成都会写入当前时间，字体内容没变也换文件名，
+        # 白白让 immutable 缓存失效（只有走变量字体实例化的字体受影响）。
+        f = TTFont(src, recalcTimestamp=False)
         instancer.instantiateVariableFont(f, limits, inplace=True, updateFontNames=False)
         tmp = tempfile.mktemp(suffix='.ttf')
         f.save(tmp)
@@ -250,7 +256,7 @@ def promote_substitution_to_default(path, feature_tag='ss01', default_tag='ccmp'
 
     安全性：已确认该字体里只有 ss01 引用字形 `a`，`calt` 只处理 `:~` 与 `数字:`，
     因此提前替换不会破坏上下文替换。"""
-    f = TTFont(path)
+    f = TTFont(path, recalcTimestamp=False)
     if 'GSUB' not in f:
         f.close()
         return False
@@ -334,7 +340,8 @@ def main():
     # family -> 源 CSS
     sources = {
         'Inter': ('rsms', 'https://rsms.me/inter/inter.css'),
-        'Noto Sans SC': ('vf', 'https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf'),
+        # 本地子集用独立 family 名，避免与 Google 的同名 @font-face 合并后互相覆盖
+        'Noto Sans SC Local': ('vf', 'https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf'),
         'Google Sans Flex': ('vfg', 'https://github.com/googlefonts/googlesans-flex/releases/download/v5.000/GoogleSansFlex-v5.000.zip'),
         'Encode Sans SC': ('g', 'https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&display=swap'),
         'Source Serif 4': ('g', 'https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900&display=swap'),
@@ -371,7 +378,7 @@ def main():
             srcfile = fetch(src, os.path.join(CACHE, 'NotoSansSC-VF.ttf'))
             out = os.path.join(OUT_FONT_DIR, 'NotoSansSC.woff2')
             if not subset_face(srcfile, chars, out, limits):
-                sys.exit('NotoSansSC 子集化失败')
+                raise SystemExit('NotoSansSC 子集化失败')
             size = os.path.getsize(out)
             total += size
             css_rules.append((family, '100 900', 'normal', 'NotoSansSC.woff2', None))

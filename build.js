@@ -469,7 +469,7 @@ const PAGES = {
       ],
       en: [
         { href: '#intro', text: 'Introduction' },
-        { href: '#charlie', text: 'Follow Charlie' },
+        { href: '#charlie', text: 'Charlie' },
         { href: '#studio', text: 'Studio' },
         { href: '#music', text: 'Echoes' },
       ],
@@ -490,9 +490,9 @@ const PAGES = {
         { href: 'toolkit/piano', text: '在线钢琴' },
       ],
       en: [
-        { href: 'toolkit/scales', text: 'Scale Explorer' },
-        { href: '#', text: 'Audio Analyzer', active: true },
-        { href: 'toolkit/piano', text: 'Online Piano' },
+        { href: 'toolkit/scales', text: 'Scales' },
+        { href: '#', text: 'Analyzer', active: true },
+        { href: 'toolkit/piano', text: ' Piano' },
       ],
     },
   },
@@ -531,9 +531,9 @@ const PAGES = {
         { href: '#', text: '在线钢琴', active: true },
       ],
       en: [
-        { href: 'toolkit/scales', text: 'Scale Explorer' },
-        { href: 'toolkit/analyzer', text: 'Audio Analyzer' },
-        { href: '#', text: 'Online Piano', active: true },
+        { href: 'toolkit/scales', text: 'Scales' },
+        { href: 'toolkit/analyzer', text: 'Analyzer' },
+        { href: '#', text: 'Piano', active: true },
       ],
     },
   },
@@ -552,9 +552,9 @@ const PAGES = {
         { href: 'toolkit/piano', text: '在线钢琴' },
       ],
       en: [
-        { href: '#', text: 'Scale Explorer', active: true },
-        { href: 'toolkit/analyzer', text: 'Audio Analyzer' },
-        { href: 'toolkit/piano', text: 'Online Piano' },
+        { href: '#', text: 'Scales', active: true },
+        { href: 'toolkit/analyzer', text: 'Analyzer' },
+        { href: 'toolkit/piano', text: 'Piano' },
       ],
     },
   },
@@ -568,7 +568,7 @@ const PAGES = {
     navLeft: {
       zh: [
         { href: '#email', text: '个人邮箱' },
-        { href: '#qq', text: 'QQ 群' },
+        { href: '#qq', text: 'QQ群' },
         { href: '#discord', text: 'Discord' },
         { href: '#github', text: 'GitHub' },
         { href: '#reward', text: '赞赏码' },
@@ -576,7 +576,7 @@ const PAGES = {
       ],
       en: [
         { href: '#email', text: 'Email' },
-        { href: '#qq', text: 'QQ Group' },
+        { href: '#qq', text: 'QQ' },
         { href: '#discord', text: 'Discord' },
         { href: '#github', text: 'GitHub' },
         { href: '#reward', text: 'Reward' },
@@ -598,9 +598,9 @@ const PAGES = {
         { href: '#piano', text: '在线钢琴' },
       ],
       en: [
-        { href: '#scales', text: 'Scale Explorer' },
-        { href: '#analyzer', text: 'Audio Analyzer' },
-        { href: '#piano', text: 'Online Piano' },
+        { href: '#scales', text: 'Scales' },
+        { href: '#analyzer', text: 'Analyzer' },
+        { href: '#piano', text: 'Piano' },
       ],
     },
   },
@@ -757,9 +757,9 @@ function generateRobots() {
   console.log('✓ robots.txt');
 }
 
-/* 首屏是否需要中文字体：只在页面正文真的出现 CJK 时才值得 preload。
-   全站共用一份 300 KB 的 NotoSansSC 子集，对整页无中文的页面（多数 en-US 页）
-   preload 它纯属浪费——字体按需加载即可，首屏并不需要它。 */
+/* 页面正文是否真的出现 CJK：中文以本地子集（`Noto Sans SC Local`）为主，
+   Google Fonts 只是缺字时的兜底。整页无中文的页面（多数 en-US 页）连兜底也不需要，
+   没必要多发一次跨域 CSS + 两个 preconnect，直接把整段删掉。 */
 const CJK_RE = /[\u2E80-\u9FFF\u3000-\u303F\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]/;
 
 function hasCJKText(html) {
@@ -771,8 +771,10 @@ function hasCJKText(html) {
   return CJK_RE.test(text);
 }
 
-function dropCJKPreload(html) {
-  return html.replace(/[ \t]*<link rel="preload"[^>]*NotoSansSC[^>]*>\r?\n/g, '');
+const CJK_FONT_BLOCK_RE = /[ \t]*<!-- cjk-font:start -->[\s\S]*?<!-- cjk-font:end -->[ \t]*\r?\n?/;
+
+function dropCJKFontBlock(html) {
+  return html.replace(CJK_FONT_BLOCK_RE, '');
 }
 
 function build() {
@@ -794,7 +796,7 @@ function build() {
       const rendered = smartQuotesHTML(env.render(tpl, ctx));
       // 开明式标点只给中文页做：英文页正文里没有 CJK 标点，不需要也不应去动
       let html = lang === 'zh' ? kaimingPunct(rendered) : rendered;
-      if (!hasCJKText(html)) html = dropCJKPreload(html);
+      if (!hasCJKText(html)) html = dropCJKFontBlock(html);
       const outPath = path.join(DIST, out);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html, 'utf8');

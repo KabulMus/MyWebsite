@@ -54,18 +54,7 @@
 			<section id="milestones" class="section-content">
 				<h2 class="section-title">里程碑</h2>
 				<p class="section-hint">左右滑动浏览</p>
-				<div class="filter-container">
-					<button class="filter-btn" onclick="filterMilestones('2011', this)">2011</button>
-					<button class="filter-btn" onclick="filterMilestones('2017', this)">2017</button>
-					<button class="filter-btn" onclick="filterMilestones('2018', this)">2018</button>
-					<button class="filter-btn" onclick="filterMilestones('2019', this)">2019</button>
-					<button class="filter-btn" onclick="filterMilestones('2020', this)">2020</button>
-					<button class="filter-btn" onclick="filterMilestones('2022', this)">2022</button>
-					<button class="filter-btn" onclick="filterMilestones('2023', this)">2023</button>
-					<button class="filter-btn" onclick="filterMilestones('2024', this)">2024</button>
-					<button class="filter-btn" onclick="filterMilestones('2025', this)">2025</button>
-					<button class="filter-btn" onclick="filterMilestones('2026', this)">2026</button>
-				</div>
+				<div class="filter-container" id="milestoneFilters" aria-label="按年代筛选"></div>
 				<div class="milestone-container">
 					<button class="milestone-nav-btn prev" onclick="scrollMilestones(-1)" aria-label="上一个">
 						<svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="M31 36L19 24L31 12"/></svg>

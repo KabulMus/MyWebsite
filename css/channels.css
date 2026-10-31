@@ -50,7 +50,7 @@
   font-stretch: 40%;
     font-feature-settings: 'ss01' 1;
 
-  font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
+  font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
   color: var(--primary-blue);              /* 数字蓝色加粗 */
 }
 

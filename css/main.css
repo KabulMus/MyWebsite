@@ -10,6 +10,9 @@
 /* --- 2. 颜色变量 --- */
 :root {
     --primary-blue: #1e66c6;
+    --color-blue: var(--primary-blue);
+    --color-blue-bg: rgba(30, 102, 198, 0.1);
+    --color-blue-border: rgba(30, 102, 198, 0.3);
     --primary-purple: #7463f1;
     --bg-light: #f1f5f9;
     --text-main: #1D1D1F;
@@ -47,6 +50,9 @@
 /* 深色模式变量 */
 :root[data-theme='dark'] {
     --primary-blue: #93c5fd;
+    --color-blue: var(--primary-blue);
+    --color-blue-bg: rgba(147, 197, 253, 0.15);
+    --color-blue-border: rgba(147, 197, 253, 0.3);
     --primary-purple: #aaa2e9;
     --bg-light: #0f172a;
     --text-main: #F5F5F7;
@@ -65,6 +71,9 @@
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
         --primary-blue: #93c5fd;
+        --color-blue: var(--primary-blue);
+        --color-blue-bg: rgba(147, 197, 253, 0.15);
+        --color-blue-border: rgba(147, 197, 253, 0.3);
         --primary-purple: #aaa2e9;
         --bg-light: #0f172a;
         --text-main: #F5F5F7;
@@ -122,7 +131,7 @@ code { font-family: 'JetBrains Mono', monospace; }
 
 body {
     font-size: 1rem;
-    font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+    font-family: 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', -apple-system, sans-serif;
     font-optical-sizing: auto;
     font-synthesis: none; /* 禁止浏览器合成伪斜体/伪粗体 */
     background-color: var(--bg-light);
@@ -206,7 +215,7 @@ body::before {
 	transition: transform 0.3s ease, translate 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 	cursor: pointer;
 	flex-direction: row;
-    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
 }
 
 .card-svg {
@@ -267,7 +276,7 @@ section.container {
 .section-title {
 	font-size: 1.3rem;
 	font-weight: 600;
-    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
 	margin-bottom: 40px;
 	position: relative;
 	display: inline-block;
@@ -309,7 +318,7 @@ section.container {
 .grid h2 {
     font-size: 1.8rem;
     font-weight: 800;
-    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
     font-stretch: 100%;
     color: var(--primary-blue);
 }
@@ -762,43 +771,6 @@ footer a:hover {
 }
 @keyframes spinner-spin { to { transform: rotate(360deg); } }
 
-/* --- 筛选 Filter ---*/
-.filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px auto 0;
-    width: 100%;
-    max-width: 1000px;
-}
-.filter-btn {
-    width: 70px;
-    background: var(--card-bg);
-    border: 1px solid var(--item-border);
-    border-radius: 8px;
-    padding: 8px 0;
-    font-weight: 400;
-    font-size: 0.85rem;
-    color: var(--text-sub);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-align: center;
-    box-shadow: var(--card-shadow);
-    font-family: inherit;
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: normal;
-}
-@media (hover: hover) and (pointer: fine) {
-.filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); }
-}
-.filter-btn.active { 
-    background: var(--primary-blue) !important; 
-    color: var(--on-primary) !important; 
-    border-color: var(--primary-blue) !important; 
-    box-shadow: var(--card-shadow); 
-}
-
 /* --- 标题栏 (Page Hero) --- */
 .page-hero {
     position: relative;
@@ -827,7 +799,7 @@ footer a:hover {
 .page-hero h1 {
     font-size: 2.8rem;
     font-weight: 800;
-    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC', sans-serif;
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
     background: linear-gradient(135deg, var(--primary-blue) 25%, var(--primary-purple) 75%);
     -webkit-background-clip: text;
     background-clip: text;

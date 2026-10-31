@@ -7,9 +7,40 @@
     .person-img { max-height: 180px; }
 }
 
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px auto 0;
+    width: 100%;
+    max-width: 1000px;
+}
 .filter-btn {
+    width: 70px;
+    background: var(--card-bg);
+    border: 1px solid var(--item-border);
+    border-radius: 8px;
+    padding: 8px 0;
+    font-weight: 400;
     font-size: 1rem;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    box-shadow: var(--card-shadow);
     font-family: 'Musical', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: normal;
+}
+@media (hover: hover) and (pointer: fine) {
+.filter-btn:hover { transform: scale(1.1); color: var(--primary-blue); box-shadow: var(--card-hover-shadow); }
+}
+.filter-btn.active { 
+    background: var(--primary-blue) !important; 
+    color: var(--on-primary) !important; 
+    border-color: var(--primary-blue) !important; 
+    box-shadow: var(--card-shadow); 
 }
 
 .scales-grid {

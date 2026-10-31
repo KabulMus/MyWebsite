@@ -46,11 +46,14 @@ npm run deploy  # （可选）手动上传 dist/（host.retiehe.com）
 
 > **背景线稿**：`images/bg-doodle-a.svg` / `bg-doodle-b.svg` 由 `build.js` 在构建时内联进 `dist/css/main.css`（转 data URI，去掉注释与多余空白）。原因是浏览器对 `mask-image` 只在绘制时才发请求，既不复用 `<link rel=preload>`，也不与隐藏 `<img>` 的请求合并，留成独立文件只会让底纹到 1s 后才冒出来。改完 `.svg` 重新构建即可，无需手工内联；源目录里的 `css/main.css` 保持 `url('/images/bg-doodle-*.svg')` 写法。
 
-> **字体**：全部自托管，页面不再请求 Google Fonts / rsms.me。字体文件在 `css/fonts/`，`@font-face` 由 `tools/build-fonts.py` 生成到 `css/_fonts.generated.css`，构建时注入 `dist/css/main.css`（与主样式同一个请求，浏览器解析到就能开始下载，首屏字体还会被 `<head>` 预加载）。
+> **字体**：全部自托管，页面不再请求 Google Fonts / rsms.me 的字体 CSS 才能拿到字形。字体文件在 `css/fonts/`，`@font-face` 由 `tools/build-fonts.py` 生成到 `css/_fonts.generated.css`，构建时注入 `dist/css/main.css`（与主样式同一个请求，浏览器解析到就能开始下载，`font-display:block` 的标题字体还会被 `<head>` 预加载）。
 >
-> 字体按站点实际用到的字符做了子集化（约 1000 个字符），**但保留了完整的 OpenType 特性表**（`tnum` 等宽数字、`halt`/`palt` 中文半宽标点、`ss01`、图标字体的 `liga` 连字…）。改字体时不要用 `--layout-features=` 收窄特性，否则这些排版会静默失效。
+> **中文（思源黑体）以本地子集为主，Google Fonts 只做兜底**：本地那份 300 KB 子集注册成独立 family `Noto Sans SC Local`，字体栈里排在 Google 的 `Noto Sans SC` 之前（必须改名，否则同名的 `@font-face` 会按声明顺序互相覆盖，本地那份永远不生效）。日常所有字符都由本地子集渲染，一次下载后 `immutable` 长缓存；只有本地子集缺字时（构建在无 Python 的 CI 上没能补字，或以后新增的生僻字）才由 Google 的分片接手。Google 的 CSS 用 `media="print"` + `onload` 异步加载，不阻塞首帧；正文没有 CJK 的页面由 `build.js` 把整个 `cjk-font` 区块删掉，那些页面没有任何第三方请求。
 >
-> 内容大改后需要重新生成（需要 Python + `pip install fonttools brotli`；构建本身不需要 Python）：
+> 字体按站点实际用到的字符做了子集化，**但保留了完整的 OpenType 特性表**（`tnum` 等宽数字、`halt`/`palt` 中文半宽标点、`ss01`、图标字体的 `liga` 连字…）。改字体时不要用 `--layout-features=` 收窄特性，否则这些排版会静默失效。
+>
+> 内容大改后需要重新生成（需要 Python + `pip install fonttools brotli`；构建本身不需要 Python，
+缺字时 `tools/build-all.js` 会自动补，甚至会在 pip 包缺失时自动安装）：
 >
 > ```bash
 > npm run fonts     # = build(取字符集) → 生成字体 → 再 build(注入 @font-face)
@@ -71,7 +74,7 @@ npm run deploy  # （可选）手动上传 dist/（host.retiehe.com）
 > 已确认该字体中只有 ss01 引用字形 `a`，`calt` 只处理 `:~` 与 `数字:`，因此这一步不会破坏其他特性。
 > 注意：子集化后 `ccmp` 可能被整体丢弃，脚本会在缺失时新建并注册到每个 LangSys。
 >
-> **缺字检查**：`npm run build` 会自动执行 `node tools/check-fonts.js`——它解析各 `.woff2` 的 cmap 表，逐字比对全站文案，**有缺字就报错并列出来源页面**（缺字本身不会报错，只会静默回退到系统字体，所以必须有这道闸门）。Cloudflare Pages 用 `npm run build`，因此新字符漏生成时构建会失败，而不是悄悄上线一个混排的页面。
+> **缺字检查**：`npm run build` 会自动执行 `node tools/check-fonts.js`——它解析各 `.woff2` 的 cmap 表，逐字比对全站文案，**有缺字就报错并列出来源页面**（缺字本身不会报错，只会静默回退到系统字体，所以必须有这道闸门）。`tools/build-all.js` 见到缺字会自动调 `tools/build-fonts.py` 补字形（pip 包缺失时会自动 `pip install --user fonttools brotli`）；如果环境里没有 Python 且缺的全是中文，构建降级放行（那些字由 Google 兜底），缺非中文字符仍然失败。Cloudflare Pages 用 `npm run build`，因此新字符漏生成时构建要么自动补齐、要么失败，而不会悄悄上线一个混排的页面。
 
 ---
 Built with love to you all and Charlie Zhou Shen by Ethan Shaw.

@@ -11,6 +11,10 @@
  *   node tools/check-fonts.js --json   # 机器可读输出
  *
  * 无第三方依赖：直接解析 WOFF2 的 cmap 表（仅格式 4 / 12，足以覆盖本站字体）。
+ *
+ * 关于中文：本地子集（family `Noto Sans SC Local`）是主力，所以 CJK 缺字同样算缺字。
+ * 只是它们还多一层 Google Fonts 兜底——build-all.js 在补字失败时，若缺的全是 CJK，
+ * 会降级成警告继续构建（那些字由 Google 分片接手），非 CJK 缺字仍然硬失败。
  */
 const fs = require('fs');
 const path = require('path');
@@ -199,6 +203,23 @@ function isEmoji(cp) {
   return EMOJI_RANGES.some(([a, b]) => cp >= a && cp <= b);
 }
 
+/**
+ * Google Fonts 的思源黑体能兜底的 CJK 码位。
+ * 本地子集缺这些字不算致命（构建会在能补的时候补上，补不了就交给 Google），
+ * 缺其他字符则一定会回退到系统字体。
+ */
+const REMOTE_CJK_RANGES = [
+  [0x2e80, 0x9fff],   // CJK 部首扩展 / 假名 / 统一汉字
+  [0x3000, 0x303f],   // CJK 标点
+  [0xf900, 0xfaff],   // CJK 兼容汉字
+  [0xfe30, 0xfe4f],   // CJK 兼容形式
+  [0xff00, 0xffef],   // 全角 / 半角形式
+];
+
+function isRemoteCJK(cp) {
+  return REMOTE_CJK_RANGES.some(([a, b]) => cp >= a && cp <= b);
+}
+
 function makeCollector() {
   const chars = new Map(); // char -> Set(files)
   return {
@@ -314,6 +335,7 @@ function main() {
     const entry = {
       ch,
       codepoint: 'U+' + cp.toString(16).toUpperCase().padStart(4, '0'),
+      remote: isRemoteCJK(cp),
       sources: [...files].sort(),
     };
     if (isEmoji(cp)) emoji.push(entry);
@@ -323,19 +345,29 @@ function main() {
   missing.sort(byCodepoint);
   emoji.sort(byCodepoint);
 
+  const remoteCount = missing.filter((m) => m.remote).length;
   const textCount = siteChars.size - emoji.length;
   if (asJson) {
-    console.log(JSON.stringify({ total: siteChars.size, textCount, missing, emoji }, null, 2));
+    console.log(JSON.stringify({
+      total: siteChars.size,
+      textCount,
+      missing,
+      // 只靠 Google 兜底也能过的缺字（全部是 CJK 时 build-all 允许降级）
+      remoteOnly: missing.length > 0 && remoteCount === missing.length,
+      emoji,
+    }, null, 2));
   } else {
     if (missing.length === 0) {
       console.log(`✓ 字体覆盖完整：${textCount} 个文本字符全部命中` +
         (emoji.length ? `（另有 ${emoji.length} 个 emoji 由系统字体渲染，已跳过）` : ''));
     } else {
-      console.error(`✗ 有 ${missing.length} 个字符没有被任何子集字体覆盖（会回退到系统字体）：`);
+      console.error(`✗ 有 ${missing.length} 个字符没有被任何子集字体覆盖` +
+        (remoteCount ? `（其中 ${remoteCount} 个是中文，可由 Google Fonts 兜底）` : '') +
+        `，会回退到系统字体：`);
       for (const m of missing) {
         const src = m.sources.slice(0, 3).join(', ') +
           (m.sources.length > 3 ? ` 等 ${m.sources.length} 处` : '');
-        console.error(`   ${m.codepoint}  ${JSON.stringify(m.ch)}  ← ${src}`);
+        console.error(`   ${m.codepoint}  ${JSON.stringify(m.ch)}${m.remote ? ' [Google 可兜底]' : ''}  ← ${src}`);
       }
       console.error('\n修复: 执行 `npm run fonts`（或 `npm run build`，会自动补字形）');
     }
