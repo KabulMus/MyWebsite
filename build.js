@@ -511,8 +511,8 @@ const PAGES = {
         { href: '#copyright', text: '版权归属' },
       ],
       en: [
-        { href: '#tech', text: 'Technical Credits' },
-        { href: '#copyright', text: 'Copyright Notice' },
+        { href: '#tech', text: 'Tech' },
+        { href: '#copyright', text: 'Copyright' },
       ],
     },
   },

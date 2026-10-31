@@ -86,10 +86,6 @@
 	.milestone-nav-btn.next { right: 10px; }
 }
 
-@media (max-width: 768px) {
-	.milestone-nav-btn { display: none; }
-}
-
 .milestone-wrapper::-webkit-scrollbar {
 	display: none; /* Chrome/Safari 隐藏滚动条 */
 }
@@ -242,6 +238,10 @@ html[lang="en-US"] .milestone-card p {
         transform: translateY(-6px);
     }
 }
+.milestone-year-group-shell {
+    min-height: 0;
+    overflow: hidden;
+}
 .milestone-year-group {
     display: flex;
     flex-wrap: wrap;
@@ -261,7 +261,7 @@ html[lang="en-US"] .milestone-card p {
     background: var(--card-bg);
     color: var(--color-blue);
     font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
-    font-stretch: 115%;
+    font-stretch: 110%;
     font-size: 0.9rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
@@ -269,9 +269,28 @@ html[lang="en-US"] .milestone-card p {
     transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--card-shadow);
 }
+.milestone-decade-btn {
+	position: relative;
+	isolation: isolate;
+}
+.milestone-decade-btn::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	background: var(--color-blue-bg);
+	opacity: 0;
+	transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.milestone-decade-btn.active::before {
+	opacity: 1;
+}
 .milestone-decade-btn.active {
-    background: var(--color-blue-bg);
-    border-color: var(--color-blue);
+	border-color: var(--color-blue);
+}
+.milestone-decade-unit {
+    margin-inline-start: 0.1em;
 }
 .milestone-year-btn {
     min-width: 0;

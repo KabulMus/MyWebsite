@@ -3,8 +3,8 @@ let activeMilestoneDecades = new Set();
 let activeMilestoneYears = new Set();
 const MILESTONE_TRANSITION_DURATION = 360;
 const MILESTONE_TRANSITION_EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
-const MILESTONE_GROUP_DURATION = 200;
-const MILESTONE_GROUP_EASING = 'ease-in-out';
+const MILESTONE_GROUP_DURATION = 300;
+const MILESTONE_GROUP_EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
 const MILESTONE_DECADE_SUFFIX = 's';
 
 // 里程碑横向滚动控制 - 实现卡片居中翻页
@@ -47,7 +47,15 @@ function initMilestoneFilters() {
 	const years = [...new Set([...container.querySelectorAll('.milestone-card')]
 		.map(card => card.dataset.year)
 		.filter(year => /^\d{4}$/.test(year)))].sort((a, b) => Number(a) - Number(b));
-	const decades = [...new Set(years.map(year => Math.floor(Number(year) / 10) * 10))];
+	const decadeYearMap = new Map();
+	for (const year of years) {
+		const decade = Math.floor(Number(year) / 10) * 10;
+		if (!decadeYearMap.has(decade)) decadeYearMap.set(decade, []);
+		decadeYearMap.get(decade).push(year);
+	}
+	const decades = [...decadeYearMap.keys()];
+	// 只含一个年份的年代直接显示该年份，不再展开二级筛选
+	const singleYearDecades = decades.filter(decade => decadeYearMap.get(decade).length === 1);
 	const isEnglish = document.documentElement.lang.startsWith('en');
 
 	const decadeFilters = document.createElement('div');
@@ -70,17 +78,33 @@ function initMilestoneFilters() {
 	activeMilestoneYears = new Set();
 
 	for (const decade of decades) {
+		const decadeYears = decadeYearMap.get(decade);
+		const isSingleYear = decadeYears.length === 1;
 		const decadeLabel = `${decade}${MILESTONE_DECADE_SUFFIX}`;
 		const button = document.createElement('button');
 		button.type = 'button';
 		button.className = 'milestone-filter-btn milestone-decade-btn';
-		button.textContent = decadeLabel;
 		button.dataset.filterType = 'decade';
 		button.dataset.filterValue = String(decade);
 		button.setAttribute('aria-pressed', 'false');
 		button.setAttribute('aria-expanded', 'false');
 		button.setAttribute('aria-controls', yearBar.id);
-		button.setAttribute('aria-label', isEnglish ? `Filter the ${decadeLabel}` : `筛选 ${decadeLabel}`);
+
+		if (isSingleYear) {
+			const year = decadeYears[0];
+			button.dataset.singleYear = '1';
+			button.setAttribute('aria-label', isEnglish ? `Filter milestones from ${year}` : `筛选 ${year} 年的里程碑`);
+			button.replaceChildren(document.createTextNode(year));
+		} else {
+			button.setAttribute('aria-label', isEnglish ? `Filter the ${decadeLabel}` : `筛选 ${decadeLabel}`);
+			const number = document.createElement('span');
+			number.textContent = String(decade);
+			const unit = document.createElement('span');
+			unit.className = 'milestone-decade-unit';
+			unit.textContent = MILESTONE_DECADE_SUFFIX;
+			button.replaceChildren(number, unit);
+		}
+
 		button.addEventListener('click', () => filterMilestones('decade', String(decade)));
 		decadeFilters.appendChild(button);
 	}
@@ -88,6 +112,7 @@ function initMilestoneFilters() {
 	controls.replaceChildren(decadeFilters, yearBar);
 	controls.dataset.years = years.join(',');
 	controls.dataset.decades = decades.join(',');
+	controls.dataset.singleDecades = singleYearDecades.join(',');
 }
 
 // 同一个年代组只更新状态，新增/移除年代时才增删对应的年份组
@@ -95,7 +120,12 @@ function updateMilestoneYearBar(controls, isEnglish) {
 	const yearBar = controls.querySelector('.milestone-year-bar');
 	const inner = yearBar.querySelector('.milestone-year-bar-inner');
 	const years = controls.dataset.years ? controls.dataset.years.split(',') : [];
-	const decades = [...activeMilestoneDecades].sort((a, b) => a - b);
+	const singleYearDecades = new Set((controls.dataset.singleDecades || '')
+		.split(',').filter(Boolean).map(Number));
+	// 仅含一个年份的年代不展开二级筛选，直接用自身按钮筛选
+	const decades = [...activeMilestoneDecades]
+		.filter(decade => !singleYearDecades.has(decade))
+		.sort((a, b) => a - b);
 	const wasOpen = yearBar.classList.contains('is-open');
 	const isOpen = decades.length > 0;
 
@@ -104,7 +134,7 @@ function updateMilestoneYearBar(controls, isEnglish) {
 		const active = activeMilestoneDecades.has(decade);
 		button.classList.toggle('active', active);
 		button.setAttribute('aria-pressed', String(active));
-		button.setAttribute('aria-expanded', String(active));
+		button.setAttribute('aria-expanded', String(active && !singleYearDecades.has(decade)));
 	}
 
 	if (!isOpen) {
@@ -124,36 +154,36 @@ function updateMilestoneYearBar(controls, isEnglish) {
 	yearBar.setAttribute('aria-hidden', 'false');
 	yearBar.classList.remove('is-closing');
 
-	const groups = new Map([...inner.querySelectorAll('.milestone-year-group')]
-		.map(group => [Number(group.dataset.decade), group]));
+	const groups = new Map([...inner.querySelectorAll('.milestone-year-group-shell')]
+		.map(shell => [Number(shell.dataset.decade), shell]));
 	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	const gap = parseFloat(getComputedStyle(inner).rowGap) || 0;
+	const timing = { duration: MILESTONE_GROUP_DURATION, easing: MILESTONE_GROUP_EASING, fill: 'both' };
 
-	for (const [decade, group] of groups) {
+	for (const [decade, shell] of groups) {
 		if (decades.includes(decade)) continue;
 		groups.delete(decade);
 		if (reduceMotion) {
-			group.remove();
+			shell.remove();
 			continue;
 		}
-		const height = group.offsetHeight;
-		group.style.overflow = 'hidden';
-		group.animate([
+		const height = shell.offsetHeight;
+		shell.animate([
 			{ height: `${height}px`, marginBottom: '0px', opacity: 1 },
 			{ height: '0px', marginBottom: `${-gap}px`, opacity: 0 },
-		], { duration: MILESTONE_GROUP_DURATION, easing: MILESTONE_GROUP_EASING, fill: 'forwards' })
-			.finished.catch(() => {}).then(() => group.remove());
+		], timing).finished.catch(() => {}).then(() => shell.remove());
 	}
 
 	for (const decade of decades) {
 		const isNew = !groups.has(decade);
-		let group = groups.get(decade);
+		let shell = groups.get(decade);
 		if (isNew) {
-			inner.querySelectorAll(`.milestone-year-group[data-decade="${decade}"]`)
-				.forEach(stale => stale.remove());
-			group = document.createElement('div');
+			shell = document.createElement('div');
+			shell.className = 'milestone-year-group-shell';
+			shell.dataset.decade = String(decade);
+
+			const group = document.createElement('div');
 			group.className = 'milestone-year-group';
-			group.dataset.decade = String(decade);
 			group.setAttribute('role', 'group');
 			group.setAttribute('aria-label', isEnglish
 				? `Years in the ${decade}${MILESTONE_DECADE_SUFFIX}`
@@ -170,37 +200,25 @@ function updateMilestoneYearBar(controls, isEnglish) {
 				button.addEventListener('click', () => filterMilestones('year', year));
 				group.appendChild(button);
 			}
-			groups.set(decade, group);
+			shell.appendChild(group);
+			groups.set(decade, shell);
 		}
 
-		if (group.parentElement !== inner) {
+		if (shell.parentElement !== inner) {
 			const next = [...inner.children].find(child => Number(child.dataset.decade) > decade);
-			if (isNew && wasOpen && !reduceMotion) {
-				group.style.overflow = 'hidden';
-				group.style.height = '0px';
-				group.style.marginBottom = `${-gap}px`;
-				group.style.opacity = '0';
-			}
-			inner.insertBefore(group, next || null);
+			inner.insertBefore(shell, next || null);
 		}
 
 		if (isNew && wasOpen && !reduceMotion) {
-			group.style.height = '';
-			const height = group.offsetHeight;
-			group.style.height = '0px';
-			group.style.opacity = '';
-			const animation = group.animate([
+			const height = shell.offsetHeight;
+			const animation = shell.animate([
 				{ height: '0px', marginBottom: `${-gap}px`, opacity: 0 },
 				{ height: `${height}px`, marginBottom: '0px', opacity: 1 },
-			], { duration: MILESTONE_GROUP_DURATION, easing: MILESTONE_GROUP_EASING });
-			animation.finished.catch(() => {}).then(() => {
-				group.style.removeProperty('height');
-				group.style.removeProperty('overflow');
-				group.style.removeProperty('margin-bottom');
-			});
+			], timing);
+			animation.finished.catch(() => {}).then(() => animation.cancel());
 		}
 
-		for (const button of group.querySelectorAll('.milestone-year-btn')) {
+		for (const button of shell.querySelectorAll('.milestone-year-btn')) {
 			const active = activeMilestoneYears.has(button.dataset.filterValue);
 			button.classList.toggle('active', active);
 			button.setAttribute('aria-pressed', String(active));

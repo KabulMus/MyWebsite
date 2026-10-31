@@ -100,8 +100,8 @@ icons {
     font-weight: 400;
 }
 
-google {
-    font-family: 'Google Sans Flex', sans-serif;
+stress {
+    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
     font-weight: 500;
 }
 
