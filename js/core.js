@@ -133,8 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 背景图案视差：这一层是 fixed 的，所以「滑动」其实是改 mask 的纵向偏移。
-// 偏移量按两块 tile 各自的高度取模（1360 / 920），取多大都接得上。
+// 背景图案视差：只改变独立图层的 transform，mask 本身保持静止。
 var DOODLE_RATE = 0.35;
 var DOODLE_TILES = [1360, 920];
 function shiftDoodles() {
@@ -144,9 +143,9 @@ function shiftDoodles() {
     body.style.setProperty('--bg-shift-a', (-(y % DOODLE_TILES[0])).toFixed(2) + 'px');
     body.style.setProperty('--bg-shift-b', (-(y % DOODLE_TILES[1])).toFixed(2) + 'px');
 }
-// 不套 rAF：蹭上惯性滚动那类场景 rAF 会被暂停，图案会卡住不动
 window.addEventListener('scroll', shiftDoodles, { passive: true });
 shiftDoodles();
+
 
 // 页脚「Charlie」连点三下的彩蛋：显示区域中央弹一颗米子星，三秒后收
 function initCharlieEgg() {

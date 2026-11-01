@@ -52,13 +52,6 @@
 .scales-grid.filtered { display: flex; justify-content: center; }
 .scales-grid.filtered .scale-card { width: 100%; max-width: 320px; }
 
-/* 入场动画：轻微缩放 + 向上位移 + 淡入 */
-@keyframes cardAppear {
-    from { opacity: 0; transform: scale(0.95) translateY(10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.appearing { animation: cardAppear 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
-
 .card {
     border-radius: var(--card-radius);
     flex-direction: column;

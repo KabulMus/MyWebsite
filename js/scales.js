@@ -3,18 +3,50 @@ let currentNotation = 'flat';
 const flatKeys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const sharpKeys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-function updateGridNotation(type, animate = false) {
+const CARD_ENTER_DURATION = 320;
+const CARD_EXIT_DURATION = 200;
+const CARD_ANIM_EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
+const CARD_ANIM_OFFSET = 10;
+let scalesFilterBusy = false;
+
+// 动画结束回调：标签页隐藏等情况下 finished 可能迟迟不 resolve，用定时器兜底
+function whenAnimationSettles(animation, duration) {
+    const timeout = new Promise(resolve => setTimeout(resolve, duration + 60));
+    return Promise.race([animation.finished.catch(() => {}), timeout]);
+}
+
+function visibleScaleCards() {
+    return [...document.querySelectorAll('.scale-card')].filter(card => card.style.display !== 'none');
+}
+
+// 入场从下方升起，退场继续向上离开，两者共用同一缓动与位移量
+function animateScaleCards(cards, direction) {
+    const entering = direction === 'in';
+    return cards.map(card => card.animate(
+        entering
+            ? [
+                { opacity: 0, transform: `translateY(${CARD_ANIM_OFFSET}px) scale(0.95)` },
+                { opacity: 1, transform: 'translateY(0) scale(1)' },
+            ]
+            : [
+                { opacity: 1, transform: 'translateY(0) scale(1)' },
+                { opacity: 0, transform: `translateY(${-CARD_ANIM_OFFSET}px) scale(0.95)` },
+            ],
+        {
+            duration: entering ? CARD_ENTER_DURATION : CARD_EXIT_DURATION,
+            easing: CARD_ANIM_EASING,
+            fill: entering ? 'none' : 'forwards',
+        },
+    ));
+}
+
+function updateGridNotation(type) {
     const cards = document.querySelectorAll('.scale-card');
     cards.forEach(c => {
         const name = c.querySelector('.scale-name').textContent.trim();
         const shouldHide = (type === 'flat' && (name.startsWith('C# ') || name.startsWith('D# ') || name.startsWith('F# ') || name.startsWith('G# ') || name.startsWith('A# '))) ||
                             (type === 'sharp' && (name.startsWith('Db ') || name.startsWith('Eb ') || name.startsWith('Gb ') || name.startsWith('Ab ') || name.startsWith('Bb ')));
         c.style.display = shouldHide ? 'none' : 'flex';
-        if (animate && !shouldHide) {
-            c.classList.remove('appearing');
-            void c.offsetWidth;
-            c.classList.add('appearing');
-        }
     });
 }
 
@@ -37,41 +69,46 @@ function setNotation(type, btn) {
         }
     });
 
-    if (!activeKey) updateGridNotation(type, true);
+    if (!activeKey) {
+        updateGridNotation(type);
+        animateScaleCards(visibleScaleCards(), 'in');
+    }
 }
 
-// 音阶筛选逻辑
-function filterScale(btn) {
-    const key = btn.textContent.trim();
+// 音阶筛选：当前卡片先退场，切换状态后再让新卡片入场
+async function filterScale(btn) {
     const grid = document.querySelector('.scales-grid');
     const cards = document.querySelectorAll('.scale-card');
     const btns = document.querySelectorAll('.filter-btn');
+    if (!grid || scalesFilterBusy) return;
+
+    const key = btn.textContent.trim();
     const isActive = btn.classList.contains('active');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // 清除按钮激活状态
+    scalesFilterBusy = true;
+    if (!reduceMotion) {
+        const outgoing = animateScaleCards(visibleScaleCards(), 'out');
+        await Promise.all(outgoing.map(animation => whenAnimationSettles(animation, CARD_EXIT_DURATION)));
+        outgoing.forEach(animation => animation.cancel());
+    }
+
     btns.forEach(b => b.classList.remove('active'));
-
     if (isActive) {
-        // 如果是取消选择：让所有卡片丝滑地"归位"
         grid.classList.remove('filtered');
-        updateGridNotation(currentNotation, true);
+        updateGridNotation(currentNotation);
     } else {
-        // 如果是选中某个调：执行筛选
         btn.classList.add('active');
         grid.classList.add('filtered');
         cards.forEach(c => {
             const name = c.querySelector('.scale-name').textContent.trim();
-            if (name.startsWith(key + ' ')) {
-                c.style.display = 'flex';
-                c.classList.remove('appearing');
-                void c.offsetWidth;
-                c.classList.add('appearing');
-            } else {
-                c.style.display = 'none';
-                c.classList.remove('appearing');
-            }
+            c.style.display = name.startsWith(key + ' ') ? 'flex' : 'none';
         });
     }
+
+    // 不改动画网格高度：卡片的 height:100% 会跟着网格高度被拉伸
+    if (!reduceMotion) animateScaleCards(visibleScaleCards(), 'in');
+    scalesFilterBusy = false;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

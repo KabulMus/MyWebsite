@@ -133,15 +133,6 @@ footer {
     margin-top: 15px; /* 压缩状态提示上方的间距 */
 }
 
-/* 按钮调整 */
-.analyzer-card .modal-btn {
-    padding: 15px 50px;
-    min-width: 180px;
-    font-size: 1.15rem;
-    font-family: inherit;
-    border: none;
-}
-
 @media (max-width: 768px) {
     .analyzer-card { padding: 30px 20px; }
     .current-note { font-size: 3.2rem; }

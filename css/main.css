@@ -100,8 +100,8 @@ icons {
     font-weight: 400;
 }
 
-stress {
-    font-family: 'Google Sans Flex', 'Inter', 'Noto Sans SC Local', 'Noto Sans SC', sans-serif;
+google {
+    font-family: 'Google Sans Flex', sans-serif;
     font-weight: 500;
 }
 
@@ -150,31 +150,39 @@ body {
    用 mask + background-color 上色：这样深浅两套主题各给一档墨色，不用把图案导两份。
    ⚠️ 两块 tile 的尺寸错开（横向要 A 铺两块、B 铺三块才对齐，纵向 31280px 才重样）
       ⇒ 屏幕上看不出「一块一块重复」。
-   ⚠️ 挂在 body::before 上（position: fixed + z-index: -1）：body 的底色会被传播到 canvas
-      （即最底那层），所以这一层在它之上、在所有内容之下；又因为 pointer-events: none，
-      完全不参与交互。卡片是不透明的，所以图案只在两边的空档里显形。
+   两个图层各自只负责一张 tile，滚动时用 transform 移动已绘制图层，
+   避免每次滚动都改变 mask-position 并触发 mask 重绘。图层上下多留一个 tile，
+   移动时不会露出边缘。它们位于页面内容之下，且不参与交互。
    ------------------------------------------------------------------ */
 body::before {
     content: '';
     position: fixed;
-    inset: 0;
+    inset: -1360px 0;
     z-index: -1;
     pointer-events: none;
     background-color: var(--bg-doodle);
-    -webkit-mask-image: url('/images/bg-doodle-a.svg'), url('/images/bg-doodle-b.svg');
-    mask-image: url('/images/bg-doodle-a.svg'), url('/images/bg-doodle-b.svg');
-    -webkit-mask-size: 1680px 1360px, 1120px 920px;
-    mask-size: 1680px 1360px, 1120px 920px;
-    -webkit-mask-repeat: repeat, repeat;
-    mask-repeat: repeat, repeat;
-    /* 视差：滚动时让图案慢慢往上走（见全局脚本里的 shiftDoodles）。偏移量是按各自
-       tile 高度取模后传进来的，所以取多大值图案都接得上，不会露出边缘。 */
-    -webkit-mask-position: 0 var(--bg-shift-a, 0px), 190px calc(110px + var(--bg-shift-b, 0px));
-    mask-position: 0 var(--bg-shift-a, 0px), 190px calc(110px + var(--bg-shift-b, 0px));
+    -webkit-mask: url('/images/bg-doodle-a.svg') 0 0 / 1680px 1360px repeat;
+    mask: url('/images/bg-doodle-a.svg') 0 0 / 1680px 1360px repeat;
+    transform: translate3d(0, var(--bg-shift-a, 0px), 0);
+    will-change: transform;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: -920px 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--bg-doodle);
+    -webkit-mask: url('/images/bg-doodle-b.svg') 190px 110px / 1120px 920px repeat;
+    mask: url('/images/bg-doodle-b.svg') 190px 110px / 1120px 920px repeat;
+    transform: translate3d(0, var(--bg-shift-b, 0px), 0);
+    will-change: transform;
 }
 
 @media print {
-    body::before { display: none; }
+    body::before,
+    body::after { display: none; }
 }
 
 /* 内核不认 text-autospace 时由 js/cjk-gap.js 插的空元素，宽度对齐 Chromium 的 1/8em */
