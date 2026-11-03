@@ -6,7 +6,7 @@
 				<span>Ethan</span>
 			</a>
 		{% else %}
-			<a href="{{ page.root }}" class="nav-brand">
+			<a href="{{ rel('', page) }}" class="nav-brand">
 				{{ ICONS.back | safe }}
 			</a>
 		{% endif %}

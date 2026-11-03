@@ -671,9 +671,11 @@ env.addGlobal('t', (key, lang) => I18N[lang || 'zh'][key]);
 // 语言切换链接: {{ langHref(page) }}
 env.addGlobal('langHref', (page) => page.root + (page.lang === 'en' ? '' : 'en-US/') + pagePath(page));
 // 站内相对链接: {{ rel('toolkit/scales', page) }}
-// 传入的是相对站点根的路径，按当前页面深度补 ../；绝对 URL、锚点、根路径原样返回
+// 传入的是相对站点根的路径，按当前页面深度及语言补前缀；绝对 URL、锚点、根路径原样返回
 env.addGlobal('rel', (href, page) => (
-  /^(?:[a-z][a-z0-9+.-]*:|\/|#|\?)/i.test(href) ? href : page.root + href
+  /^(?:[a-z][a-z0-9+.-]*:|\/|#|\?)/i.test(href)
+    ? href
+    : page.root + (page.lang === 'en' ? 'en-US/' : '') + href
 ));
 
 /* -------------------------------- 构建 -------------------------------- */
