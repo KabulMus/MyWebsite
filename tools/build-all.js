@@ -11,11 +11,11 @@
  *   新字符 → 重新生成字体 → @font-face 变了 → 必须再渲染一次才能把新声明注入 main.css。
  *
  * 环境依赖:
- *   正常构建只需要 Node（字体文件已提交在 css/fonts/）。
+ *   正常构建只需要 Node（自托管字体文件已提交在 css/fonts/）。
  *   只有在「出现新字符」或 --force 时才需要 Python + fonttools + brotli；
  *   pip 包缺失时会自动 `pip install --user fonttools brotli` 后重试。
- *   若环境里根本没有 Python（常见于 CI），且缺的字符全是中文，构建会降级放行——
- *   这些字由 Google Fonts 的思源黑体兜底（见 head.njk 的 cjk-font 区块）。
+ *   若环境里根本没有 Python（常见于 CI），且缺的字符全是思源黑体可覆盖的 CJK，
+ *   构建会降级放行；这些字符直接由 Google Fonts 的思源黑体提供。
  *   缺非中文字符仍然失败：那才是真的会回退到系统字体。
  */
 const { spawnSync } = require('child_process');
@@ -70,8 +70,8 @@ function checkFonts(quiet = false) {
   return { ok: (r.status ?? 1) === 0, report, output: (r.stdout || '') + (r.stderr || '') };
 }
 
-/* 缺字只在「本地子集缺 CJK」时才允许放行：中文另有 Google Fonts 兜底（见 head.njk 的
-   cjk-font 区块），其余字符缺了就是真回退到系统字体，必须让构建失败。 */
+/* 只有缺失字符全属于 Google Fonts 思源黑体覆盖范围时才允许放行；
+   其余字符缺了就是真回退到系统字体，必须让构建失败。 */
 function canFallbackToCdn(report) {
   return Boolean(report && report.remoteOnly);
 }
@@ -82,13 +82,28 @@ let status = buildHtml();
 if (status !== 0) process.exit(status);
 
 if (CHECK_ONLY) {
-  process.exit(checkFonts().ok ? 0 : 1);
+  const check = checkFonts(true);
+  if (check.ok) {
+    checkFonts();
+    process.exit(0);
+  }
+  if (canFallbackToCdn(check.report)) {
+    console.log('\n[fonts] 缺失字符均由 Google Fonts 思源黑体覆盖，无需本地生成。');
+    process.exit(0);
+  }
+  checkFonts();
+  process.exit(1);
 }
 
 const first = checkFonts(true);
 
 if (first.ok && !FORCE) {
   checkFonts();   // 再跑一次非 JSON 版本，把人类可读的结论打出来
+  process.exit(0);
+}
+
+if (!first.ok && !FORCE && canFallbackToCdn(first.report)) {
+  console.log('\n[fonts] 缺失字符均由 Google Fonts 思源黑体覆盖，无需生成本地字体。');
   process.exit(0);
 }
 
@@ -100,15 +115,14 @@ if (!first.ok) {
 
 const fontStatus = runPython();
 if (fontStatus !== 0) {
-  // 字体没生成成功。中文缺字有 Google 兜底，可以继续；其余缺字不能带着上线。
+  // 字体没生成成功。可由 Google 思源黑体覆盖的 CJK 缺字可以继续；其余缺字不能上线。
   const retry = checkFonts(true);
   if (retry.ok) {
     console.error('\n[fonts] 生成失败，但现有字体已覆盖全部字符，继续构建。');
     process.exit(0);
   }
   if (canFallbackToCdn(retry.report)) {
-    console.error('\n[fonts] 生成失败，缺的字符全是中文 —— 这些字会由 Google Fonts 兜底，继续构建。');
-    console.error('        想彻底自托管，请装好 Python + fonttools + brotli 后执行 `npm run fonts`。');
+    console.error('\n[fonts] 生成失败，缺的字符全是 Google Fonts 思源黑体可覆盖的 CJK，继续构建。');
     process.exit(0);
   }
   console.error('\n[fonts] 生成失败，保留原有字体文件。');
@@ -119,4 +133,14 @@ if (fontStatus !== 0) {
 status = buildHtml();
 if (status !== 0) process.exit(status);
 
-process.exit(checkFonts().ok ? 0 : 1);
+const final = checkFonts(true);
+if (final.ok) {
+  checkFonts();
+  process.exit(0);
+}
+if (canFallbackToCdn(final.report)) {
+  console.log('\n[fonts] 缺失字符均由 Google Fonts 思源黑体覆盖，无需本地生成。');
+  process.exit(0);
+}
+checkFonts();
+process.exit(1);

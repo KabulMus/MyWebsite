@@ -73,7 +73,7 @@ function inlineCssBackgrounds() {
 }
 
 /* ------------------------- 自托管字体的 @font-face -------------------------
- * 字体文件已按站点字符子集化（tools/build-fonts.py 生成），这里只做拼接：
+ * 其余自托管字体已按站点字符子集化（tools/build-fonts.py 生成），这里只做拼接：
  * 把 @font-face 放到阻塞渲染的 main.css 最前面，浏览器解析到就立刻请求字体，
  * 不必像以前那样先等 6 个 Google Fonts / rsms.me 的 CSS 回来再发现字体。 */
 function inlineFontFaces(css) {
@@ -759,9 +759,8 @@ function generateRobots() {
   console.log('✓ robots.txt');
 }
 
-/* 页面正文是否真的出现 CJK：中文以本地子集（`Noto Sans SC Local`）为主，
-   Google Fonts 只是缺字时的兜底。整页无中文的页面（多数 en-US 页）连兜底也不需要，
-   没必要多发一次跨域 CSS + 两个 preconnect，直接把整段删掉。 */
+/* 页面正文是否真的出现 CJK：整页无中文的页面（多数 en-US 页）不需要思源黑体，
+   删掉对应的 Google Fonts 样式表，避免额外请求。 */
 const CJK_RE = /[\u2E80-\u9FFF\u3000-\u303F\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]/;
 
 function hasCJKText(html) {

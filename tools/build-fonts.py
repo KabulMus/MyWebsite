@@ -10,16 +10,11 @@
     css/fonts/*.woff2           子集字体（已提交到仓库，构建时不需 Python）
     css/_fonts.generated.css    @font-face 声明，由 build.js 注入 dist/css/main.css
 
-哪些自托管、哪些走 CDN：
-    * 西文/装饰字体（Inter、Google Sans Flex、Source Serif 4、Playfair、JetBrains Mono…）
-      自托管：这些 family 用 Google Fonts 要先拉一份 CSS 才知道字体地址，叠加 DNS/TLS
-      首字要等 3 个 RTT 以上（实测这些 CSS 在 4Mbps 下 1.15s 才完成）；自托管后同源、
-      无额外连接，还能按站点实际字符裁到最小。
-    * 中文思源黑体（Noto Sans SC）也自托管，但注册成独立的 family
-      `Noto Sans SC Local`，字体栈里排在 Google 的 `Noto Sans SC` 之前：
-      日常全部字符由本地 300 KB 子集渲染（一次下载、immutable 长缓存）；
-      构建期没补上的字（CI 无 Python 时的漏网字符、或以后新增的生僻字）
-      才由 Google Fonts 的分片接手。详见 src/_includes/partials/head.njk 的 cjk-font 区块。
+自托管字体：
+    * Inter、Google Sans Flex、Encode Sans SC、Source Serif 4、Noto Serif SC（思源宋体）、
+      Playfair、JetBrains Mono 等西文/衬线与装饰字体。
+    * 中文思源黑体（Noto Sans SC）由 Google Fonts 加载，不在此脚本生成。
+    * Google Sans Flex 从上游全轴字体生成独立正体与斜体子集；斜体文件默认应用 ss01。
 """
 
 import glob
@@ -44,17 +39,13 @@ OUT_FONT_DIR = os.path.join('css', 'fonts')
 CACHE = os.path.join('tools', '.font-cache')
 CSS_OUT = os.path.join('css', '_fonts.generated.css')
 
-# 变量字体只保留站点实际用到的轴范围，可显著减小体积。
-# Google Sans Flex 在站点只用于标题/导航（字号 ≥ ~1.5rem），且不需要光学校正到正文尺寸，
-# 所以 opsz 下限收到 32；wght 只用到 400–900。ROND（圆角）轴站点不用，钉到默认 0。
-# ⚠️ Google Fonts 上架的 Google Sans Flex 砍掉了 slnt 轴（只有 opsz/wdth/wght），
-#    所以斜体必须从上游发布版取全轴 VF；版本号与 Google 版一致（v5.000, cedf1e9）。
+# 固定 Google Sans Flex 不使用的 ROND 轴，并限制本站需要的变量轴范围。
+# Noto Sans SC 不在此脚本生成，由 Google Fonts 加载。
 AXIS_LIMITS = {
     'Google Sans Flex': {'ROND': 0, 'opsz': (32, 144), 'wdth': (25, 151), 'wght': (400, 900)},
 }
 
-# 需要额外生成「斜体面」的字体：family -> (slnt 轴取值, 输出文件名)
-# 该字体的斜体是 slnt 轴（-10..0）实现的，不是独立的 ital 轴。
+# 独立生成正体与斜体文件，只有斜体文件将 ss01 合并到默认替换。
 ITALIC_SOURCES = {
     'Google Sans Flex': (-10, 'GoogleSansFlex-italic.woff2'),
 }
@@ -64,9 +55,7 @@ ITALIC_SOURCES = {
 # 白名单式裁剪虽然能省 40 KB，但会让这些排版特性静默失效。
 LAYOUT_FEATURES = '*'
 
-# 标题字体用 block：swap 必然「先画错字形再跳」，block 只会「晚点出现」，绝不出现字形跳变。
-# 前提是它已在 <head> 里 preload（否则最坏 3s 不可见，反而更糟）。
-# 斜体面不做 preload，所以保持 swap，避免斜体文字长时间不可见。
+# 标题字体用 block，避免首屏字形跳变；斜体面使用 swap。
 FONT_DISPLAY_BLOCK = {'Google Sans Flex'}
 
 
@@ -160,10 +149,7 @@ CHROME_UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
 
 
 def fetch_full_vf(zip_url):
-    """下载字体项目的发布 zip，解出里面唯一的全轴变量字体 .ttf。
-
-    Google Fonts 上架的 Google Sans Flex 只有 opsz/wdth/wght 三个轴，没有 slnt，
-    所以斜体拿不到；上游发布版是 [ROND,opsz,slnt,wdth,wght] 全轴，版本号一致。"""
+    """下载 Google Sans Flex 上游全轴变量字体，Google Fonts 托管版没有 slnt 轴。"""
     key = re.sub(r'\W+', '_', zip_url)[-60:]
     zip_path = os.path.join(CACHE, key + '.zip')
     fetch(zip_url, zip_path)
@@ -178,9 +164,9 @@ def fetch_full_vf(zip_url):
             zf.extractall(extract_dir)
         open(marker, 'w').close()
 
-    for p in glob.glob(os.path.join(extract_dir, '**', '*.ttf'), recursive=True):
-        if '[' in os.path.basename(p):      # 变量字体文件名里带轴列表
-            return p
+    for path in glob.glob(os.path.join(extract_dir, '**', '*.ttf'), recursive=True):
+        if '[' in os.path.basename(path):
+            return path
     raise SystemExit(f'压缩包里没找到变量字体: {zip_url}')
 
 
@@ -228,12 +214,10 @@ def subset_face(src, chars, out, limits=None):
     path = src
     tmp = None
     if limits:
-        # recalcTimestamp=False: 否则每次生成都会写入当前时间，字体内容没变也换文件名，
-        # 白白让 immutable 缓存失效（只有走变量字体实例化的字体受影响）。
-        f = TTFont(src, recalcTimestamp=False)
-        instancer.instantiateVariableFont(f, limits, inplace=True, updateFontNames=False)
+        font = TTFont(src, recalcTimestamp=False)
+        instancer.instantiateVariableFont(font, limits, inplace=True, updateFontNames=False)
         tmp = tempfile.mktemp(suffix='.ttf')
-        f.save(tmp)
+        font.save(tmp)
         path = tmp
     subset.main([path, '--text=' + ''.join(sorted(chars)), '--flavor=woff2',
                  '--output-file=' + out, '--layout-features=' + LAYOUT_FEATURES])
@@ -243,71 +227,54 @@ def subset_face(src, chars, out, limits=None):
 
 
 def promote_substitution_to_default(path, feature_tag='ss01', default_tag='ccmp'):
-    """把某个特性并入默认启用的特性，使其无需 CSS 开关就生效。
-
-    用途：Google Sans Flex 的单层 a 放在 `ss01` 里（a → a.alt），而 ss01 默认关闭。
-    把它挂到 `ccmp`（所有 shaper 都默认应用）上，斜体面就直接是单层 a，
-    且不依赖任何 CSS 声明（canvas、导出等场景同样生效）。
-
-    两个坑：
-    * 不能按字形名查找——子集化会把 `a.alt` 重命名成 `glyphXXXXX`，
-      所以改为「提升 ss01 特性引用的 lookup」。
-    * 子集化后 `ccmp` 可能被整个丢掉（本字体没有合成需求），需要新建并注册到每个 LangSys。
-
-    安全性：已确认该字体里只有 ss01 引用字形 `a`，`calt` 只处理 `:~` 与 `数字:`，
-    因此提前替换不会破坏上下文替换。"""
-    f = TTFont(path, recalcTimestamp=False)
-    if 'GSUB' not in f:
-        f.close()
-        return False
-    gsub = f['GSUB'].table
-    if not gsub.FeatureList:
-        f.close()
+    """Make a stylistic substitution default in this font face only."""
+    font = TTFont(path, recalcTimestamp=False)
+    if 'GSUB' not in font or not font['GSUB'].table.FeatureList:
+        font.close()
         return False
 
+    gsub = font['GSUB'].table
     records = gsub.FeatureList.FeatureRecord
-    wanted = set()
-    for fr in records:
-        if fr.FeatureTag == feature_tag:
-            wanted.update(fr.Feature.LookupListIndex)
-    if not wanted:
-        f.close()
+    lookups = set()
+    for record in records:
+        if record.FeatureTag == feature_tag:
+            lookups.update(record.Feature.LookupListIndex)
+    if not lookups:
+        font.close()
         return False
 
-    feature_index = None
-    for i, fr in enumerate(records):
-        if fr.FeatureTag != default_tag:
+    default_index = None
+    for index, record in enumerate(records):
+        if record.FeatureTag != default_tag:
             continue
-        feature_index = i
-        for li in sorted(wanted):
-            if li not in fr.Feature.LookupListIndex:
-                fr.Feature.LookupListIndex.append(li)
-                fr.Feature.LookupCount = len(fr.Feature.LookupListIndex)
+        default_index = index
+        for lookup in sorted(lookups):
+            if lookup not in record.Feature.LookupListIndex:
+                record.Feature.LookupListIndex.append(lookup)
+                record.Feature.LookupCount = len(record.Feature.LookupListIndex)
 
-    if feature_index is None:
-        new_fr = otTables.FeatureRecord()
-        new_fr.FeatureTag = default_tag
-        new_fr.Feature = otTables.Feature()
-        new_fr.Feature.FeatureParams = None
-        new_fr.Feature.LookupListIndex = sorted(wanted)
-        new_fr.Feature.LookupCount = len(new_fr.Feature.LookupListIndex)
-        records.append(new_fr)
+    if default_index is None:
+        record = otTables.FeatureRecord()
+        record.FeatureTag = default_tag
+        record.Feature = otTables.Feature()
+        record.Feature.FeatureParams = None
+        record.Feature.LookupListIndex = sorted(lookups)
+        record.Feature.LookupCount = len(record.Feature.LookupListIndex)
+        records.append(record)
         gsub.FeatureList.FeatureCount = len(records)
-        feature_index = len(records) - 1
+        default_index = len(records) - 1
 
-        for si in range(gsub.ScriptList.ScriptCount):
-            script = gsub.ScriptList.ScriptRecord[si].Script
-            langsys = []
-            if script.DefaultLangSys:
-                langsys.append(script.DefaultLangSys)
-            langsys.extend(lr.LangSys for lr in script.LangSysRecord)
-            for ls in langsys:
-                if feature_index not in ls.FeatureIndex:
-                    ls.FeatureIndex.append(feature_index)
-                    ls.FeatureCount = len(ls.FeatureIndex)
+        for script_record in gsub.ScriptList.ScriptRecord:
+            script = script_record.Script
+            langsys = [script.DefaultLangSys] if script.DefaultLangSys else []
+            langsys.extend(item.LangSys for item in script.LangSysRecord)
+            for language in langsys:
+                if default_index not in language.FeatureIndex:
+                    language.FeatureIndex.append(default_index)
+                    language.FeatureCount = len(language.FeatureIndex)
 
-    f.save(path)
-    f.close()
+    font.save(path)
+    font.close()
     return True
 
 
@@ -340,8 +307,6 @@ def main():
     # family -> 源 CSS
     sources = {
         'Inter': ('rsms', 'https://rsms.me/inter/inter.css'),
-        # 本地子集用独立 family 名，避免与 Google 的同名 @font-face 合并后互相覆盖
-        'Noto Sans SC Local': ('vf', 'https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf'),
         'Google Sans Flex': ('vfg', 'https://github.com/googlefonts/googlesans-flex/releases/download/v5.000/GoogleSansFlex-v5.000.zip'),
         'Encode Sans SC': ('g', 'https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&display=swap'),
         'Source Serif 4': ('g', 'https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900&display=swap'),
@@ -356,7 +321,6 @@ def main():
 
     for family, (kind, src) in sources.items():
         limits = AXIS_LIMITS.get(family)
-
         if kind == 'rsms':
             files = [
                 ('https://rsms.me/inter/font-files/InterVariable.woff2', 'normal'),
@@ -374,37 +338,22 @@ def main():
                 print(f'  {name:32} {size/1024:7.1f} KB')
             continue
 
-        if kind == 'vf':
-            srcfile = fetch(src, os.path.join(CACHE, 'NotoSansSC-VF.ttf'))
-            out = os.path.join(OUT_FONT_DIR, 'NotoSansSC.woff2')
-            if not subset_face(srcfile, chars, out, limits):
-                raise SystemExit('NotoSansSC 子集化失败')
-            size = os.path.getsize(out)
-            total += size
-            css_rules.append((family, '100 900', 'normal', 'NotoSansSC.woff2', None))
-            print(f'  {"NotoSansSC.woff2":32} {size/1024:7.1f} KB')
-            continue
-
         if kind == 'vfg':
-            # 上游发布版全轴 VF（ROND,opsz,slnt,wdth,wght），斜体由 slnt 轴实例化得到
             srcfile = fetch_full_vf(src)
             faces = [(None, 'normal', f'{slug(family)}.woff2')]
             if family in ITALIC_SOURCES:
-                slnt, it_name = ITALIC_SOURCES[family]
-                faces.append((slnt, 'italic', it_name))
+                slnt, italic_name = ITALIC_SOURCES[family]
+                faces.append((slnt, 'italic', italic_name))
+
             for slnt, style, name in faces:
                 face_limits = dict(limits or {})
-                if slnt is not None:
-                    face_limits['slnt'] = slnt
-                else:
-                    face_limits['slnt'] = 0      # 钉住普通面，否则会保留 slnt 轴
+                face_limits['slnt'] = slnt if slnt is not None else 0
                 out = os.path.join(OUT_FONT_DIR, name)
                 if not subset_face(srcfile, chars, out, face_limits):
-                    print(f'  {name:32} 跳过（子集为空）'); continue
+                    raise SystemExit(f'{name} 子集化失败')
                 if style == 'italic' and family == 'Google Sans Flex':
-                    # 斜体默认用单层 a（字体里以 ss01 提供，这里提升为默认）
                     if promote_substitution_to_default(out, 'ss01', 'ccmp'):
-                        print(f'  {name:32} 单层 a 已设为默认（ss01 → ccmp）')
+                        print(f'  {name:32} 单层 a 已设为默认（仅斜体面）')
                 size = os.path.getsize(out)
                 total += size
                 css_rules.append((family, '400 900', style, name, None))
@@ -475,16 +424,13 @@ def main():
     # ---------- 生成 @font-face ----------
     lines = ['/* 由 tools/build-fonts.py 生成，请勿手改。字体按站点实际字符子集化。 */']
     for family, weight, style, name, keep in css_rules:
-        w = weight
         wght_axis = (AXIS_LIMITS.get(family) or {}).get('wght')
-        if wght_axis:
-            # 轴已裁到站点用到的范围，声明也要跟着收窄，否则浏览器会误以为有更细/更粗的字重
-            w = f'{wght_axis[0]} {wght_axis[1]}'
+        weight_range = f'{wght_axis[0]} {wght_axis[1]}' if wght_axis else weight
         block = [
             '@font-face {',
             f"\tfont-family: '{family}';",
             f'\tfont-style: {style};',
-            f'\tfont-weight: {w};',
+            f'\tfont-weight: {weight_range};',
             f'\tfont-display: {font_display(family, style)};',
             f"\tsrc: url('fonts/{name}') format('woff2');",
         ]

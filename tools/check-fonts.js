@@ -12,9 +12,8 @@
  *
  * 无第三方依赖：直接解析 WOFF2 的 cmap 表（仅格式 4 / 12，足以覆盖本站字体）。
  *
- * 关于中文：本地子集（family `Noto Sans SC Local`）是主力，所以 CJK 缺字同样算缺字。
- * 只是它们还多一层 Google Fonts 兜底——build-all.js 在补字失败时，若缺的全是 CJK，
- * 会降级成警告继续构建（那些字由 Google 分片接手），非 CJK 缺字仍然硬失败。
+ * 关于中文：思源黑体由 Google Fonts 提供，所以其覆盖范围内的 CJK 缺字允许远程加载；
+ * 非 CJK 缺字仍然硬失败。
  */
 const fs = require('fs');
 const path = require('path');
@@ -204,9 +203,7 @@ function isEmoji(cp) {
 }
 
 /**
- * Google Fonts 的思源黑体能兜底的 CJK 码位。
- * 本地子集缺这些字不算致命（构建会在能补的时候补上，补不了就交给 Google），
- * 缺其他字符则一定会回退到系统字体。
+ * Google Fonts 的思源黑体能覆盖的 CJK 码位；这些字由外部字体样式表加载。
  */
 const REMOTE_CJK_RANGES = [
   [0x2e80, 0x9fff],   // CJK 部首扩展 / 假名 / 统一汉字
@@ -352,7 +349,7 @@ function main() {
       total: siteChars.size,
       textCount,
       missing,
-      // 只靠 Google 兜底也能过的缺字（全部是 CJK 时 build-all 允许降级）
+      // 由 Google Fonts 思源黑体覆盖的缺字
       remoteOnly: missing.length > 0 && remoteCount === missing.length,
       emoji,
     }, null, 2));
