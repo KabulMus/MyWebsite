@@ -33,7 +33,7 @@ npm run deploy  # （可选）手动上传 dist/（host.retiehe.com）
 - **Build output directory**: `dist`
 
 之后每次 `git push` 到 GitHub，Cloudflare Pages 会自动拉取源码 → 安装依赖 → 构建 → 部署 `dist/`。
-本地只需要 push 源码（`src/`、`build.js`、`package.json`），无需提交 `dist/`（已 .gitignore 忽略）。
+本地只需要 push 源码和字体资源（包括 `src/`、`tools/fonts/`、`css/fonts/`），无需提交 `dist/`（已 .gitignore 忽略）。
 
 > 修改导航、页脚或按钮只需改 `src/_includes/` 或 `build.js` 里的配置，重新 `npm run build` 即可全站生效。**请勿直接编辑 `dist/` 下的 HTML，它们由构建生成。**
 
@@ -47,6 +47,8 @@ npm run deploy  # （可选）手动上传 dist/（host.retiehe.com）
 > **背景线稿**：`images/bg-doodle-a.svg` / `bg-doodle-b.svg` 由 `build.js` 在构建时内联进 `dist/css/main.css`（转 data URI，去掉注释与多余空白）。原因是浏览器对 `mask-image` 只在绘制时才发请求，既不复用 `<link rel=preload>`，也不与隐藏 `<img>` 的请求合并，留成独立文件只会让底纹到 1s 后才冒出来。改完 `.svg` 重新构建即可，无需手工内联；源目录里的 `css/main.css` 保持 `url('/images/bg-doodle-*.svg')` 写法。
 
 > **字体**：全部自托管，页面不再请求 Google Fonts / rsms.me 的字体 CSS 才能拿到字形。字体文件在 `css/fonts/`，`@font-face` 由 `tools/build-fonts.py` 生成到 `css/_fonts.generated.css`，构建时注入 `dist/css/main.css`（与主样式同一个请求，浏览器解析到就能开始下载，`font-display:block` 的标题字体还会被 `<head>` 预加载）。
+>
+> **中文页面大标题**：使用阿里妈妈数黑体 Bold；中文 `.page-hero h1` 和任意语言中带 `.alimama-shuhei` 的文本都会纳入同一子集。完整源字体保存在 `tools/fonts/`；每次 `npm run build` 都会检查所需字形，若有缺字则从源字体自动生成新的哈希 WOFF2 子集、更新 `css/_heading-font.generated.css` 并重建页面。部署构建也执行同一检查；无需手动更新子集。字体源文件的再分发许可已由项目维护者确认。
 >
 > **中文（思源黑体）以本地子集为主，Google Fonts 只做兜底**：本地那份 300 KB 子集注册成独立 family `Noto Sans SC Local`，字体栈里排在 Google 的 `Noto Sans SC` 之前（必须改名，否则同名的 `@font-face` 会按声明顺序互相覆盖，本地那份永远不生效）。日常所有字符都由本地子集渲染，一次下载后 `immutable` 长缓存；只有本地子集缺字时（构建在无 Python 的 CI 上没能补字，或以后新增的生僻字）才由 Google 的分片接手。Google 的 CSS 用 `media="print"` + `onload` 异步加载，不阻塞首帧；正文没有 CJK 的页面由 `build.js` 把整个 `cjk-font` 区块删掉，那些页面没有任何第三方请求。
 >

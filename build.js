@@ -73,13 +73,15 @@ function inlineCssBackgrounds() {
 }
 
 /* ------------------------- 自托管字体的 @font-face -------------------------
- * 其余自托管字体已按站点字符子集化（tools/build-fonts.py 生成），这里只做拼接：
+ * 自托管字体已按站点字符子集化，生成声明只在这里拼接：
  * 把 @font-face 放到阻塞渲染的 main.css 最前面，浏览器解析到就立刻请求字体，
  * 不必像以前那样先等 6 个 Google Fonts / rsms.me 的 CSS 回来再发现字体。 */
 function inlineFontFaces(css) {
-  const facesPath = path.join(ROOT, 'css', '_fonts.generated.css');
-  if (!fs.existsSync(facesPath)) return css;
-  const faces = fs.readFileSync(facesPath, 'utf8');
+  const generatedFiles = ['_fonts.generated.css', '_heading-font.generated.css']
+    .map((file) => path.join(ROOT, 'css', file))
+    .filter((file) => fs.existsSync(file));
+  if (!generatedFiles.length) return css;
+  const faces = generatedFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
   const marker = '/* --- 1. 字体声明 --- */';
   return css.includes(marker) ? css.replace(marker, faces + '\n' + marker) : faces + '\n' + css;
 }
@@ -663,6 +665,7 @@ const env = new nunjucks.Environment(new nunjucks.FileSystemLoader(SRC), {
 });
 
 env.addGlobal('ICONS', ICONS);
+env.addGlobal('currentYear', new Date().getFullYear());
 // 字体文件名（带内容哈希）: {{ fontFile('Inter.woff2') }}
 // 清单由 tools/build-fonts.py 生成；没有清单时（尚未跑过字体脚本）退回原名。
 env.addGlobal('fontFile', (name) => FONT_MANIFEST[name] || name);

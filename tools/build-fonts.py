@@ -416,11 +416,11 @@ def main():
         hashed_rules.append((family, weight, style, hashed, keep))
     css_rules = hashed_rules
 
-    # 清掉本次没有产出的旧字体（Musical / Icons 是手工维护的，不归本脚本管）
+    # 清掉本次没有产出的旧字体（手工维护的字体不归本脚本管）
     produced = set(manifest.values())
     for stale in glob.glob(os.path.join(OUT_FONT_DIR, '*.woff2')):
         base = os.path.basename(stale)
-        if base in produced or base.startswith(('Musical-', 'Icons-')):
+        if base in produced or base.startswith(('Musical-', 'Icons-', 'AlimamaShuHeiTi.')):
             continue
         os.remove(stale)
 

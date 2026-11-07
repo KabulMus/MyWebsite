@@ -12,6 +12,7 @@
  *
  * 环境依赖:
  *   正常构建只需要 Node（自托管字体文件已提交在 css/fonts/）。
+ *   数黑体标题字形每次都会检查；出现新标题字形时从 tools/fonts/ 的源字体自动重建。
  *   只有在「出现新字符」或 --force 时才需要 Python + fonttools + brotli；
  *   pip 包缺失时会自动 `pip install --user fonttools brotli` 后重试。
  *   若环境里根本没有 Python（常见于 CI），且缺的字符全是思源黑体可覆盖的 CJK，
@@ -32,13 +33,13 @@ function run(script, extraArgs = []) {
   return spawnSync(NODE, [script, ...extraArgs], { cwd: ROOT, stdio: 'inherit' }).status ?? 1;
 }
 
-function runPython() {
+function runPython(scriptPath = 'tools/build-fonts.py') {
   // Windows 上优先 python，回退 py -3
   const candidates = process.platform === 'win32'
-    ? [['python', ['tools/build-fonts.py']], ['py', ['-3', 'tools/build-fonts.py']]]
-    : [['python3', ['tools/build-fonts.py']], ['python', ['tools/build-fonts.py']]];
-  for (const [cmd, cmdArgs] of candidates) {
-    const r = spawnSync(cmd, cmdArgs, { cwd: ROOT, stdio: 'inherit' });
+    ? [['python', [scriptPath]], ['py', ['-3', scriptPath]]]
+    : [['python3', [scriptPath]], ['python', [scriptPath]]];
+  for (const [cmd, args] of candidates) {
+    const r = spawnSync(cmd, args, { cwd: ROOT, stdio: 'inherit' });
     if (r.error && r.error.code === 'ENOENT') continue;
     if (r.status === 0) return 0;
     // 最常见的原因是没装 fonttools / brotli（CI 上的干净环境）：装一次再重试
@@ -46,7 +47,7 @@ function runPython() {
     const pip = spawnSync(cmd, ['-m', 'pip', 'install', '--quiet', '--disable-pip-version-check',
       '--user', 'fonttools', 'brotli'], { cwd: ROOT, stdio: 'inherit' });
     if (pip.error || pip.status !== 0) return r.status ?? 1;
-    return spawnSync(cmd, cmdArgs, { cwd: ROOT, stdio: 'inherit' }).status ?? 1;
+    return spawnSync(cmd, args, { cwd: ROOT, stdio: 'inherit' }).status ?? 1;
   }
   console.error('\n[fonts] 找不到可用的 Python。');
   console.error('        本地请安装 Python 后执行：pip install fonttools brotli');
@@ -57,8 +58,12 @@ function buildHtml() {
   return run(path.join(ROOT, 'build.js'));
 }
 
-function checkFonts(quiet = false) {
-  const r = spawnSync(NODE, [path.join(ROOT, 'tools/check-fonts.js'), ...(quiet ? ['--json'] : [])], {
+function checkFonts(quiet = false, extraArgs = []) {
+  const r = spawnSync(NODE, [
+    path.join(ROOT, 'tools/check-fonts.js'),
+    ...(quiet ? ['--json'] : []),
+    ...extraArgs,
+  ], {
     cwd: ROOT,
     stdio: quiet ? 'pipe' : 'inherit',
     encoding: 'utf8',
@@ -80,6 +85,43 @@ function canFallbackToCdn(report) {
 
 let status = buildHtml();
 if (status !== 0) process.exit(status);
+
+const headingArgs = ['--headings'];
+const headingCheck = checkFonts(true, headingArgs);
+if (!headingCheck.report) {
+  checkFonts(false, headingArgs);
+  console.error('\n[fonts] 无法检查数黑体标题字形，停止构建。');
+  process.exit(1);
+}
+if (!headingCheck.ok && !headingCheck.report.missing.length) {
+  checkFonts(false, headingArgs);
+  console.error('\n[fonts] 数黑体标题字形检查异常，停止构建。');
+  process.exit(1);
+}
+if (CHECK_ONLY && (!headingCheck.ok || headingCheck.report.missing.length)) {
+  checkFonts(false, headingArgs);
+  process.exit(1);
+}
+
+if (headingCheck.report.missing.length || FORCE) {
+  console.log(headingCheck.report.missing.length
+    ? '\n[fonts] 数黑体标题发现新字形，正在自动更新子集…'
+    : '\n[fonts] --force：重新生成数黑体标题子集…');
+  const headingStatus = runPython('tools/build-heading-font.py');
+  if (headingStatus !== 0) {
+    console.error('\n[fonts] 数黑体标题子集生成失败，停止构建。');
+    process.exit(headingStatus);
+  }
+  status = buildHtml();
+  if (status !== 0) process.exit(status);
+  const updatedHeadingCheck = checkFonts(true, headingArgs);
+  if (!updatedHeadingCheck.report || !updatedHeadingCheck.ok || updatedHeadingCheck.report.missing.length) {
+    checkFonts(false, headingArgs);
+    console.error('\n[fonts] 数黑体标题子集更新后仍有缺字，停止构建。');
+    process.exit(1);
+  }
+}
+checkFonts(false, headingArgs);
 
 if (CHECK_ONLY) {
   const check = checkFonts(true);

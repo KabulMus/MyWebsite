@@ -26,9 +26,8 @@ const WATCH_TARGETS = [
   path.join(ROOT, 'package.json'),
 ];
 
-// 生成产物不触发重建：字体子集与 @font-face 由 tools/build-fonts.py 写出，
-// 若不忽略会形成「构建 → 写字体 → 又触发构建」的多余循环。
-const IGNORE_RE = /[\\/](dist|node_modules)[\\/]|[\\/]css[\\/]fonts[\\/]|_fonts\.generated\.css$|[\\/]\.font-cache[\\/]/;
+// 生成产物不触发重建，避免「构建 → 写字体声明 → 又触发构建」的多余循环。
+const IGNORE_RE = /[\\/](dist|node_modules)[\\/]|[\\/]css[\\/]fonts[\\/]|_(?:fonts|heading-font)\.generated\.css$|[\\/]\.font-cache[\\/]/;
 
 let building = false;
 let queued = false;

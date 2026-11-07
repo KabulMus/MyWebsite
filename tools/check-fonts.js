@@ -296,6 +296,39 @@ function collectSiteChars() {
   return col.chars;
 }
 
+function decodeHtmlEntities(text) {
+  return text
+    .replace(/&#x([0-9a-f]+);?/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);?/g, (_, decimal) => String.fromCodePoint(parseInt(decimal, 10)))
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/g, "'");
+}
+
+function collectHeadingChars() {
+  const col = makeCollector();
+  for (const file of walk(DIST)) {
+    if (!file.endsWith('.html')) continue;
+    const rel = path.relative(DIST, file);
+    const html = fs.readFileSync(file, 'utf8');
+    const lang = html.match(/<html\b[^>]*\blang=["']([^"']+)["']/i)?.[1] || '';
+    if (lang.startsWith('zh')) {
+      for (const header of html.matchAll(/<header\b([^>]*)>([\s\S]*?)<\/header>/gi)) {
+        if (!/\bclass=["'][^"']*\bpage-hero\b[^"']*["']/i.test(header[1])) continue;
+        const heading = header[2].match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
+        if (heading) col.add(decodeHtmlEntities(heading[1].replace(/<[^>]*>/g, '')), rel);
+      }
+    }
+
+    for (const marked of html.matchAll(/<([a-z][\w:-]*)\b([^>]*\bclass=["'][^"']*\balimama-shuhei\b[^"']*["'][^>]*)>([\s\S]*?)<\/\1>/gi)) {
+      col.add(decodeHtmlEntities(marked[3].replace(/<[^>]*>/g, '')), rel);
+    }
+  }
+  return col.chars;
+}
+
 function walk(dir) {
   const out = [];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -310,16 +343,21 @@ function walk(dir) {
 function main() {
   const asJson = process.argv.includes('--json');
   const reportEmoji = process.argv.includes('--report-emoji');
+  const headingOnly = process.argv.includes('--headings');
   if (!fs.existsSync(FONT_DIR)) {
     console.error('未找到 css/fonts/，先执行 npm run fonts');
     process.exit(1);
   }
 
   const fonts = fs.readdirSync(FONT_DIR)
-    .filter((f) => f.endsWith('.woff2'))
+    .filter((f) => f.endsWith('.woff2') && (!headingOnly || f.startsWith('AlimamaShuHeiTi.')))
     .map((f) => ({ file: f, ...fontCoverage(path.join(FONT_DIR, f)) }));
 
-  const siteChars = collectSiteChars();
+  const siteChars = headingOnly ? collectHeadingChars() : collectSiteChars();
+  if (headingOnly && siteChars.size === 0) {
+    console.error('未找到中文页面大标题，无法校验数黑体字形');
+    process.exit(1);
+  }
   const covered = new Set();
   for (const f of fonts) for (const c of f.codes) covered.add(c);
 
@@ -349,18 +387,19 @@ function main() {
       total: siteChars.size,
       textCount,
       missing,
+      headingOnly,
       // 由 Google Fonts 思源黑体覆盖的缺字
       remoteOnly: missing.length > 0 && remoteCount === missing.length,
       emoji,
     }, null, 2));
   } else {
     if (missing.length === 0) {
-      console.log(`✓ 字体覆盖完整：${textCount} 个文本字符全部命中` +
+      console.log(`✓ ${headingOnly ? '标题字体覆盖完整' : '字体覆盖完整'}：${textCount} 个文本字符全部命中` +
         (emoji.length ? `（另有 ${emoji.length} 个 emoji 由系统字体渲染，已跳过）` : ''));
     } else {
-      console.error(`✗ 有 ${missing.length} 个字符没有被任何子集字体覆盖` +
+      console.error(`✗ ${headingOnly ? '数黑体标题子集' : '字体子集'}有 ${missing.length} 个字符没有覆盖` +
         (remoteCount ? `（其中 ${remoteCount} 个是中文，可由 Google Fonts 兜底）` : '') +
-        `，会回退到系统字体：`);
+        `${headingOnly ? '：' : '，会回退到系统字体：'}`);
       for (const m of missing) {
         const src = m.sources.slice(0, 3).join(', ') +
           (m.sources.length > 3 ? ` 等 ${m.sources.length} 处` : '');
