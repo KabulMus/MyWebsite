@@ -23,8 +23,8 @@ import json
 import os
 import re
 import shutil
-import subprocess
 import tempfile
+from urllib.request import Request, urlopen
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -136,11 +136,19 @@ def parse_range(s):
 
 # ---------- 下载 ----------
 
-def fetch(url, dest):
+def fetch(url, dest, headers=None, timeout=120):
     if os.path.exists(dest) and os.path.getsize(dest) > 0:
         return dest
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    subprocess.run(['curl.exe', '-sSLf', '--max-time', '120', '-o', dest, url], check=True)
+    tmp = dest + '.download'
+    try:
+        request = Request(url, headers=headers or {})
+        with urlopen(request, timeout=timeout) as response, open(tmp, 'wb') as output:
+            shutil.copyfileobj(response, output)
+        os.replace(tmp, dest)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
     return dest
 
 
@@ -175,8 +183,7 @@ def google_css(url):
     key = re.sub(r'\W+', '_', url)[-80:]
     dest = os.path.join(CACHE, key + '.css')
     if not os.path.exists(dest):
-        subprocess.run(['curl.exe', '-sSf', '--max-time', '60', '-H', 'User-Agent: ' + CHROME_UA,
-                        '-o', dest, url], check=True)
+        fetch(url, dest, headers={'User-Agent': CHROME_UA}, timeout=60)
     return open(dest, encoding='utf-8').read()
 
 
