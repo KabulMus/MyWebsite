@@ -510,10 +510,12 @@ const PAGES = {
     navLeft: {
       zh: [
         { href: '#tech', text: '技术支持' },
+        { href: '#inspiration', text: '设计灵感' },
         { href: '#copyright', text: '版权归属' },
       ],
       en: [
         { href: '#tech', text: 'Tech' },
+        { href: '#inspiration', text: 'Design' },
         { href: '#copyright', text: 'Copyright' },
       ],
     },
