@@ -42,7 +42,7 @@
 
     /* 背景装饰的墨色（线稿小图形）。两档是按「看起来一样淡」配的：
        亮底 ≈0.105 的品牌蓝 与 暗底 0.075 的亮蓝，感知亮度差接近（ΔL* 都 ≈5）。 */
-    --bg-doodle: rgba(30, 102, 198, 0.105);
+    --bg-doodle: rgba(30, 102, 198, 0.1);
 
     --selection-bg: #1e67c640;
 }
@@ -54,10 +54,10 @@
     --color-blue-bg: rgba(147, 197, 253, 0.15);
     --color-blue-border: rgba(147, 197, 253, 0.3);
     --primary-purple: #aaa2e9;
-    --bg-light: #0f172a;
+    --bg-light: #081023;
     --text-main: #F5F5F7;
     --text-sub: #94a3b8;
-    --navbar-bg: rgba(15, 23, 42, 0.8);
+    --navbar-bg: rgba(3, 9, 23, 0.8);
     --card-bg: #1e293b;
     --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
     --card-hover-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.7);
@@ -65,7 +65,7 @@
     --on-primary: #0f172a; /* 深色模式下设为与背景相同的深蓝色/黑色 */
 
     /* 背景装饰：暗底对比低，给亮蓝并提高一档透明度 */
-    --bg-doodle: rgba(147, 197, 253, 0.075);
+    --bg-doodle: rgba(147, 197, 253, 0.05);
     --selection-bg: #93c5fd80;
 }
 @media (prefers-color-scheme: dark) {
@@ -75,10 +75,10 @@
         --color-blue-bg: rgba(147, 197, 253, 0.15);
         --color-blue-border: rgba(147, 197, 253, 0.3);
         --primary-purple: #aaa2e9;
-        --bg-light: #0f172a;
+        --bg-light: #081023;
         --text-main: #F5F5F7;
         --text-sub: #94a3b8;
-        --navbar-bg: rgba(15, 23, 42, 0.8);
+        --navbar-bg: rgba(3, 9, 23, 0.8);
         --card-bg: #1e293b;
         --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
         --card-hover-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.7);
@@ -86,7 +86,7 @@
         --on-primary: #0f172a;
 
         /* 背景装饰：暗底对比低，给亮蓝并提高一档透明度 */
-        --bg-doodle: rgba(147, 197, 253, 0.075);
+        --bg-doodle: rgba(147, 197, 253, 0.05);
         --selection-bg: #93c5fd80;
     }
 }
